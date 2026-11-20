@@ -11,7 +11,9 @@ Implementation update: the landmark-only training and local inference commands
 are documented in [Step 3](STEP3.md), with [actual results](STEP3_RESULTS.md).
 The trained pilot is not ready for alignment. [Step 4](STEP4.md) now implements
 four-point alignment and overlays using reviewed Step 2 labels; remaining modules
-and full quality/acceptance gates below are proposed.
+and full quality/acceptance gates below are proposed. [Step 5](STEP5.md) now adds
+provisional region correlation, per-region review gates, symmetric optional
+sharpening and a local annotated report; this is not full-app acceptance.
 
 ## 1. Design basis and boundary
 
@@ -93,7 +95,7 @@ For each photo, check JPEG/PNG content and decoder success, byte and decoded-dim
 
 Detect the same four semantic landmarks. Require confidence above calibrated thresholds, finite in-image coordinates, distinct well-spread points, a non-self-intersecting convex quadrilateral with consistent order, adequate area, and a numerically usable transform. Reject collinear, near-degenerate, mirrored/identity-inconsistent, or incomplete observations. Numeric cutoffs are TBD.
 
-Use `cv2.getPerspectiveTransform(inspection_points, reference_points)` and `cv2.warpPerspective` to produce a reference-sized image [T7]. Warp an all-valid source mask with the same transform and invalid border. Step 4 conservatively requires full bilinear source support plus inverse-coordinate bounds rather than nearest-neighbor support alone; see its [implemented contract](STEP4.md#coordinate-and-validation-contract). Verification of every marked rectangle's coverage remains pending. Padding outside the photographed image must not become comparison evidence.
+Use `cv2.getPerspectiveTransform(inspection_points, reference_points)` and `cv2.warpPerspective` to produce a reference-sized image [T7]. Warp an all-valid source mask with the same transform and invalid border. Step 4 conservatively requires full bilinear source support plus inverse-coordinate bounds rather than nearest-neighbor support alone; see its [implemented contract](STEP4.md#coordinate-and-validation-contract). Step 5 requires full coverage of each scored rectangle, routing partial local coverage to Needs review as requested for this pilot. The full application's global coverage/retake policy remains to be calibrated. Padding outside the photographed image must not become comparison evidence.
 
 **Four fitted points cannot independently validate their own alignment:** mapping residual at those same four correspondences can be tiny even for wrong identities. Check transform plausibility and board containment; where available, compare independent stable features such as mounting holes, silkscreen, or board-edge correspondences outside inspected components. The feature method, matching tolerance, minimum evidence, and fallback acceptance gates without independent features are TBD and must be calibrated before demo acceptance. If confidence in the alignment cannot be established, return `retake` rather than OK. Generate a blend overlay for operator verification; visual review supplements automated gates.
 

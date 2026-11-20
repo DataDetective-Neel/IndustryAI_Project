@@ -11,7 +11,10 @@ Related documents: [Software Design Document](SDD.md) · [Data Flow Diagrams](DF
 Implementation update: [Step 3 commands](STEP3.md) and [measured results](STEP3_RESULTS.md)
 record the executed landmark training/evaluation. Its four-point accuracy failed
 readiness. [Step 4](STEP4.md) implements alignment and review overlays from reviewed
-Step 2 labels; the wider application requirements below remain the design baseline.
+Step 2 labels. [Step 5](STEP5.md) implements provisional component-region scoring,
+local Needs review coverage/parallax handling and optional symmetric sharpening;
+failed alignment skips classification. The wider application requirements below
+remain the design baseline, including pending global quality/acceptance policy.
 
 ## 1. Purpose and source basis
 

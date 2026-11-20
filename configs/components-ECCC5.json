@@ -1,0 +1,14 @@
+{
+  "layout_id": "micropcb_E",
+  "reference_image": "PCB_Dataset_Pilot/images/val/ECCC5.jpg",
+  "coordinate_system": "Decoded reference pixels; xyxy with exclusive max bounds",
+  "reference_wh_px": [1174, 1536],
+  "components": [
+    {"id": "U2", "name": "U2 chip", "bbox_xyxy_px": [370, 430, 490, 550]},
+    {"id": "AM335x", "name": "AM335x processor", "bbox_xyxy_px": [510, 700, 755, 955]},
+    {"id": "ethernet", "name": "Ethernet housing", "bbox_xyxy_px": [510, 105, 780, 450],
+     "review_reason": "ECCC5/ECCB5: visible double housing edges from tall-component parallax"},
+    {"id": "usb", "name": "USB housing", "bbox_xyxy_px": [340, 1200, 565, 1430],
+     "review_reason": "ECCC5/ECCB5: visible displaced housing slots and edges from parallax"}
+  ]
+}
