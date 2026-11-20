@@ -1,0 +1,300 @@
+{
+  "communities": {
+    "0": [
+      "docs_dfd_d3",
+      "docs_dfd_p2",
+      "docs_dfd_p3",
+      "docs_sdd_comparator",
+      "docs_srs_fr_10"
+    ],
+    "1": [
+      "docs_dfd_d2",
+      "docs_sdd_api_validation",
+      "docs_sdd_landmark_service"
+    ],
+    "2": [
+      "docs_dfd_d1",
+      "docs_dfd_p1"
+    ],
+    "3": [
+      "pcb_dataset_pilot_images_train_hccb5",
+      "pcb_dataset_pilot_labels_train_hccb5"
+    ],
+    "4": [
+      "pcb_dataset_pilot_images_train_hccc5",
+      "pcb_dataset_pilot_labels_train_hccc5"
+    ],
+    "5": [
+      "pcb_dataset_pilot_images_train_hcdc5",
+      "pcb_dataset_pilot_labels_train_hcdc5"
+    ],
+    "6": [
+      "pcb_dataset_pilot_images_train_hdcc5",
+      "pcb_dataset_pilot_labels_train_hdcc5"
+    ],
+    "7": [
+      "pcb_dataset_pilot_images_train_mbcc5",
+      "pcb_dataset_pilot_labels_train_mbcc5"
+    ],
+    "8": [
+      "pcb_dataset_pilot_images_train_mccb5",
+      "pcb_dataset_pilot_labels_train_mccb5"
+    ],
+    "9": [
+      "pcb_dataset_pilot_images_train_mcdc5",
+      "pcb_dataset_pilot_labels_train_mcdc5"
+    ],
+    "10": [
+      "pcb_dataset_pilot_images_train_mdcc5",
+      "pcb_dataset_pilot_labels_train_mdcc5"
+    ],
+    "11": [
+      "pcb_dataset_pilot_images_val_ebcc5",
+      "pcb_dataset_pilot_labels_val_ebcc5"
+    ],
+    "12": [
+      "pcb_dataset_pilot_images_val_eccb5",
+      "pcb_dataset_pilot_labels_val_eccb5"
+    ],
+    "13": [
+      "pcb_dataset_pilot_images_val_eccc5",
+      "pcb_dataset_pilot_labels_val_eccc5"
+    ],
+    "14": [
+      "pcb_dataset_pilot_images_val_ecdc5",
+      "pcb_dataset_pilot_labels_val_ecdc5"
+    ],
+    "15": [
+      "pcb_dataset_pilot_images_val_edcc5",
+      "pcb_dataset_pilot_labels_val_edcc5"
+    ],
+    "16": [
+      "pcb_dataset_pilot_pcb_dataset_pilot_dataset_yaml",
+      "pcb_dataset_pilot_pcb_dataset_pilot_landmark_preview"
+    ],
+    "17": [
+      "docs_dfd_d4"
+    ],
+    "18": [
+      "docs_dfd_offline_pcb_inspection"
+    ],
+    "19": [
+      "docs_dfd_p4"
+    ],
+    "20": [
+      "docs_sdd_operator_ui"
+    ],
+    "21": [
+      "pcb_dataset_pilot_labels_test_fbcc5"
+    ],
+    "22": [
+      "pcb_dataset_pilot_labels_test_fccb5"
+    ],
+    "23": [
+      "pcb_dataset_pilot_labels_test_fccc5"
+    ],
+    "24": [
+      "pcb_dataset_pilot_labels_test_fdcc5"
+    ],
+    "25": [
+      "pcb_dataset_pilot_labels_test_kbcc5"
+    ],
+    "26": [
+      "pcb_dataset_pilot_labels_test_kccb5"
+    ],
+    "27": [
+      "pcb_dataset_pilot_labels_test_kccc5"
+    ],
+    "28": [
+      "pcb_dataset_pilot_labels_test_kdcc5"
+    ],
+    "29": [
+      "pcb_dataset_pilot_labels_train_abcc5"
+    ],
+    "30": [
+      "pcb_dataset_pilot_labels_train_accb5"
+    ],
+    "31": [
+      "pcb_dataset_pilot_labels_train_accc5"
+    ],
+    "32": [
+      "pcb_dataset_pilot_labels_train_acdc5"
+    ],
+    "33": [
+      "pcb_dataset_pilot_labels_train_adcc5"
+    ],
+    "34": [
+      "pcb_dataset_pilot_labels_train_bbcc5"
+    ],
+    "35": [
+      "pcb_dataset_pilot_labels_train_bccb5"
+    ],
+    "36": [
+      "pcb_dataset_pilot_labels_train_bccc5"
+    ],
+    "37": [
+      "pcb_dataset_pilot_labels_train_bcdc5"
+    ],
+    "38": [
+      "pcb_dataset_pilot_labels_train_bdcc5"
+    ],
+    "39": [
+      "pcb_dataset_pilot_labels_train_hbcc5"
+    ]
+  },
+  "cohesion": {
+    "0": 0.4,
+    "1": 0.6666666666666666,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0
+  },
+  "gods": [
+    {
+      "id": "docs_dfd_p3",
+      "label": "3.0 Inspect each photo independently",
+      "degree": 3
+    },
+    {
+      "id": "docs_sdd_landmark_service",
+      "label": "Landmark service",
+      "degree": 2
+    },
+    {
+      "id": "docs_sdd_comparator",
+      "label": "Comparator",
+      "degree": 2
+    },
+    {
+      "id": "docs_dfd_p1",
+      "label": "1.0 Reference setup and annotation validation",
+      "degree": 1
+    },
+    {
+      "id": "docs_dfd_p2",
+      "label": "2.0 Batch intake and snapshot",
+      "degree": 1
+    },
+    {
+      "id": "docs_dfd_d1",
+      "label": "D1 Reference image and annotation store",
+      "degree": 1
+    },
+    {
+      "id": "docs_dfd_d2",
+      "label": "D2 Local PCB landmark weights and schema",
+      "degree": 1
+    },
+    {
+      "id": "docs_dfd_d3",
+      "label": "D3 Result and evidence store",
+      "degree": 1
+    },
+    {
+      "id": "docs_sdd_api_validation",
+      "label": "API and validation",
+      "degree": 1
+    },
+    {
+      "id": "docs_srs_fr_10",
+      "label": "FR-10: Configurable Sharpening",
+      "degree": 1
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Landmark Preview Diagram",
+      "target": "PCB Pilot Dataset Config",
+      "source_files": [
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/landmark_preview.jpg",
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/dataset.yaml"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 image)"
+    },
+    {
+      "source": "HCCB5 Label",
+      "target": "HCCB5 Photo",
+      "source_files": [
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCCB5.txt",
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HCCB5.jpg"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 image)"
+    },
+    {
+      "source": "HCCC5 Label",
+      "target": "HCCC5 Photo",
+      "source_files": [
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCCC5.txt",
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HCCC5.jpg"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 image)"
+    },
+    {
+      "source": "HCDC5 Label",
+      "target": "HCDC5 Photo",
+      "source_files": [
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCDC5.txt",
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HCDC5.jpg"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 image)"
+    },
+    {
+      "source": "HDCC5 Label",
+      "target": "HDCC5 Photo",
+      "source_files": [
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HDCC5.txt",
+        "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HDCC5.jpg"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 image)"
+    }
+  ],
+  "tokens": {
+    "input": 62326,
+    "output": 5820
+  }
+}

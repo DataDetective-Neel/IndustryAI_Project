@@ -1,0 +1,825 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "beaglebone_black_group",
+        "label": "BeagleBone Black Dataset",
+        "nodes": [
+          "pcb_dataset_pilot_images_val_ebcc5",
+          "pcb_dataset_pilot_images_val_eccb5",
+          "pcb_dataset_pilot_images_val_eccc5",
+          "pcb_dataset_pilot_images_val_ecdc5",
+          "pcb_dataset_pilot_images_val_edcc5"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.9
+      },
+      {
+        "id": "raspberry_pi_a_plus_group",
+        "label": "Raspberry Pi Model A+ Dataset",
+        "nodes": [
+          "pcb_dataset_pilot_images_train_mbcc5",
+          "pcb_dataset_pilot_images_train_mccb5",
+          "pcb_dataset_pilot_images_train_mcdc5",
+          "pcb_dataset_pilot_images_train_mdcc5"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.9
+      },
+      {
+        "id": "raspberry_pi_b_plus_group",
+        "label": "Raspberry Pi Model B+ Dataset",
+        "nodes": [
+          "pcb_dataset_pilot_images_train_hccb5",
+          "pcb_dataset_pilot_images_train_hccc5",
+          "pcb_dataset_pilot_images_train_hcdc5",
+          "pcb_dataset_pilot_images_train_hdcc5"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.9
+      },
+      {
+        "id": "inspection_pipeline_flow",
+        "label": "Inspection Pipeline Flow",
+        "nodes": [
+          "docs_dfd_p2",
+          "docs_dfd_p3",
+          "docs_dfd_p4"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "docs/DFD.md"
+      },
+      {
+        "id": "landmark_detection_subsystem",
+        "label": "Landmark Detection Subsystem",
+        "nodes": [
+          "docs_sdd_landmark_service",
+          "docs_dfd_d2",
+          "pcb_dataset_pilot_pcb_dataset_pilot_dataset_yaml"
+        ],
+        "relation": "form",
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "docs/SDD.md"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "docs_dfd_d3",
+      "label": "D3 Result and evidence store",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "d3 result and evidence store",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_dfd_p2",
+      "label": "2.0 Batch intake and snapshot",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "2.0 batch intake and snapshot",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_dfd_p3",
+      "label": "3.0 Inspect each photo independently",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "3.0 inspect each photo independently",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_sdd_comparator",
+      "label": "Comparator",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "comparator",
+      "rationale": "Uses normalized correlation for classification.",
+      "source_file": "docs/SDD.md"
+    },
+    {
+      "id": "docs_srs_fr_10",
+      "label": "FR-10: Configurable Sharpening",
+      "community": 0,
+      "file_type": "concept",
+      "norm_label": "fr-10: configurable sharpening",
+      "rationale": "Requirement for optional symmetric unsharp mask.",
+      "source_file": "docs/SRS.md"
+    },
+    {
+      "id": "docs_dfd_d2",
+      "label": "D2 Local PCB landmark weights and schema",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "d2 local pcb landmark weights and schema",
+      "rationale": "Packaged local trained weights.",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_sdd_api_validation",
+      "label": "API and validation",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "api and validation",
+      "rationale": "FastAPI process for orchestration and intake.",
+      "source_file": "docs/SDD.md"
+    },
+    {
+      "id": "docs_sdd_landmark_service",
+      "label": "Landmark service",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "landmark service",
+      "rationale": "Loads YOLO26n Pose weights for keypoint detection.",
+      "source_file": "docs/SDD.md"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_mdcc5",
+      "label": "MDCC5 Label",
+      "community": 10,
+      "file_type": "document",
+      "norm_label": "mdcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MDCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_mdcc5",
+      "label": "MDCC5 Photo",
+      "community": 10,
+      "file_type": "image",
+      "norm_label": "mdcc5 photo",
+      "rationale": "Photo of a Raspberry Pi Model A+ V1.1 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/MDCC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_val_ebcc5",
+      "label": "EBCC5 Label",
+      "community": 11,
+      "file_type": "document",
+      "norm_label": "ebcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/EBCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_val_ebcc5",
+      "label": "EBCC5 Photo",
+      "community": 11,
+      "file_type": "image",
+      "norm_label": "ebcc5 photo",
+      "rationale": "Photo of a BeagleBoard.org (BeagleBone Black) PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/val/EBCC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_val_eccb5",
+      "label": "ECCB5 Label",
+      "community": 12,
+      "file_type": "document",
+      "norm_label": "eccb5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/ECCB5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_val_eccb5",
+      "label": "ECCB5 Photo",
+      "community": 12,
+      "file_type": "image",
+      "norm_label": "eccb5 photo",
+      "rationale": "Photo of a BeagleBoard.org (BeagleBone Black) PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/val/ECCB5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_val_eccc5",
+      "label": "ECCC5 Label",
+      "community": 13,
+      "file_type": "document",
+      "norm_label": "eccc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/ECCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_val_eccc5",
+      "label": "ECCC5 Photo",
+      "community": 13,
+      "file_type": "image",
+      "norm_label": "eccc5 photo",
+      "rationale": "Photo of a BeagleBoard.org (BeagleBone Black) PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/val/ECCC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_val_ecdc5",
+      "label": "ECDC5 Label",
+      "community": 14,
+      "file_type": "document",
+      "norm_label": "ecdc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/ECDC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_val_ecdc5",
+      "label": "ECDC5 Photo",
+      "community": 14,
+      "file_type": "image",
+      "norm_label": "ecdc5 photo",
+      "rationale": "Photo of a BeagleBoard.org (BeagleBone Black) PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/val/ECDC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_val_edcc5",
+      "label": "EDCC5 Label",
+      "community": 15,
+      "file_type": "document",
+      "norm_label": "edcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/EDCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_val_edcc5",
+      "label": "EDCC5 Photo",
+      "community": 15,
+      "file_type": "image",
+      "norm_label": "edcc5 photo",
+      "rationale": "Photo of a BeagleBoard.org (BeagleBone Black) PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/val/EDCC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_pcb_dataset_pilot_dataset_yaml",
+      "label": "PCB Pilot Dataset Config",
+      "community": 16,
+      "file_type": "code",
+      "norm_label": "pcb pilot dataset config",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/dataset.yaml"
+    },
+    {
+      "id": "pcb_dataset_pilot_pcb_dataset_pilot_landmark_preview",
+      "label": "Landmark Preview Diagram",
+      "community": 16,
+      "file_type": "image",
+      "norm_label": "landmark preview diagram",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/landmark_preview.jpg"
+    },
+    {
+      "id": "docs_dfd_d4",
+      "label": "D4 Calibrated configuration",
+      "community": 17,
+      "file_type": "code",
+      "norm_label": "d4 calibrated configuration",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_dfd_offline_pcb_inspection",
+      "label": "Offline PCB Component Inspection",
+      "community": 18,
+      "file_type": "concept",
+      "norm_label": "offline pcb component inspection",
+      "rationale": "Top-level system process defined in Level 0 DFD.",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_dfd_p4",
+      "label": "4.0 Result reporting and evidence review",
+      "community": 19,
+      "file_type": "code",
+      "norm_label": "4.0 result reporting and evidence review",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_dfd_d1",
+      "label": "D1 Reference image and annotation store",
+      "community": 2,
+      "file_type": "code",
+      "norm_label": "d1 reference image and annotation store",
+      "rationale": "Proposed file and JSON storage for reference data.",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_dfd_p1",
+      "label": "1.0 Reference setup and annotation validation",
+      "community": 2,
+      "file_type": "code",
+      "norm_label": "1.0 reference setup and annotation validation",
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "docs_sdd_operator_ui",
+      "label": "Operator UI",
+      "community": 20,
+      "file_type": "code",
+      "norm_label": "operator ui",
+      "rationale": "Proposed React/Vite frontend.",
+      "source_file": "docs/SDD.md"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_fbcc5",
+      "label": "FBCC5 Label",
+      "community": 21,
+      "file_type": "document",
+      "norm_label": "fbcc5 label",
+      "rationale": "YOLO format annotation for PCB components.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/FBCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_fccb5",
+      "label": "FCCB5 Label",
+      "community": 22,
+      "file_type": "document",
+      "norm_label": "fccb5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/FCCB5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_fccc5",
+      "label": "FCCC5 Label",
+      "community": 23,
+      "file_type": "document",
+      "norm_label": "fccc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/FCCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_fdcc5",
+      "label": "FDCC5 Label",
+      "community": 24,
+      "file_type": "document",
+      "norm_label": "fdcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/FDCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_kbcc5",
+      "label": "KBCC5 Label",
+      "community": 25,
+      "file_type": "document",
+      "norm_label": "kbcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/KBCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_kccb5",
+      "label": "KCCB5 Label",
+      "community": 26,
+      "file_type": "document",
+      "norm_label": "kccb5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/KCCB5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_kccc5",
+      "label": "KCCC5 Label",
+      "community": 27,
+      "file_type": "document",
+      "norm_label": "kccc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/KCCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_test_kdcc5",
+      "label": "KDCC5 Label",
+      "community": 28,
+      "file_type": "document",
+      "norm_label": "kdcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/test/KDCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_abcc5",
+      "label": "ABCC5 Label",
+      "community": 29,
+      "file_type": "document",
+      "norm_label": "abcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/ABCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_hccb5",
+      "label": "HCCB5 Label",
+      "community": 3,
+      "file_type": "document",
+      "norm_label": "hccb5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCCB5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_hccb5",
+      "label": "HCCB5 Photo",
+      "community": 3,
+      "file_type": "image",
+      "norm_label": "hccb5 photo",
+      "rationale": "Photo of a Raspberry Pi Model B+ V1.2 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HCCB5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_accb5",
+      "label": "ACCB5 Label",
+      "community": 30,
+      "file_type": "document",
+      "norm_label": "accb5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/ACCB5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_accc5",
+      "label": "ACCC5 Label",
+      "community": 31,
+      "file_type": "document",
+      "norm_label": "accc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/ACCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_acdc5",
+      "label": "ACDC5 Label",
+      "community": 32,
+      "file_type": "document",
+      "norm_label": "acdc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/ACDC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_adcc5",
+      "label": "ADCC5 Label",
+      "community": 33,
+      "file_type": "document",
+      "norm_label": "adcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/ADCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_bbcc5",
+      "label": "BBCC5 Label",
+      "community": 34,
+      "file_type": "document",
+      "norm_label": "bbcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/BBCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_bccb5",
+      "label": "BCCB5 Label",
+      "community": 35,
+      "file_type": "document",
+      "norm_label": "bccb5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/BCCB5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_bccc5",
+      "label": "BCCC5 Label",
+      "community": 36,
+      "file_type": "document",
+      "norm_label": "bccc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/BCCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_bcdc5",
+      "label": "BCDC5 Label",
+      "community": 37,
+      "file_type": "document",
+      "norm_label": "bcdc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/BCDC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_bdcc5",
+      "label": "BDCC5 Label",
+      "community": 38,
+      "file_type": "document",
+      "norm_label": "bdcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/BDCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_hbcc5",
+      "label": "HBCC5 Label",
+      "community": 39,
+      "file_type": "document",
+      "norm_label": "hbcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HBCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_hccc5",
+      "label": "HCCC5 Label",
+      "community": 4,
+      "file_type": "document",
+      "norm_label": "hccc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_hccc5",
+      "label": "HCCC5 Photo",
+      "community": 4,
+      "file_type": "image",
+      "norm_label": "hccc5 photo",
+      "rationale": "Photo of a Raspberry Pi Model B+ V1.2 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HCCC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_hcdc5",
+      "label": "HCDC5 Label",
+      "community": 5,
+      "file_type": "document",
+      "norm_label": "hcdc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCDC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_hcdc5",
+      "label": "HCDC5 Photo",
+      "community": 5,
+      "file_type": "image",
+      "norm_label": "hcdc5 photo",
+      "rationale": "Photo of a Raspberry Pi Model B+ V1.2 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HCDC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_hdcc5",
+      "label": "HDCC5 Label",
+      "community": 6,
+      "file_type": "document",
+      "norm_label": "hdcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HDCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_hdcc5",
+      "label": "HDCC5 Photo",
+      "community": 6,
+      "file_type": "image",
+      "norm_label": "hdcc5 photo",
+      "rationale": "Photo of a Raspberry Pi Model B+ V1.2 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/HDCC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_mbcc5",
+      "label": "MBCC5 Label",
+      "community": 7,
+      "file_type": "document",
+      "norm_label": "mbcc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MBCC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_mbcc5",
+      "label": "MBCC5 Photo",
+      "community": 7,
+      "file_type": "image",
+      "norm_label": "mbcc5 photo",
+      "rationale": "Photo of a Raspberry Pi Model A+ V1.1 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/MBCC5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_mccb5",
+      "label": "MCCB5 Label",
+      "community": 8,
+      "file_type": "document",
+      "norm_label": "mccb5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MCCB5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_mccb5",
+      "label": "MCCB5 Photo",
+      "community": 8,
+      "file_type": "image",
+      "norm_label": "mccb5 photo",
+      "rationale": "Photo of a Raspberry Pi Model A+ V1.1 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/MCCB5.jpg"
+    },
+    {
+      "id": "pcb_dataset_pilot_labels_train_mcdc5",
+      "label": "MCDC5 Label",
+      "community": 9,
+      "file_type": "document",
+      "norm_label": "mcdc5 label",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MCDC5.txt"
+    },
+    {
+      "id": "pcb_dataset_pilot_images_train_mcdc5",
+      "label": "MCDC5 Photo",
+      "community": 9,
+      "file_type": "image",
+      "norm_label": "mcdc5 photo",
+      "rationale": "Photo of a Raspberry Pi Model A+ V1.1 PCB.",
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/images/train/MCDC5.jpg"
+    }
+  ],
+  "links": [
+    {
+      "source": "docs_dfd_p1",
+      "target": "docs_dfd_d1",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "source": "docs_dfd_p2",
+      "target": "docs_dfd_p3",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "source": "docs_dfd_p3",
+      "target": "docs_dfd_d3",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "source": "docs_sdd_comparator",
+      "target": "docs_srs_fr_10",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/SDD.md"
+    },
+    {
+      "source": "docs_sdd_landmark_service",
+      "target": "docs_dfd_d2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/SDD.md"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_hccb5",
+      "target": "pcb_dataset_pilot_images_train_hccb5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCCB5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_hccc5",
+      "target": "pcb_dataset_pilot_images_train_hccc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCCC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_hcdc5",
+      "target": "pcb_dataset_pilot_images_train_hcdc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HCDC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_hdcc5",
+      "target": "pcb_dataset_pilot_images_train_hdcc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/HDCC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_mbcc5",
+      "target": "pcb_dataset_pilot_images_train_mbcc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MBCC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_mccb5",
+      "target": "pcb_dataset_pilot_images_train_mccb5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MCCB5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_mcdc5",
+      "target": "pcb_dataset_pilot_images_train_mcdc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MCDC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_train_mdcc5",
+      "target": "pcb_dataset_pilot_images_train_mdcc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/train/MDCC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_val_ebcc5",
+      "target": "pcb_dataset_pilot_images_val_ebcc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/EBCC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_val_eccb5",
+      "target": "pcb_dataset_pilot_images_val_eccb5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/ECCB5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_val_eccc5",
+      "target": "pcb_dataset_pilot_images_val_eccc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/ECCC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_val_ecdc5",
+      "target": "pcb_dataset_pilot_images_val_ecdc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/ECDC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_labels_val_edcc5",
+      "target": "pcb_dataset_pilot_images_val_edcc5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/labels/val/EDCC5.txt"
+    },
+    {
+      "source": "pcb_dataset_pilot_pcb_dataset_pilot_landmark_preview",
+      "target": "pcb_dataset_pilot_pcb_dataset_pilot_dataset_yaml",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PCB_Dataset_Pilot/PCB_Dataset_Pilot/README.md"
+    },
+    {
+      "source": "docs_dfd_p3",
+      "target": "docs_sdd_comparator",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "source": "docs_sdd_api_validation",
+      "target": "docs_sdd_landmark_service",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs/SDD.md"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "beaglebone_black_group",
+      "label": "BeagleBone Black Dataset",
+      "nodes": [
+        "pcb_dataset_pilot_images_val_ebcc5",
+        "pcb_dataset_pilot_images_val_eccb5",
+        "pcb_dataset_pilot_images_val_eccc5",
+        "pcb_dataset_pilot_images_val_ecdc5",
+        "pcb_dataset_pilot_images_val_edcc5"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9
+    },
+    {
+      "id": "raspberry_pi_a_plus_group",
+      "label": "Raspberry Pi Model A+ Dataset",
+      "nodes": [
+        "pcb_dataset_pilot_images_train_mbcc5",
+        "pcb_dataset_pilot_images_train_mccb5",
+        "pcb_dataset_pilot_images_train_mcdc5",
+        "pcb_dataset_pilot_images_train_mdcc5"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9
+    },
+    {
+      "id": "raspberry_pi_b_plus_group",
+      "label": "Raspberry Pi Model B+ Dataset",
+      "nodes": [
+        "pcb_dataset_pilot_images_train_hccb5",
+        "pcb_dataset_pilot_images_train_hccc5",
+        "pcb_dataset_pilot_images_train_hcdc5",
+        "pcb_dataset_pilot_images_train_hdcc5"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9
+    },
+    {
+      "id": "inspection_pipeline_flow",
+      "label": "Inspection Pipeline Flow",
+      "nodes": [
+        "docs_dfd_p2",
+        "docs_dfd_p3",
+        "docs_dfd_p4"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/DFD.md"
+    },
+    {
+      "id": "landmark_detection_subsystem",
+      "label": "Landmark Detection Subsystem",
+      "nodes": [
+        "docs_sdd_landmark_service",
+        "docs_dfd_d2",
+        "pcb_dataset_pilot_pcb_dataset_pilot_dataset_yaml"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "docs/SDD.md"
+    }
+  ],
+  "built_at_commit": "0af6ebf7db237041873f83bb890512a99850a21c"
+}
