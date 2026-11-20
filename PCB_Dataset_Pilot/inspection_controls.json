@@ -1,0 +1,55 @@
+{
+  "layout_id": "micropcb_F",
+  "kind": "visually_confirmed_present_controls",
+  "reference_image": "images/test/FCCC5.jpg",
+  "coordinate_system": "Resized reference image pixels. xyxy with exclusive max bounds.",
+  "reference_wh_px": [
+    1324,
+    1536
+  ],
+  "components": [
+    {
+      "id": "dip_microcontroller",
+      "name": "DIP microcontroller",
+      "bbox_xyxy_px": [
+        411,
+        695,
+        587,
+        1349
+      ]
+    },
+    {
+      "id": "metal_crystal",
+      "name": "Metal crystal",
+      "bbox_xyxy_px": [
+        614,
+        469,
+        715,
+        652
+      ]
+    }
+  ],
+  "inspection_photos": [
+    {
+      "image": "images/test/FCCB5.jpg",
+      "expected_parts": {
+        "dip_microcontroller": "present",
+        "metal_crystal": "present"
+      }
+    },
+    {
+      "image": "images/test/FBCC5.jpg",
+      "expected_parts": {
+        "dip_microcontroller": "present",
+        "metal_crystal": "present"
+      }
+    },
+    {
+      "image": "images/test/FDCC5.jpg",
+      "expected_parts": {
+        "dip_microcontroller": "present",
+        "metal_crystal": "present"
+      }
+    }
+  ]
+}

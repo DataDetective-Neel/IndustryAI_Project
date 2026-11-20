@@ -1,0 +1,9 @@
+# Relative paths resolve against this YAML file when passed as --data.
+train: images/train
+val: images/val
+test: images/test
+kpt_shape: [4, 3]
+names:
+  0: pcb
+kpt_names:
+  0: [upper_left_mount, upper_right_mount, lower_right_mount, lower_left_mount]
