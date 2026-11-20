@@ -1,0 +1,19 @@
+{
+  "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e",
+  "dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+  "landmark_order": [
+    "upper_left_mount",
+    "upper_right_mount",
+    "lower_right_mount",
+    "lower_left_mount"
+  ],
+  "imgsz": 640,
+  "selected_on": "val",
+  "board_conf": 0.95,
+  "point_conf": 0.99,
+  "tolerance_fraction": 0.01,
+  "match_iou": 0.5,
+  "selection_policy": "min inaccurate accepted; max accurate accepted; conservative confidence ties",
+  "validation_usable": 0,
+  "validation_accurate": 0
+}

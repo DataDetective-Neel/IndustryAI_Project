@@ -1,0 +1,200 @@
+{
+  "images": 5,
+  "matched_predictions": 5,
+  "all_four_usable": 0,
+  "all_four_within_tolerance": 0,
+  "confident_but_inaccurate": 0,
+  "failed_detections": 5,
+  "rows": [
+    {
+      "image": "EBCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 20.25264427179819,
+      "errors_px": [
+        320.1153746035907,
+        451.8039076115305,
+        220.10547631542468,
+        256.5748805792864
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "ECCB5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 19.260166146739234,
+      "errors_px": [
+        169.32041968580774,
+        258.19734231522375,
+        211.4542609289327,
+        245.85449376989035
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "ECCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 19.33280114210044,
+      "errors_px": [
+        229.70210231747697,
+        306.2696552214967,
+        251.7226719208082,
+        250.2809315332471
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "ECDC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 19.45490169597369,
+      "errors_px": [
+        205.93295884973926,
+        275.7849623186687,
+        246.45304581435846,
+        260.98793470038123
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "EDCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 20.168155592418458,
+      "errors_px": [
+        239.41123606186892,
+        174.34170737975248,
+        198.37906759251666,
+        218.49169116898435
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    }
+  ],
+  "per_landmark": {
+    "upper_left_mount": {
+      "count": 5,
+      "mean_px": 232.89641830369675,
+      "median_px": 229.70210231747697,
+      "p95_px": 303.9745468952463
+    },
+    "upper_right_mount": {
+      "count": 5,
+      "mean_px": 293.2795149693344,
+      "median_px": 275.7849623186687,
+      "p95_px": 422.69705713352374
+    },
+    "lower_right_mount": {
+      "count": 5,
+      "mean_px": 225.62290451440813,
+      "median_px": 220.10547631542468,
+      "p95_px": 250.66874669951827
+    },
+    "lower_left_mount": {
+      "count": 5,
+      "mean_px": 246.43798635035787,
+      "median_px": 250.2809315332471,
+      "p95_px": 260.1053238761623
+    }
+  },
+  "split": "val",
+  "configuration": {
+    "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e",
+    "dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+    "landmark_order": [
+      "upper_left_mount",
+      "upper_right_mount",
+      "lower_right_mount",
+      "lower_left_mount"
+    ],
+    "imgsz": 640,
+    "selected_on": "val",
+    "board_conf": 0.95,
+    "point_conf": 0.99,
+    "tolerance_fraction": 0.01,
+    "match_iou": 0.5,
+    "selection_policy": "min inaccurate accepted; max accurate accepted; conservative confidence ties",
+    "validation_usable": 0,
+    "validation_accurate": 0
+  },
+  "dataset": {
+    "split_sizes": {
+      "train": 19,
+      "val": 5,
+      "test": 8
+    },
+    "layouts": {
+      "train": [
+        "micropcb_A",
+        "micropcb_B",
+        "micropcb_H",
+        "micropcb_M"
+      ],
+      "val": [
+        "micropcb_E"
+      ],
+      "test": [
+        "micropcb_F",
+        "micropcb_K"
+      ]
+    },
+    "landmark_order": [
+      "upper_left_mount",
+      "upper_right_mount",
+      "lower_right_mount",
+      "lower_left_mount"
+    ],
+    "visibility_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 128
+    },
+    "duplicate_images_across_splits": 0,
+    "dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+    "layout_and_family_separation": "passed"
+  },
+  "pose_metrics": {
+    "metrics/precision(B)": 1.0,
+    "metrics/recall(B)": 0.9909647578654274,
+    "metrics/mAP50(B)": 0.995,
+    "metrics/mAP50-95(B)": 0.9349999999999999,
+    "metrics/precision(P)": 1.0,
+    "metrics/recall(P)": 0.9909647578654274,
+    "metrics/mAP50(P)": 0.995,
+    "metrics/mAP50-95(P)": 0.6483333333333333,
+    "fitness": 1.5833333333333333
+  },
+  "localization_matching": "Highest-confidence prediction with box IoU >= 0.5 at score >= 0.001; visible labels only; independent of runtime acceptance",
+  "oks_sigma": "Ultralytics custom-four-point default: 1/4 for each landmark"
+}

@@ -8,6 +8,10 @@
 
 Related documents: [Software Design Document](SDD.md) · [Data Flow Diagrams](DFD.md).
 
+Implementation update: [Step 3 commands](STEP3.md) and [measured results](STEP3_RESULTS.md)
+record the executed landmark training/evaluation. Its four-point accuracy failed
+readiness; the wider application requirements below remain the design baseline.
+
 ## 1. Purpose and source basis
 
 Specify a local tool that compares a photograph of a PCB with a known-good photograph of the **same PCB layout**, checks operator-marked components, and highlights expected locations of components that appear to be missing. The intended user is a factory inspection operator; this is an internship take-home demonstration, not a claim of production inspection performance.

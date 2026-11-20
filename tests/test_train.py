@@ -1,5 +1,7 @@
 import tempfile
 import unittest
+import contextlib
+import io
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -25,5 +27,6 @@ class TrainingTests(unittest.TestCase):
                  patch('pcb_landmarks.train.audit', return_value={}), \
                  patch('ultralytics.YOLO') as yolo:
                 yolo.return_value.train.side_effect = train
-                main()
+                with contextlib.redirect_stdout(io.StringIO()):
+                    main()
             self.assertTrue((project / 'smoke/summary.json').is_file())

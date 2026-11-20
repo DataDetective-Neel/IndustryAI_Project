@@ -1,0 +1,72 @@
+{
+  "settings": {
+    "data": "PCB_Dataset_Pilot/dataset.yaml",
+    "weights": "models/yolo26n-pose.pt",
+    "imgsz": 640,
+    "epochs": 150,
+    "batch": 4,
+    "device": "0",
+    "seed": 42,
+    "patience": 30,
+    "project": "runs/landmarks",
+    "name": "full"
+  },
+  "dataset": {
+    "split_sizes": {
+      "train": 19,
+      "val": 5,
+      "test": 8
+    },
+    "layouts": {
+      "train": [
+        "micropcb_A",
+        "micropcb_B",
+        "micropcb_H",
+        "micropcb_M"
+      ],
+      "val": [
+        "micropcb_E"
+      ],
+      "test": [
+        "micropcb_F",
+        "micropcb_K"
+      ]
+    },
+    "landmark_order": [
+      "upper_left_mount",
+      "upper_right_mount",
+      "lower_right_mount",
+      "lower_left_mount"
+    ],
+    "visibility_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 128
+    },
+    "duplicate_images_across_splits": 0,
+    "dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+    "layout_and_family_separation": "passed"
+  },
+  "cuda_available": true,
+  "torch": "2.9.1+cu128",
+  "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+  "metrics": {
+    "metrics/precision(B)": 1.0,
+    "metrics/recall(B)": 0.9925840738482616,
+    "metrics/mAP50(B)": 0.995,
+    "metrics/mAP50-95(B)": 0.9349999999999999,
+    "metrics/precision(P)": 1.0,
+    "metrics/recall(P)": 0.9925840738482616,
+    "metrics/mAP50(P)": 0.995,
+    "metrics/mAP50-95(P)": 0.6418333333333333,
+    "fitness": 1.576833333333333
+  },
+  "checkpoint": "runs/landmarks/full/weights/best.pt",
+  "completed_epochs": 89,
+  "selected_epoch": 59,
+  "selection": "Ultralytics validation fitness (box mAP50-95 + pose mAP50-95)",
+  "training_seconds": 190.907,
+  "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e",
+  "initial_checkpoint_sha256": "eb3bb8268828aeaf515cec23a4bfafd793944a86fe9af94ba7823609c14522a9",
+  "training_code_commit": "e1b5a536fabb09141fda97a03aa95022ea7c9b32"
+}

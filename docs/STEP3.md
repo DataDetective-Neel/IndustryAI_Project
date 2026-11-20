@@ -42,6 +42,8 @@ image/label pairs, manifest dimensions, cross-split layout and family separation
 and duplicate file/decoded-pixel hashes. The manifest must match the configured
 images exactly. Generated contact sheets allow checking physical identities;
 hash checks do not prove absence of every near-duplicate acquisition.
+Dataset fingerprints normalize YAML/label CRLF to LF so Windows checkout line
+endings do not invalidate otherwise identical data.
 
 All 32 annotated views were inspected in contact sheets. Identities remain on
 the same four mounting holes across the supplied modest rotations/viewpoints.
@@ -76,7 +78,85 @@ Choose `runs/landmarks/full/weights/best.pt` using Ultralytics validation fitnes
 only. Test F/K images must not be used for epoch selection or threshold tuning.
 The pilot is too small for production accuracy claims. Full evaluation,
 threshold selection and offline inference evidence are recorded in
-`STEP3_RESULTS.md` when actually executed.
+`STEP3_RESULTS.md`.
+
+## Evaluation and local inference
+
+The measured pilot **did not produce a usable four-landmark detector**. The
+frozen configuration rejects all validation/test images. These commands verify
+the trained artifact and explicit failures; they do not certify alignment accuracy.
+
+```powershell
+# Fresh reproduction: select on validation only, using a NEW config filename.
+# The committed config is bound to the measured checkpoint hash.
+.\.venv\Scripts\python.exe -m pcb_landmarks.evaluate --checkpoint runs/landmarks/full/weights/best.pt --split val --select --config configs/reproduced-landmarks.json --output runs/evaluation/val.json --device 0
+# Only after checkpoint/thresholds are fixed:
+.\.venv\Scripts\python.exe -m pcb_landmarks.evaluate --checkpoint runs/landmarks/full/weights/best.pt --split test --config configs/reproduced-landmarks.json --output runs/evaluation/test.json --device 0
+# Exact inference command for the measured local checkpoint:
+.\.venv\Scripts\python.exe -m pcb_landmarks.infer --checkpoint runs/landmarks/full/weights/best.pt --config configs/landmarks.json --source PCB_Dataset_Pilot/images/val/ECCC5.jpg --device cpu --output runs/evaluation/inference.json
+# Fresh-process CPU verification with DNS/socket connections blocked:
+.\.venv\Scripts\python.exe -m pcb_landmarks.verify_offline --checkpoint runs/landmarks/full/weights/best.pt --config configs/landmarks.json --sources PCB_Dataset_Pilot/images/val/ECCC5.jpg PCB_Dataset_Pilot/images/test/FCCC5.jpg PCB_Dataset_Pilot/images/train/ACCC5.jpg --generic-checkpoint models/yolo26n-pose.pt --output runs/evaluation/offline.json
+```
+
+For CPU evaluation replace `--device 0` with `--device cpu`. Add
+`--samples runs/evaluation/samples` to evaluation to create local annotated
+examples. Only publication-cleared sources may have samples added to Git.
+
+`LandmarkDetector(checkpoint, data, device='cpu', imgsz=640)` loads once;
+`predict(image_path, board_conf, point_conf)` returns `status`, `reason`,
+`image_wh`, checkpoint hash, board box/confidence and four `{name,x,y,confidence}`
+landmarks in dataset order on success. Coordinates refer to the full decoded
+raster, not the 640-pixel model input. No sorting or homography occurs.
+The CLI requires a checkpoint-bound JSON config and verifies the hash before
+deserializing weights, then checks the schema. Direct API callers can supply
+`expected_sha256`; omit it only for a checkpoint they explicitly trust.
+Missing, corrupt, generic human-pose or schema-incompatible weights fail; missing,
+ambiguous, low-confidence, nonfinite, coincident, out-of-image, edge-clipped,
+collinear, crossed or mirrored points return
+`status: failure` with `landmarks: []`. CLI exit code is 0 on success and 2 on
+failure. A failure JSON is an expected measured outcome for this checkpoint.
+No point coordinates are returned as usable on failure.
+Board confidence must strictly exceed its threshold (matching Ultralytics' raw
+filter); point confidences must meet theirs. Mounting holes are interior features,
+so x=0 or y=0 is rejected as potentially clipped. Cyclic turns must all have the
+positive sign of the dataset's canonical order; calibrated area/alignment gates
+remain a later step.
+
+Ultralytics startup connectivity probing is disabled before import via
+`YOLO_OFFLINE=true`; sync is disabled. The loader resolves an existing local
+checkpoint before invoking YOLO, so missing paths cannot trigger downloads.
+Images with EXIF rotation must be normalized and annotated in that frame first.
+The offline check verifies model loading and three inferences with zero DNS/socket
+attempts, plus rejection of the local generic 17-human-keypoint checkpoint.
+It is not an offline test of the future complete application or a physical
+Wi-Fi-off test.
+
+Threshold selection tries board confidence `[0.25,0.5,0.75,0.9,0.95]` and
+keypoint confidence `[0.5,0.7,0.85,0.95,0.99]` on validation only. It minimizes
+inaccurate accepted images, then maximizes accurately accepted images, then
+chooses conservative ties. Accuracy here requires all four visible labels and
+each error <= 1% of the decoded image diagonal, plus box IoU >= 0.5. This is an
+exploratory localization tolerance, **not** a calibrated alignment requirement.
+No candidate achieved an accurately usable validation image. The resulting
+0.95/0.99 settings are rejection-only, not a deployment recommendation.
+
+Pixel localization independently matches the highest-confidence prediction with
+board IoU >= 0.5 at score >= 0.001, including points rejected by the runtime
+gate. It uses visible labeled points (visibility > 0). Complete usable counts
+require the runtime gate; `all_four_within_tolerance` adds the ground-truth check.
+`failed_detections` counts images returning failure, not just absent boxes.
+Denominators and per-image reasons are published in `docs/results/`. Standard
+pose metrics use Ultralytics' custom-four-point OKS sigma of 0.25 per point,
+which is broad and must not substitute for pixel errors.
+
+The measured checkpoint is local and ignored:
+`runs/landmarks/full/weights/best.pt`. Its SHA-256 is in
+`configs/landmarks.json`; `configs/training.json` records the initial weight
+hash, run settings, selected epoch and aggregate metrics. Rerunning training
+obtains a new local checkpoint. Binary hashes can change with serialization
+metadata or hardware even with a deterministic seed: select a new validation
+configuration for reproduced weights. No binary download or usable production
+model is claimed.
 
 ## Public repository boundary
 

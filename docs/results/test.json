@@ -1,0 +1,257 @@
+{
+  "images": 8,
+  "matched_predictions": 8,
+  "all_four_usable": 0,
+  "all_four_within_tolerance": 0,
+  "confident_but_inaccurate": 0,
+  "failed_detections": 8,
+  "rows": [
+    {
+      "image": "FBCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 20.816630370931794,
+      "errors_px": [
+        231.75805208159224,
+        326.13291817606813,
+        174.22032842165083,
+        290.32219046401946
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "FCCB5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 20.272210042321483,
+      "errors_px": [
+        93.25250083686178,
+        141.14575044228621,
+        286.6196282660622,
+        314.83666607889967
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "FCCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 20.278737633294636,
+      "errors_px": [
+        186.78342114983585,
+        172.49982119365814,
+        282.63246316868066,
+        396.4592631550858
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "FDCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 21.511234274211233,
+      "errors_px": [
+        300.40857100681234,
+        133.70897593778815,
+        304.8184369097146,
+        404.3105017036271
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "KBCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 21.37169155682348,
+      "errors_px": [
+        223.9292557065857,
+        367.35912145850233,
+        215.94199948476427,
+        253.93547614467886
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "KCCB5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 20.843648912798354,
+      "errors_px": [
+        222.86097950715947,
+        307.8527138628487,
+        197.8266555820762,
+        239.0543190756293
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "KCCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 20.568714106623194,
+      "errors_px": [
+        249.34939766252631,
+        284.2425064241167,
+        245.52695015125286,
+        293.9756924275155
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    },
+    {
+      "image": "KDCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "matched": true,
+      "all_four_accurate": false,
+      "tolerance_px": 21.469271063545683,
+      "errors_px": [
+        369.67866347804147,
+        219.9361526074576,
+        208.71191503421088,
+        294.75587001637047
+      ],
+      "detection": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": []
+      }
+    }
+  ],
+  "per_landmark": {
+    "upper_left_mount": {
+      "count": 8,
+      "mean_px": 234.75260517867693,
+      "median_px": 227.84365389408896,
+      "p95_px": 345.4341311131112
+    },
+    "upper_right_mount": {
+      "count": 8,
+      "mean_px": 244.10974501284073,
+      "median_px": 252.08932951578714,
+      "p95_px": 352.92995030965034
+    },
+    "lower_right_mount": {
+      "count": 8,
+      "mean_px": 239.53729712730157,
+      "median_px": 230.73447481800855,
+      "p95_px": 298.44885388443623
+    },
+    "lower_left_mount": {
+      "count": 8,
+      "mean_px": 310.9562473832283,
+      "median_px": 294.365781221943,
+      "p95_px": 401.56256821163765
+    }
+  },
+  "split": "test",
+  "configuration": {
+    "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e",
+    "dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+    "landmark_order": [
+      "upper_left_mount",
+      "upper_right_mount",
+      "lower_right_mount",
+      "lower_left_mount"
+    ],
+    "imgsz": 640,
+    "selected_on": "val",
+    "board_conf": 0.95,
+    "point_conf": 0.99,
+    "tolerance_fraction": 0.01,
+    "match_iou": 0.5,
+    "selection_policy": "min inaccurate accepted; max accurate accepted; conservative confidence ties",
+    "validation_usable": 0,
+    "validation_accurate": 0
+  },
+  "dataset": {
+    "split_sizes": {
+      "train": 19,
+      "val": 5,
+      "test": 8
+    },
+    "layouts": {
+      "train": [
+        "micropcb_A",
+        "micropcb_B",
+        "micropcb_H",
+        "micropcb_M"
+      ],
+      "val": [
+        "micropcb_E"
+      ],
+      "test": [
+        "micropcb_F",
+        "micropcb_K"
+      ]
+    },
+    "landmark_order": [
+      "upper_left_mount",
+      "upper_right_mount",
+      "lower_right_mount",
+      "lower_left_mount"
+    ],
+    "visibility_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 128
+    },
+    "duplicate_images_across_splits": 0,
+    "dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+    "layout_and_family_separation": "passed"
+  },
+  "pose_metrics": {
+    "metrics/precision(B)": 0.9923753429967084,
+    "metrics/recall(B)": 1.0,
+    "metrics/mAP50(B)": 0.995,
+    "metrics/mAP50-95(B)": 0.83675,
+    "metrics/precision(P)": 0.9923753429967084,
+    "metrics/recall(P)": 1.0,
+    "metrics/mAP50(P)": 0.995,
+    "metrics/mAP50-95(P)": 0.6395138888888889,
+    "fitness": 1.476263888888889
+  },
+  "localization_matching": "Highest-confidence prediction with box IoU >= 0.5 at score >= 0.001; visible labels only; independent of runtime acceptance",
+  "oks_sigma": "Ultralytics custom-four-point default: 1/4 for each landmark"
+}

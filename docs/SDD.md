@@ -7,6 +7,10 @@
 
 Related documents: [Software Requirements Specification](SRS.md) · [Data Flow Diagrams](DFD.md).
 
+Implementation update: the landmark-only training and local inference commands
+are documented in [Step 3](STEP3.md), with [actual results](STEP3_RESULTS.md).
+The trained pilot is not ready for alignment; remaining modules below are proposed.
+
 ## 1. Design basis and boundary
 
 Implement the supplied operator workflow with a single local application: one complete reference photo, confirmed four-landmark geometry, named component rectangles, and batches of **one to three inspection photos** of the same PCB layout. Fixed-camera factory use motivates stable views; the Windows demo accepts uploaded still photos. The official assignment brief was unavailable locally and no verifiable public copy was found; assignment-specific claims are based on the supplied requirements and must be checked against the brief when obtained.

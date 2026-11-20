@@ -79,7 +79,7 @@ def audit(data, preview_dir=None):
     hashes, layouts, families, seen = {}, {}, {}, set()
     report = dict(split_sizes={}, layouts={}, landmark_order=landmarks,
                   visibility_counts={'0': 0, '1': 0, '2': 0}, duplicate_images_across_splits=0)
-    digest = hashlib.sha256(Path(data).read_bytes())
+    digest = hashlib.sha256(Path(data).read_bytes().replace(b'\r\n', b'\n'))
     for split in ['train', 'val', 'test']:
         records, tiles = split_records(data, split), []
         report['split_sizes'][split] = len(records)
@@ -103,7 +103,7 @@ def audit(data, preview_dir=None):
                 if value in hashes and hashes[value] != split:
                     raise ValueError(f'{relative}: duplicate image across splits')
                 hashes[value] = split
-            digest.update(relative.encode() + image_path.read_bytes() + label_path.read_bytes())
+            digest.update(relative.encode() + image_path.read_bytes() + label_path.read_bytes().replace(b'\r\n', b'\n'))
             for visibility in points[:, 2]:
                 report['visibility_counts'][str(int(visibility))] += 1
             if preview_dir:

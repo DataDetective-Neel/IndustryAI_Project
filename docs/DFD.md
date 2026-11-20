@@ -7,6 +7,10 @@
 
 Related documents: [Software Requirements Specification](SRS.md) · [Software Design Document](SDD.md).
 
+Implementation update: [Step 3](STEP3.md) implements offline landmark training,
+evaluation and a local detector entry point; [measured accuracy](STEP3_RESULTS.md)
+failed readiness. The complete application flows below remain proposed.
+
 ## 1. Notation and shared contract
 
 These are logical DFDs expressed with Mermaid flowchart shapes. Rectangles represent **external entities**; rounded nodes represent **processes**; cylinders represent **data stores**. Every arrow names the data transferred, including settings that select preprocessing. Numbers identify processes, not execution timing. Mermaid rendering follows [GitHub's fenced diagram support](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and the [Mermaid flowchart syntax](https://mermaid.js.org/syntax/flowchart.html).

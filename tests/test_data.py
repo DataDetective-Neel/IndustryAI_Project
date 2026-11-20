@@ -39,10 +39,16 @@ class DataTests(unittest.TestCase):
                 (root / 'images' / split).mkdir(parents=True)
                 (root / 'labels' / split).mkdir(parents=True)
                 Image.new('RGB', (20, 20), (i * 80, 0, 0)).save(root / f'images/{split}/x.png')
-                (root / f'labels/{split}/x.txt').write_text(LABEL)
+                (root / f'labels/{split}/x.txt').write_text(LABEL + '\n')
                 rows.append(f'images/{split}/x.png,labels/{split}/x.txt,{split},{split},{split},20,20')
             (root / 'manifest.csv').write_text('\n'.join(rows))
             self.assertEqual(audit(data)['split_sizes'], dict(train=1, val=1, test=1))
+            for text_path in [data, *root.glob('labels/*/*.txt')]:
+                text_path.write_bytes(text_path.read_bytes().replace(b'\r\n', b'\n'))
+            fingerprint = audit(data)['dataset_sha256']
+            for text_path in [data, *root.glob('labels/*/*.txt')]:
+                text_path.write_bytes(text_path.read_bytes().replace(b'\r\n', b'\n').replace(b'\n', b'\r\n'))
+            self.assertEqual(audit(data)['dataset_sha256'], fingerprint)
             (root / 'images/val/x.png').write_bytes((root / 'images/train/x.png').read_bytes())
             with self.assertRaisesRegex(ValueError, 'duplicate'):
                 audit(data)

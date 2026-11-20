@@ -1,0 +1,40 @@
+{
+  "device": "cpu",
+  "network_attempts": 0,
+  "generic_pose_weights_rejected": true,
+  "results": [
+    {
+      "image": "ECCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "landmarks": [],
+      "image_wh": [
+        1174,
+        1536
+      ],
+      "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+    },
+    {
+      "image": "FCCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "landmarks": [],
+      "image_wh": [
+        1324,
+        1536
+      ],
+      "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+    },
+    {
+      "image": "ACCC5.jpg",
+      "status": "failure",
+      "reason": "no_confident_board",
+      "landmarks": [],
+      "image_wh": [
+        959,
+        1536
+      ],
+      "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+    }
+  ]
+}
