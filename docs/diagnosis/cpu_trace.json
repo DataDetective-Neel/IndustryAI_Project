@@ -1,0 +1,844 @@
+{
+  "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e",
+  "device": "cpu",
+  "images": [
+    {
+      "image": "EBCC5.jpg",
+      "first_rejection": "no_confident_board",
+      "candidates": [
+        {
+          "class_id": 0,
+          "box": [
+            151.1539306640625,
+            109.2255630493164,
+            1237.87109375,
+            1441.267578125
+          ],
+          "score": 0.8820043206214905,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 387.0828857421875,
+              "y": 757.7317504882812,
+              "confidence": 0.0153739582747221
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 944.62646484375,
+              "y": 750.8682861328125,
+              "confidence": 0.16127952933311462
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 897.125732421875,
+              "y": 1078.160400390625,
+              "confidence": 0.2217186987400055
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 759.4744262695312,
+              "y": 1269.327880859375,
+              "confidence": 0.46077632904052734
+            }
+          ],
+          "errors_px": [
+            320.0876130065289,
+            451.8611129646626,
+            220.1055276473559,
+            256.43855284385063
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 312.1232016155995
+        },
+        {
+          "class_id": 0,
+          "box": [
+            159.966064453125,
+            119.49287414550781,
+            840.8948974609375,
+            1417.4295654296875
+          ],
+          "score": 0.013757923617959023,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 267.1707763671875,
+              "y": 593.7402954101562,
+              "confidence": 0.18432588875293732
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 567.165771484375,
+              "y": 557.72021484375,
+              "confidence": 0.4537772536277771
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 495.9801025390625,
+              "y": 844.5170288085938,
+              "confidence": 0.3486647307872772
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 404.7831726074219,
+              "y": 930.0149536132812,
+              "confidence": 0.4922235608100891
+            }
+          ],
+          "errors_px": [
+            122.29115681993575,
+            409.9331284973953,
+            683.948952096393,
+            435.93261502783054
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 413.02646311038865
+        },
+        {
+          "class_id": 0,
+          "box": [
+            148.9573211669922,
+            128.13673400878906,
+            1056.7275390625,
+            1431.7420654296875
+          ],
+          "score": 0.006023273803293705,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 287.4179382324219,
+              "y": 579.8574829101562,
+              "confidence": 0.1210177019238472
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 684.6554565429688,
+              "y": 541.0493774414062,
+              "confidence": 0.4026871621608734
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 586.3981323242188,
+              "y": 847.46826171875,
+              "confidence": 0.32409659028053284
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 488.5223388671875,
+              "y": 965.58203125,
+              "confidence": 0.5374256372451782
+            }
+          ],
+          "errors_px": [
+            116.30557324168,
+            313.4125269087768,
+            606.9979640737171,
+            386.8170554855224
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 355.88327992742404
+        },
+        {
+          "class_id": 0,
+          "box": [
+            164.8328094482422,
+            142.1364288330078,
+            701.8551635742188,
+            1363.3282470703125
+          ],
+          "score": 0.0013064600061625242,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 213.33937072753906,
+              "y": 621.7088623046875,
+              "confidence": 0.25952962040901184
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 480.8453674316406,
+              "y": 577.2813720703125,
+              "confidence": 0.517326831817627
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 412.48846435546875,
+              "y": 846.4283447265625,
+              "confidence": 0.3700733780860901
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 315.5882873535156,
+              "y": 934.2296142578125,
+              "confidence": 0.4820828437805176
+            }
+          ],
+          "errors_px": [
+            148.05005978065995,
+            491.17447018477975,
+            755.4668394321113,
+            463.0241601540119
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 464.4288823878908
+        }
+      ],
+      "path_vs_pil_max_coordinate_difference": 0.0
+    },
+    {
+      "image": "ECCB5.jpg",
+      "first_rejection": "no_confident_board",
+      "candidates": [
+        {
+          "class_id": 0,
+          "box": [
+            160.50596618652344,
+            181.0271453857422,
+            954.711181640625,
+            1426.1488037109375
+          ],
+          "score": 0.9229341745376587,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 234.0648956298828,
+              "y": 588.0875244140625,
+              "confidence": 0.037587448954582214
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 949.8056640625,
+              "y": 650.882080078125,
+              "confidence": 0.10813547670841217
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 746.606689453125,
+              "y": 1155.2069091796875,
+              "confidence": 0.07940477877855301
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 484.4148254394531,
+              "y": 1174.66552734375,
+              "confidence": 0.614596962928772
+            }
+          ],
+          "errors_px": [
+            169.26363015261697,
+            258.2937552637815,
+            211.3377045758718,
+            245.71188310745023
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 221.15174327493014
+        }
+      ],
+      "path_vs_pil_max_coordinate_difference": 0.0
+    },
+    {
+      "image": "ECCC5.jpg",
+      "first_rejection": "no_confident_board",
+      "candidates": [
+        {
+          "class_id": 0,
+          "box": [
+            201.248291015625,
+            118.94209289550781,
+            1003.8162841796875,
+            1448.7987060546875
+          ],
+          "score": 0.9204082489013672,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 264.7481689453125,
+              "y": 606.490966796875,
+              "confidence": 0.03586070239543915
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 960.5487060546875,
+              "y": 679.7298583984375,
+              "confidence": 0.19786366820335388
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 771.7836303710938,
+              "y": 1112.593994140625,
+              "confidence": 0.105935238301754
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 498.50927734375,
+              "y": 1162.6781005859375,
+              "confidence": 0.6176720857620239
+            }
+          ],
+          "errors_px": [
+            229.74539728522674,
+            306.3990564590322,
+            251.67916096998607,
+            250.22992695981551
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 259.5133854185151
+        }
+      ],
+      "path_vs_pil_max_coordinate_difference": 0.0
+    },
+    {
+      "image": "ECDC5.jpg",
+      "first_rejection": "no_confident_board",
+      "candidates": [
+        {
+          "class_id": 0,
+          "box": [
+            232.64703369140625,
+            135.752197265625,
+            1013.8170776367188,
+            1432.2022705078125
+          ],
+          "score": 0.9181127548217773,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 295.9281311035156,
+              "y": 599.6217041015625,
+              "confidence": 0.0365472286939621
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 972.084228515625,
+              "y": 650.8358154296875,
+              "confidence": 0.18161100149154663
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 769.1072998046875,
+              "y": 1100.0537109375,
+              "confidence": 0.1116270199418068
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 538.4039306640625,
+              "y": 1169.5570068359375,
+              "confidence": 0.639458954334259
+            }
+          ],
+          "errors_px": [
+            206.01799631202476,
+            275.8555744392606,
+            246.48959769161198,
+            260.9982382850921
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 247.34035168199733
+        }
+      ],
+      "path_vs_pil_max_coordinate_difference": 0.0
+    },
+    {
+      "image": "EDCC5.jpg",
+      "first_rejection": "no_confident_board",
+      "candidates": [
+        {
+          "class_id": 0,
+          "box": [
+            168.49229431152344,
+            136.71885681152344,
+            1158.659912109375,
+            1435.647216796875
+          ],
+          "score": 0.9117538928985596,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 353.5106506347656,
+              "y": 569.528564453125,
+              "confidence": 0.12972135841846466
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 1036.8741455078125,
+              "y": 674.9234008789062,
+              "confidence": 0.2744064927101135
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 808.6243896484375,
+              "y": 1168.5374755859375,
+              "confidence": 0.08918030560016632
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 375.69244384765625,
+              "y": 1044.262939453125,
+              "confidence": 0.6528373956680298
+            }
+          ],
+          "errors_px": [
+            239.40338949249673,
+            174.39042455837435,
+            198.40105844968002,
+            218.5682769132331
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 207.69078735344607
+        },
+        {
+          "class_id": 0,
+          "box": [
+            0.0,
+            0.0,
+            338.51214599609375,
+            719.6998901367188
+          ],
+          "score": 0.0017742527415975928,
+          "points": [
+            {
+              "name": "upper_left_mount",
+              "x": 0.0,
+              "y": 152.11166381835938,
+              "confidence": 0.440785676240921
+            },
+            {
+              "name": "upper_right_mount",
+              "x": 219.0421905517578,
+              "y": 137.69540405273438,
+              "confidence": 0.5881563425064087
+            },
+            {
+              "name": "lower_right_mount",
+              "x": 164.84263610839844,
+              "y": 361.2328796386719,
+              "confidence": 0.44892558455467224
+            },
+            {
+              "name": "lower_left_mount",
+              "x": 17.156497955322266,
+              "y": 415.1860656738281,
+              "confidence": 0.5410685539245605
+            }
+          ],
+          "errors_px": [
+            471.1919506213757,
+            928.3981455161027,
+            1193.0039882434253,
+            844.548589481932
+          ],
+          "best_permutation": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "best_permutation_mean_error": 859.285668465709
+        }
+      ],
+      "path_vs_pil_max_coordinate_difference": 0.0
+    }
+  ],
+  "thresholds": [
+    {
+      "board": 0.25,
+      "point": 0.01,
+      "accepted": 5,
+      "accurate": 0,
+      "inaccurate": 5,
+      "rejected": 0
+    },
+    {
+      "board": 0.25,
+      "point": 0.05,
+      "accepted": 1,
+      "accurate": 0,
+      "inaccurate": 1,
+      "rejected": 4
+    },
+    {
+      "board": 0.25,
+      "point": 0.1,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.25,
+      "point": 0.25,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.25,
+      "point": 0.5,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.25,
+      "point": 0.7,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.25,
+      "point": 0.85,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.25,
+      "point": 0.95,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.25,
+      "point": 0.99,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.5,
+      "point": 0.01,
+      "accepted": 5,
+      "accurate": 0,
+      "inaccurate": 5,
+      "rejected": 0
+    },
+    {
+      "board": 0.5,
+      "point": 0.05,
+      "accepted": 1,
+      "accurate": 0,
+      "inaccurate": 1,
+      "rejected": 4
+    },
+    {
+      "board": 0.5,
+      "point": 0.1,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.5,
+      "point": 0.25,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.5,
+      "point": 0.5,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.5,
+      "point": 0.7,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.5,
+      "point": 0.85,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.5,
+      "point": 0.95,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.5,
+      "point": 0.99,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.75,
+      "point": 0.01,
+      "accepted": 5,
+      "accurate": 0,
+      "inaccurate": 5,
+      "rejected": 0
+    },
+    {
+      "board": 0.75,
+      "point": 0.05,
+      "accepted": 1,
+      "accurate": 0,
+      "inaccurate": 1,
+      "rejected": 4
+    },
+    {
+      "board": 0.75,
+      "point": 0.1,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.75,
+      "point": 0.25,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.75,
+      "point": 0.5,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.75,
+      "point": 0.7,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.75,
+      "point": 0.85,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.75,
+      "point": 0.95,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.75,
+      "point": 0.99,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.9,
+      "point": 0.01,
+      "accepted": 4,
+      "accurate": 0,
+      "inaccurate": 4,
+      "rejected": 1
+    },
+    {
+      "board": 0.9,
+      "point": 0.05,
+      "accepted": 1,
+      "accurate": 0,
+      "inaccurate": 1,
+      "rejected": 4
+    },
+    {
+      "board": 0.9,
+      "point": 0.1,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.9,
+      "point": 0.25,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.9,
+      "point": 0.5,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.9,
+      "point": 0.7,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.9,
+      "point": 0.85,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.9,
+      "point": 0.95,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.9,
+      "point": 0.99,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.01,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.05,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.1,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.25,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.5,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.7,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.85,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.95,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    },
+    {
+      "board": 0.95,
+      "point": 0.99,
+      "accepted": 0,
+      "accurate": 0,
+      "inaccurate": 0,
+      "rejected": 5
+    }
+  ]
+}
