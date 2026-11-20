@@ -6,3 +6,8 @@ __pycache__/
 runs/
 models/
 .pytest_cache/
+frontend/node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+.playwright-mcp/

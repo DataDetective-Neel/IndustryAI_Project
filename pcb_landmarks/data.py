@@ -8,6 +8,8 @@ from pathlib import Path
 import numpy as np
 import yaml
 from PIL import Image, ImageDraw
+# Keep decoding stable when Ultralytics later patches the global Image.open.
+from PIL.Image import open as open_image
 
 
 DEFAULT_DATA = 'PCB_Dataset_Pilot/dataset.yaml'
@@ -48,7 +50,7 @@ def read_label(path):
 
 
 def read_image(path):
-    with Image.open(path) as image:
+    with open_image(path) as image:
         if image.getexif().get(274, 1) != 1:
             raise ValueError('Image EXIF orientation must be normalized before annotation/inference')
         return image.convert('RGB')

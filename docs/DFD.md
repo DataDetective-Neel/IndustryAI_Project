@@ -14,6 +14,9 @@ and review overlay from reviewed Step 2 labels. The complete application flows
 and automated quality/acceptance gates below remain proposed. [Step 5](STEP5.md)
 implements the region crop/correlation, optional sharpening and annotated local
 report slice, with per-region coverage/review gates and provisional thresholds.
+[Step 6](STEP6.md) connects that slice to a local React/FastAPI workflow. Operator
+Manual coordinates can explicitly replace automatic detection for this pilot;
+complete global quality/persistence/packaging acceptance remains pending.
 
 ## 1. Notation and shared contract
 

@@ -14,6 +14,8 @@ four-point alignment and overlays using reviewed Step 2 labels; remaining module
 and full quality/acceptance gates below are proposed. [Step 5](STEP5.md) now adds
 provisional region correlation, per-region review gates, symmetric optional
 sharpening and a local annotated report; this is not full-app acceptance.
+[Step 6](STEP6.md) adds the React/Vite and loopback FastAPI workflow with explicit
+Manual/Automatic modes, original-pixel annotation editing and per-photo reports.
 
 ## 1. Design basis and boundary
 
@@ -179,7 +181,7 @@ The proposed `setup.bat` runs from the project directory while online, checks a 
 
 Prepare `frontend/dist/` through the Vite build on a development machine and ship it with the demo [T2]. Package the trained model and configuration explicitly; setup must verify all required local assets. FastAPI serves the HTML and static files after API routes are registered [T4], binds to `127.0.0.1` (proposed port `8000`), and loads weights from disk once at startup. No Vite development server, Node.js runtime, CDN font/script, cloud API, or first-run model download is required at demo time. Disable optional network telemetry/update checks in packaged libraries and verify actual offline behavior rather than assuming it.
 
-Operator startup instructions will use the project environment to run the FastAPI application; the entry module/launcher is TBD because no application exists yet. Final verification must stop the app, disable Wi-Fi, restart from the packaged files, reload a saved reference, inspect a batch, and review evidence. Repeat on the actual target laptop and record versions/hardware.
+The implemented Step 6 entry point is `uvicorn pcb_landmarks.web:app --host 127.0.0.1 --port 8000`, with React/Vite development and production-build commands in [Step 6](STEP6.md). Manual annotation is an explicit operator-selected alternative to the frozen detector in this pilot. The complete saved-reference library, launcher and packaging remain pending. Final packaging verification must stop the app, disable Wi-Fi, restart from the packaged files, reload a saved reference, inspect a batch, and review evidence. Repeat on the actual target laptop and record versions/hardware.
 
 ## 8. Validation and SRS traceability
 

@@ -1,0 +1,20 @@
+{
+  "name": "pcb-inspection-bench",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "build": "vite build",
+    "test": "node --test src/coordinates.test.js",
+    "test:browser": "npm run build && playwright test"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "vite": "8.3.8",
+    "@playwright/test": "1.65.1"
+  }
+}

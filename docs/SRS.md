@@ -4,7 +4,7 @@
 - **Author:** Indraneel Chatterjee
 - **Assignment:** Task B, “Which Part Is Missing?”
 - **Version:** 1.0 — 20 November 2026
-- **Status:** Proposed requirements; application and model are not implemented in this repository.
+- **Status:** Design baseline; Steps 3–6 record partial implementation and measured results. Full application acceptance remains pending.
 
 Related documents: [Software Design Document](SDD.md) · [Data Flow Diagrams](DFD.md).
 
@@ -15,6 +15,8 @@ Step 2 labels. [Step 5](STEP5.md) implements provisional component-region scorin
 local Needs review coverage/parallax handling and optional symmetric sharpening;
 failed alignment skips classification. The wider application requirements below
 remain the design baseline, including pending global quality/acceptance policy.
+[Step 6](STEP6.md) implements the local React/FastAPI upload-to-results workflow,
+including requested Manual landmark correction and explicit Automatic failure handling.
 
 ## 1. Purpose and source basis
 

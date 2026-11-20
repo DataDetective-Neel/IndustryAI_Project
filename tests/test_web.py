@@ -1,0 +1,120 @@
+import io
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+import numpy as np
+from fastapi.testclient import TestClient
+from PIL import Image
+
+from comparison_fixture import comparison_pair
+from pcb_landmarks.align import align_images
+from pcb_landmarks.compare import compare_regions, load_config
+from pcb_landmarks.web import create_app
+
+
+class WebTests(unittest.TestCase):
+    def setUp(self):
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        self.client = TestClient(create_app(Path(self.folder.name)))
+        self.reference, self.inspection, self.rp, self.ip, self.regions = comparison_pair()
+
+    def upload(self, image, name='photo.png'):
+        stream = io.BytesIO()
+        Image.fromarray(image).save(stream, format='PNG')
+        response = self.client.post('/api/photos', files={'image': (name, stream.getvalue(), 'image/png')})
+        self.assertEqual(response.status_code, 200, response.text)
+        return response.json()
+
+    def payload(self):
+        ref, inspection = self.upload(self.reference), self.upload(self.inspection)
+        return dict(reference_id=ref['id'], reference_points=self.rp.tolist(),
+                    inspections=[dict(photo_id=inspection['id'], points=self.ip.tolist())],
+                    components=self.regions['components'], mode='manual', sharpen=False, synthetic=True)
+
+    def test_pipeline_matches_cli_functions_and_saves_assets(self):
+        response = self.client.post('/api/inspections', json=self.payload())
+        self.assertEqual(response.status_code, 200, response.text)
+        batch = response.json()
+        self.assertTrue(batch['synthetic'])
+        actual = batch['photos'][0]
+        aligned, _, mask = align_images(self.reference, self.inspection, self.rp, self.ip)
+        expected = compare_regions(self.reference, aligned, mask, self.regions,
+                                   load_config('configs/comparison.json'), dict(status='ok', reference_wh=[320, 240]))
+        self.assertEqual(actual['components'], expected['components'])
+        self.assertEqual(actual['outcome'], 'missing')
+        for key in ['alignment_overlay_url', 'component_overlay_url']:
+            asset = self.client.get(actual[key])
+            self.assertEqual(asset.status_code, 200)
+            with Image.open(io.BytesIO(asset.content)) as image:
+                self.assertEqual(image.size, (320, 240))
+        self.assertEqual(self.client.get(batch['report_url']).json(), batch)
+
+    def test_failed_photo_does_not_suppress_valid_sibling(self):
+        payload = self.payload()
+        bad = self.client.post('/api/photos', files={'image': ('broken.png', b'not an image', 'image/png')}).json()
+        payload['inspections'] = [dict(photo_id=bad['id'], points=[]), *payload['inspections'],
+                                  dict(payload['inspections'][0], points=[[1, 1]]*4)]
+        response = self.client.post('/api/inspections', json=payload)
+        self.assertEqual(response.status_code, 200, response.text)
+        photos = response.json()['photos']
+        self.assertEqual([p['outcome'] for p in photos], ['error', 'missing', 'retake'])
+        self.assertIsNone(photos[0]['component_overlay_url'])
+        self.assertIsNone(photos[2]['alignment_overlay_url'])
+        self.assertTrue(all(p['status'] == 'not_evaluated' for p in photos[2]['components']))
+
+    def test_automatic_missing_checkpoint_is_explicit_and_never_manual_fallback(self):
+        payload = self.payload()
+        payload['mode'] = 'automatic'
+        with patch('pcb_landmarks.web.CHECKPOINT', Path(self.folder.name)/'absent.pt'):
+            result = self.client.post('/api/inspections', json=payload).json()['photos'][0]
+            detection = self.client.post(f"/api/landmarks/{payload['reference_id']}").json()
+        self.assertEqual(result['outcome'], 'retake')
+        self.assertIn('checkpoint_unavailable', result['alignment']['reason'])
+        self.assertIn('checkpoint_unavailable', detection['reason'])
+        self.assertTrue(all(p['score'] is None for p in result['components']))
+
+    def test_batch_limits_ids_booleans_and_origin(self):
+        payload = self.payload()
+        for change in [dict(inspections=[]), dict(inspections=payload['inspections']*4),
+                       dict(sharpen='false'), dict(mode='guess'), dict(components=[])]:
+            self.assertEqual(self.client.post('/api/inspections', json=dict(payload, **change)).status_code, 422)
+        payload['reference_id'] = '../configs/comparison.json'
+        self.assertEqual(self.client.post('/api/inspections', json=payload).status_code, 404)
+        self.assertEqual(self.client.post('/api/photos', headers={'Origin': 'https://external.example'},
+                                         files={'image': ('x.png', b'x')}).status_code, 403)
+
+    def test_upload_orientation_and_size_boundaries(self):
+        image = Image.fromarray(self.reference)
+        stream = io.BytesIO()
+        exif = image.getexif()
+        exif[274] = 6
+        image.save(stream, format='JPEG', exif=exif)
+        response = self.client.post('/api/photos', files={'image': ('rotated.jpg', stream.getvalue())})
+        self.assertIn('EXIF', response.json()['error'])
+        with patch('pcb_landmarks.web.MAX_UPLOAD', 10):
+            self.assertEqual(self.client.post('/api/photos', files={'image': ('large.png', b'x'*11)}).status_code, 413)
+
+    def test_annotation_limits_and_nonfinite_metadata_are_rejected(self):
+        payload = self.payload()
+        payload['components'][0]['name'] = 'x'*121
+        self.assertEqual(self.client.post('/api/inspections', json=payload).status_code, 422)
+        payload['components'][0]['name'] = 'chip'
+        payload['components'][0]['bbox_xyxy_px'][0] = float('nan')
+        response = self.client.post('/api/inspections', content=json.dumps(payload),
+                                    headers={'Content-Type': 'application/json'})
+        self.assertEqual(response.status_code, 422)
+
+    def test_corrupt_upload_after_yolo_import_stays_a_photo_error(self):
+        from ultralytics import YOLO  # Loading the library replaces Pillow's global Image.open.
+        self.assertIsNotNone(YOLO)
+        response = self.client.post('/api/photos', files={'image': ('broken.png', b'not an image', 'image/png')})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('ImageDecodeError', response.json()['error'])
+
+
+if __name__ == '__main__':
+    unittest.main()
