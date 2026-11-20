@@ -115,6 +115,16 @@ class WebTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('ImageDecodeError', response.json()['error'])
 
+    def test_health_needs_no_dataset_for_manual_demo(self):
+        root = Path(self.folder.name)/'without dataset'
+        (root/'configs').mkdir(parents=True)
+        for name in ['landmarks.json', 'comparison.json']:
+            (root/'configs'/name).write_bytes((Path('configs')/name).read_bytes())
+        with patch('pcb_landmarks.web.ROOT', root):
+            response = self.client.get('/api/health')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()['landmark_names']), 4)
+
 
 if __name__ == '__main__':
     unittest.main()

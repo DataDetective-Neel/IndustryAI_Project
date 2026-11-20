@@ -19,7 +19,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .align import align_images, blend_overlay
 from .compare import _validate_regions, annotated_overlay, compare_regions, load_config
-from .data import load_data, open_image, read_image
+from .data import open_image, read_image
 from .infer import LandmarkDetector
 
 
@@ -107,7 +107,7 @@ def create_app(storage=None):
 
     @app.get('/api/health')
     def health():
-        _, _, names = load_data(ROOT/'PCB_Dataset_Pilot/dataset.yaml')
+        names = json.loads((ROOT/'configs/landmarks.json').read_text())['landmark_order']
         return dict(status='ok', landmark_names=names,
                     comparison=load_config(ROOT/'configs/comparison.json'),
                     checkpoint_available=CHECKPOINT.is_file(), max_photos=3,

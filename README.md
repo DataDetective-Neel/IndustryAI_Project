@@ -1,0 +1,118 @@
+# Offline PCB inspection demo
+
+Compare a known-good PCB photo with up to three same-layout inspection photos.
+The local React frontend and FastAPI backend share the alignment/comparison CLI
+functions. **Thresholds are provisional; real missing-part validation is pending.**
+The verified missing-part example is synthetic, not a real defective board.
+
+## Windows prerequisites
+
+- 64-bit CPython **3.10**, installed with the Windows `py` launcher (`py -3.10`).
+  The pinned Python environment is supported/tested on this minor version.
+- **Node.js 24 or newer and npm 10 or newer**, available on PATH. Reopen the
+  terminal after installation. Node/npm are needed for setup, not offline launch.
+- Disk space for Python/PyTorch dependencies and the frontend build. Initial
+  setup needs internet unless all dependencies are already locally available.
+  Cached packages alone do not guarantee that every required wheel is available.
+
+## Setup once, launch repeatedly
+
+From PowerShell, including from another working directory:
+
+```powershell
+& 'A:\IndustryAI_Project\setup.bat'
+& 'A:\IndustryAI_Project\launch.bat'
+```
+
+Scripts resolve their own directory, including paths with spaces. Setup creates
+or reuses `.venv`, validates its Python version, installs `requirements-web.txt`,
+runs `npm ci` against `frontend/package-lock.json`, then builds `frontend/dist`.
+It stops at the first failed step and returns exit 1; fix the printed problem
+and rerun it. A mismatched existing virtual environment must be moved aside and
+recreated with supported Python; setup does not silently delete environments.
+
+Launch uses only `.venv` and the built frontend, serves on **127.0.0.1:8000**, and
+prints [the browser URL](http://127.0.0.1:8000/). It installs nothing and builds
+nothing. Missing dependencies/build outputs point you back to `setup.bat`.
+Keep the terminal open so server errors remain visible. **Stop with Ctrl+C**;
+if cmd asks `Terminate batch job (Y/N)?`, answer Y. No detached server is started.
+If another server owns port 8000, stop that server before launching this one.
+
+After setup, disconnect Wi-Fi/Ethernet while retaining normal local loopback
+networking, then run `launch.bat`. No CDN, cloud service, Vite server or Node.js
+process is required for inspection. Photos, annotations and reports stay under
+ignored `runs/web/`. Refreshing the page resets the editor; completed report URLs
+and annotation snapshots remain on disk. There is no automatic retention cleanup.
+
+## Reproducible synthetic demo without dataset or weights
+
+Generate the original shareable fixture locally after setup; use a new output
+directory when repeating this command:
+
+```powershell
+Set-Location A:\IndustryAI_Project
+.\.venv\Scripts\python.exe tests/comparison_fixture.py --output runs/demo
+# Print each photo's four original-pixel landmarks, in dataset order:
+.\.venv\Scripts\python.exe -c "from pcb_landmarks.data import read_image; from pcb_landmarks.align import label_points; from pathlib import Path; [print(n, label_points(Path('runs/demo/input')/(n+'.txt'), read_image(Path('runs/demo/input')/(n+'.png')).size).tolist()) for n in ['reference','inspection']]"
+.\launch.bat
+```
+
+No `PCB_Dataset_Pilot` directory or checkpoint is needed for this Manual demo.
+
+1. Upload `runs/demo/input/reference.png` as reference and
+   `runs/demo/input/inspection.png` as inspection. Check **Label this run as a
+   synthetic demonstration**, and leave **Manual** selected.
+2. For each photo, enter the printed x/y pairs into L0–L3, in the displayed order:
+   upper-left, upper-right, lower-right, lower-left **physical identities**.
+   Reference pairs are (35,30), (285,30), (285,210), (35,210). Points may also be
+   marked/corrected by clicking. Preview resizing does not change stored pixels.
+3. Select the reference, use **Add box** or draw rectangles, then enter these
+   names and integer half-open xyxy bounds in the region editor:
+
+   | Name | x1 | y1 | x2 | y2 |
+   | --- | ---: | ---: | ---: | ---: |
+   | Retained chip | 60 | 45 | 100 | 85 |
+   | Controlled removal | 140 | 100 | 180 | 140 |
+   | Coverage control | 0 | 50 | 24 | 90 |
+
+4. Leave sharpening off and choose **Inspect 1 photo**. Expect **Present** for
+   the retained chip, **Missing** for the controlled removal and **Needs review**
+   for the partially covered control. Inspect both overlays and the component
+   table. The synthetic banner must be visible. Review flags can explicitly
+   prevent scoring unreliable regions such as tall connectors with parallax.
+
+Missing <= 0.25, Present >= 0.50; the intermediate band, low texture, bad crops,
+incomplete coverage and flagged regions need review. Low correlation can also
+come from glare or misalignment. These pilot decisions do not certify a board.
+
+## Automatic mode: optional local checkpoint
+
+Manual mode works without weights. Automatic uses the unchanged frozen hash and
+settings in `configs/landmarks.json`; it never downloads a model or silently
+substitutes Manual points. Default checkpoint: `runs/landmarks/full/weights/best.pt`.
+For another local path, set it before launching in the same PowerShell terminal:
+
+```powershell
+$env:PCB_CHECKPOINT = 'A:\Local Models\best.pt'
+& 'A:\IndustryAI_Project\launch.bat'
+```
+
+That file must match the frozen checkpoint hash/schema. Automatic schema loading
+also uses the repository's small `PCB_Dataset_Pilot/dataset.yaml` metadata file;
+dataset photographs are not needed. With no checkpoint, the app displays
+`checkpoint_unavailable` and offers **Switch to Manual**. The trained pilot still
+rejects the documented development pair (`Reference: no_confident_board`). No
+thresholds were relaxed for this demo. Failed alignment skips component scoring
+for that photo and preserves successful siblings.
+
+## Verification and limitations
+
+See [Step 7 actual verification](docs/STEP7.md), [web workflow](docs/STEP6.md),
+[alignment](docs/STEP4.md) and [comparison](docs/STEP5.md).
+
+Clean-copy setup, rerun, a spaces/outside-directory invocation, production
+synthetic inspection under process-level external-network blocking, missing-weight
+Manual mode, failure exits and launcher shutdown were verified on Windows.
+**Physical adapter-off testing and a pristine Windows-machine installation remain
+pending.** The test machine already had Python/Node and package/browser caches.
+Real missing-part accuracy and full production-quality acceptance remain pending.

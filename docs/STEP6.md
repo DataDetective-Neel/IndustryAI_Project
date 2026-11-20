@@ -1,5 +1,8 @@
 # Step 6: local React / FastAPI inspection app
 
+Windows setup/launch scripts are now documented in the [README](../README.md)
+and [Step 7 verification](STEP7.md); startup limitations below describe Step 6.
+
 Implemented and verified on 20 November 2026. The app calls the existing Python
 inference, alignment and comparison functions; there is no second scoring
 implementation. See [Step 4](STEP4.md), [Step 5](STEP5.md) and the [design](SDD.md).
