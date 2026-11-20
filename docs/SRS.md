@@ -10,7 +10,8 @@ Related documents: [Software Design Document](SDD.md) · [Data Flow Diagrams](DF
 
 Implementation update: [Step 3 commands](STEP3.md) and [measured results](STEP3_RESULTS.md)
 record the executed landmark training/evaluation. Its four-point accuracy failed
-readiness; the wider application requirements below remain the design baseline.
+readiness. [Step 4](STEP4.md) implements alignment and review overlays from reviewed
+Step 2 labels; the wider application requirements below remain the design baseline.
 
 ## 1. Purpose and source basis
 

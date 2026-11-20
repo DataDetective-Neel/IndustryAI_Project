@@ -9,7 +9,9 @@ Related documents: [Software Requirements Specification](SRS.md) · [Software De
 
 Implementation update: [Step 3](STEP3.md) implements offline landmark training,
 evaluation and a local detector entry point; [measured accuracy](STEP3_RESULTS.md)
-failed readiness. The complete application flows below remain proposed.
+failed readiness. [Step 4](STEP4.md) implements the four-point warp, validity mask
+and review overlay from reviewed Step 2 labels. The complete application flows
+and automated quality/acceptance gates below remain proposed.
 
 ## 1. Notation and shared contract
 
