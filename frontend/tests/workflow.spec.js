@@ -308,7 +308,7 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
   await expect(
     page
       .getByTestId("result-0")
-      .getByRole("cell", { name: "Present", exact: true }),
+      .locator(".findings-panel .status").filter({ hasText: /^Present$/ }),
   ).toHaveCount(manual.photos[0].components.filter((p) => p.status === "present").length);
   await page.screenshot({
     path: absolute("runs/web-verification/real-manual.png"),
@@ -349,7 +349,7 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
   await expect(
     page
       .getByTestId("result-0")
-      .getByRole("img", { name: /Component decisions/ }),
+      .getByRole("link", { name: "Component decisions", exact: true }),
   ).toBeVisible();
   await expect(
     page
@@ -442,7 +442,7 @@ for (const [variant, url] of [
     await expect(
       page
         .getByTestId("result-0")
-        .getByRole("cell", { name: "Needs review", exact: true }),
+        .locator(".findings-panel .status").filter({ hasText: /^Needs review$/ }),
     ).toHaveCount(2);
     await page.screenshot({
       path: absolute("runs/web-verification/synthetic-missing.png"),

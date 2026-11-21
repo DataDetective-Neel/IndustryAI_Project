@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { imagePoint, pixelBox } from "./coordinates.js";
 import "./style.css";
+import Comparison from "./Comparison.jsx";
 
 async function api(path, options) {
   const response = await fetch(path, options);
@@ -23,13 +24,6 @@ const jsonPost = (data) => ({
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(data),
 });
-const outcomeName = {
-  ok: "Scored regions present",
-  missing: "Missing component",
-  review: "Needs review",
-  retake: "Alignment needs review",
-  error: "Photo could not be processed",
-};
 
 function App() {
   const [health, setHealth] = useState(null);
@@ -879,89 +873,9 @@ function App() {
               </div>
             )}
             {batch.photos.map((result, index) => (
-              <article
-                className="result-sheet"
-                data-testid={`result-${index}`}
-                key={`${result.photo_id}-${index}`}
-              >
-                <div className="result-heading">
-                  <h3>{result.filename}</h3>
-                  <strong className={`status ${result.outcome}`}>
-                    {outcomeName[result.outcome]}
-                  </strong>
-                </div>
-                {result.alignment.status !== "ok" ? (
-                  <div className="message notice">
-                    <strong>Component scoring skipped.</strong>{" "}
-                    {result.alignment.reason}
-                    {batch.mode === "automatic" && (
-                      <button
-                        className="secondary"
-                        onClick={() => switchMode("manual")}
-                      >
-                        Switch to Manual
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="result-images">
-                    {[
-                      ["Alignment overlay", result.alignment_overlay_url],
-                      ["Component decisions", result.component_overlay_url],
-                    ].map(([title, url]) => (
-                      <figure key={title}>
-                        <figcaption>{title}</figcaption>
-                        <a href={url} target="_blank" rel="noreferrer">
-                          <img
-                            src={url}
-                            alt={`${title} for ${result.filename}`}
-                            loading="lazy"
-                          />
-                        </a>
-                      </figure>
-                    ))}
-                  </div>
-                )}
-                {result.alignment_validation && <p>Alignment overlay score: {result.alignment_validation.overlay_score?.toFixed(4) ?? "unavailable"}; {result.alignment_validation.reliable ? "validated" : "REVIEW — correct landmarks or retake photo"}</p>}
-                <div className="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Component</th>
-                        <th>Decision</th>
-                        <th>Similarity</th>
-                        <th>Best offset (px)</th>
-                        <th>Expected box</th>
-                        <th>Coverage</th>
-                        <th>Reason</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.components.map((p, i) => (
-                        <tr key={`${p.id}-${i}`}>
-                          <th scope="row">{p.name}</th>
-                          <td>
-                            <span className={`status ${p.status}`}>
-                              {p.display_status}
-                            </span>
-                          </td>
-                          <td>{p.score == null ? "—" : p.score.toFixed(6)}</td>
-                          <td>
-                            {p.overlap == null
-                              ? "—"
-                              : `${(p.overlap * 100).toFixed(2)}%`}
-                          </td>
-                          <td className="reason">
-                            {p.reason
-                              ?.replace(/^explicit_review: /, "")
-                              .replaceAll("_", " ")}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </article>
+              <Comparison key={`${result.photo_id}-${index}`} result={result} reference={reference}
+                inspection={inspections.find((p) => p.id === result.photo_id)} index={index}
+                mode={batch.mode} onManual={() => switchMode("manual")} />
             ))}
             <p className="muted">
               Review evidence before acting. Low similarity can also come from
