@@ -65,6 +65,12 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   await page.getByRole('button',{name:'Run Inspection',exact:true}).click();
   const automatic=await (await automaticPending).json();
   expect(automatic.photos[0].outcome).toBe('DIFFERENT_BOARD');
+  for (const photo of automatic.photos.slice(1,5)) {
+    expect(photo.board_compatibility.status).toBe('SAME_DESIGN');
+    expect(photo.components_evaluated).toBe(true);
+    expect(photo.components[0].status).toBe('present');
+  }
+  expect(automatic.photos[5].components_evaluated).toBe(true);
   await expect(page.getByTestId('result-0').getByRole('button',{name:'Switch to Manual',exact:true})).toHaveCount(0);
   await fs.writeFile(path.join(output,'browser-automatic-report.json'),JSON.stringify(automatic,null,2));
 });

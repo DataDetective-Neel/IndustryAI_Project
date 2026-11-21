@@ -55,7 +55,8 @@ def _detector(checkpoint):
                                 expected_sha256=config['checkpoint_sha256'],
                                 refine_mounting_holes=config.get('refine_mounting_holes', False),
                                 mounting_reference=(ROOT/'configs'/config['mounting_reference']
-                                                    if config.get('mounting_reference') else None))
+                                                    if config.get('mounting_reference') else None),
+                                calibrated_mounting_holes=config.get('calibrated_mounting_holes', False))
     if detector.names != config['landmark_order']:
         raise ValueError('Frozen configuration landmark order does not match checkpoint')
     return detector, config

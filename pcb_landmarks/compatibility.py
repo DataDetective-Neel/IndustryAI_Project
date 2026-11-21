@@ -45,8 +45,20 @@ def _profiles(catalog):
         image = read_image(image_path)
         points, descriptors, scale, _ = _features(image, design['regions'], design['board_polygon'])
         _, mounts = read_label(label_path)
+        mounts = mounts[:, :2]*image.size
+        controls = mounts.tolist() + [[(r['box'][0]+r['box'][2])/2, (r['box'][1]+r['box'][3])/2]
+                                      for r in design['regions']]
+        canonical = next((p for p in profiles if p['id'] == design['id']), None)
+        canonical_to_template = (cv2.getPerspectiveTransform(np.float32(canonical['mounts']), np.float32(mounts))
+                                 if canonical else np.eye(3))
+        identity_patch = None
+        if design.get('identity_box'):
+            x, y, right, bottom = design['identity_box']
+            identity_patch = np.asarray(image)[y:bottom, x:right]
         profiles.append(dict(design, keypoints=points, descriptors=descriptors, scale=scale,
-                             mounts=mounts[:, :2]*image.size))
+                             mounts=mounts, controls=canonical['controls'] if canonical else controls,
+                             identity_patch=identity_patch,
+                             canonical_to_template=canonical_to_template))
     return profiles
 
 
@@ -97,18 +109,31 @@ def identify_board(image, catalog=CATALOG):
         if area < .05*image.shape[0]*image.shape[1]:
             continue
         visible = float(np.clip(cv2.intersectConvexConvex(projected, frame)[0]/area, 0, 1))
+        identity_score = None
+        if profile.get('identity_box'):
+            x, y, right, bottom = profile['identity_box']
+            patch = cv2.warpPerspective(image, np.array([[1, 0, -x], [0, 1, -y], [0, 0, 1]]) @ np.linalg.inv(matrix),
+                                        (right-x, bottom-y))
+            identity_score, _ = _score(profile['identity_patch'], patch, False)
+            # Pi variants share the lower PCB; their different upper connectors must also agree.
+            if identity_score is None or identity_score < .15:
+                continue
         accepted.append(dict(base, status='IDENTIFIED', layout_id=profile['id'], name=profile['name'],
+                             connector_identity_score=identity_score,
+                             template_image=profile['image'],
                              matched_regions=regions, inliers=len(inliers), match_count=len(matches),
                              spatial_coverage=float(spread), visible_fraction=visible,
-                             template_to_image=matrix.tolist(),
-                             template_controls=profile['mounts'].tolist() +
-                                 [[(r['box'][0]+r['box'][2])/2, (r['box'][1]+r['box'][3])/2]
-                                  for r in profile['regions']]))
+                             calibration_to_image=matrix.tolist(),
+                             template_to_image=(matrix @ profile['canonical_to_template']).tolist(),
+                             template_controls=profile['controls']))
     accepted.sort(key=lambda row: row['inliers'], reverse=True)
     if not accepted:
         return dict(base, reason='insufficient_positive_layout_evidence')
-    if len(accepted) > 1 and accepted[0]['inliers'] < 1.5*accepted[1]['inliers']:
-        return dict(base, status='REVIEW', reason='ambiguous_supported_layouts')
+    other = next((row for row in accepted if row['layout_id'] != accepted[0]['layout_id']), None)
+    if other and accepted[0]['inliers'] < 1.5*other['inliers']:
+        return dict(base, status='REVIEW', reason='ambiguous_supported_layouts',
+                    candidates=[{key: row[key] for key in ['layout_id', 'template_image', 'inliers', 'connector_identity_score']}
+                                for row in accepted])
     result = accepted[0]
     if result['visible_fraction'] < .9:
         result.update(status='REVIEW', reason='board_layout_clipped')
@@ -162,3 +187,59 @@ def check_compatibility(reference_info, inspection_info, reference=None, aligned
     return dict(result, status='SAME_DESIGN' if positive else 'REVIEW',
                 message='Distributed layout agreement.' if positive else 'Board layout or alignment needs review.',
                 reason='distributed_positive_agreement' if positive else 'insufficient_positive_layout_evidence', regions=rows)
+
+
+def calibrated_mounts(image, catalog=CATALOG):
+    """Recover calibrated hole identities only with positive layout and local hole evidence."""
+    image = np.asarray(image)
+    layout = identify_board(image, catalog)
+    return _calibrated_mounts(image, layout, catalog)
+
+
+def _calibrated_mounts(image, layout, catalog):
+    evidence = dict(status='failure', reason='layout_not_calibrated_for_automatic_mounts', layout=layout)
+    if layout['status'] != 'IDENTIFIED':
+        return None, evidence
+    profile = next(p for p in _profiles(str(catalog)) if p['image'] == layout['template_image'])
+    if not profile.get('automatic_mounts'):
+        return None, evidence
+    template = np.asarray(read_image(Path(catalog).parent.parent/profile['image']))
+    height, width = template.shape[:2]
+    matrix = np.array(layout['calibration_to_image'])
+    rectified = cv2.warpPerspective(image, np.linalg.inv(matrix), (width, height))
+    mask = cv2.warpPerspective(np.full(image.shape[:2], 255, np.uint8), np.linalg.inv(matrix), (width, height))
+    def hole_channel(rgb):
+        # Saturation separates bare holes from colored solder mask despite cloth texture/shadows.
+        gray = (cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY) if profile.get('mount_channel') == 'gray'
+                else cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)[:, :, 1])
+        return cv2.GaussianBlur(gray, (5, 5), 1.2)
+    template, rectified = hole_channel(template), hole_channel(rectified)
+    radius, search = round(.035*min(width, height)), round(.008*min(width, height))
+    corrected, rows = [], []
+    for identity, (x, y) in enumerate(profile['mounts']):
+        x, y = round(x), round(y)
+        left, top = x-radius, y-radius
+        right, bottom = x+radius+1, y+radius+1
+        if min(left-search, top-search) < 0 or right+search > width or bottom+search > height:
+            return None, dict(evidence, reason='mount_patch_clipped', landmark_id=identity)
+        if (mask[top-search:bottom+search, left-search:right+search] < 254).any():
+            return None, dict(evidence, reason='mount_patch_not_visible', landmark_id=identity)
+        patch = template[top:bottom, left:right]
+        window = rectified[top-search:bottom+search, left-search:right+search]
+        disk = np.zeros(patch.shape, np.uint8)
+        cv2.circle(disk, (radius, radius), round(.026*min(width, height)), 255, -1)
+        scores = cv2.matchTemplate(window, patch, cv2.TM_CCOEFF_NORMED, mask=disk)
+        scores[~np.isfinite(scores)] = -1
+        _, score, _, offset = cv2.minMaxLoc(scores)
+        dx, dy = offset[0]-search, offset[1]-search
+        best = rectified[top+dy:bottom+dy, left+dx:right+dx]
+        edge = lambda a: cv2.magnitude(cv2.Sobel(a, cv2.CV_32F, 1, 0), cv2.Sobel(a, cv2.CV_32F, 0, 1))
+        gradient = float(cv2.matchTemplate(edge(best), edge(patch), cv2.TM_CCOEFF_NORMED, mask=disk)[0, 0])
+        rows.append(dict(id=identity, score=float(score), edge_score=gradient if np.isfinite(gradient) else None,
+                         offset_template_px=[dx, dy]))
+        if not np.isfinite([score, gradient]).all() or score < .65 or gradient < .4 or max(abs(dx), abs(dy)) >= search:
+            return None, dict(evidence, reason='local_mount_patch_not_verified', points=rows)
+        corrected.append([x+dx, y+dy])
+    points = cv2.perspectiveTransform(np.float64([corrected]), matrix)[0]
+    return points, dict(status='ok', method='recognized layout and four local mounting-hole patches',
+                        layout_id=layout['layout_id'], layout=layout, points=rows)

@@ -50,7 +50,7 @@ test('one-board real-photo fixtures through production upload and inspect UI', a
   expect(simulated.photos[0].components.filter(p=>p.status==='present')).toHaveLength(7);
   await page.getByRole('radio',{name:'Automatic',exact:true}).check();
   await expect(page.getByText('Detecting landmarks with the local model…')).toHaveCount(0,{timeout:60000});
-  await expect(page.getByText('Raw landmark diagnostics (rejected points are tentative)')).toBeVisible();
+  await expect(page.getByText('Raw landmark diagnostics (rejected points are tentative)')).toBeVisible({timeout:60000});
   const automatic=await inspect(page);
   expect(automatic.photos[0].outcome).toBe('review');
   const health = await (await page.request.get('http://127.0.0.1:8000/api/health')).json();

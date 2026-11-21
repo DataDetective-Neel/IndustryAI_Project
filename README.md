@@ -12,6 +12,9 @@ uses distributed connector, mounting-region and silkscreen features. Positively
 recognized mismatched layouts return `DIFFERENT_BOARD` and skip component decisions.
 Blur, cropping, unknown layouts and uncertain alignment remain `REVIEW`.
 
+[Mounting-hole correction evidence](docs/MOUNT_CALIBRATION.md) covers the pictured
+Pi and Mega2560 layouts, direct-versus-uploaded inference, and remaining REVIEW cases.
+
 ## Windows prerequisites
 
 - 64-bit CPython **3.10**, installed with the Windows `py` launcher (`py -3.10`).

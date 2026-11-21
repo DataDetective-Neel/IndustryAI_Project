@@ -8,10 +8,10 @@ landmark prediction is not used as evidence that a board is different.
 
 ## Positive layout evidence
 
-`configs/board_designs.json` defines stable feature regions for the three existing
-demo layouts: the blue Mega2560 board, Raspberry Pi, and BeagleBone. These include
+`configs/board_designs.json` defines stable feature regions for five existing
+demo layouts: blue and black Mega2560 boards, two Raspberry Pi layouts, and BeagleBone. These include
 upper mounting-hole/connector regions, separate headers and pin silkscreen, and
-lower connector footprints. Main processors are excluded from these identity masks. Feature masks are
+lower connector footprints. The central Mega target IC is excluded from its identity masks. Feature masks are
 intersected with an eroded PCB boundary so surrounding cloth/background cannot
 supply layout votes.
 Uploaded filenames and board color do not identify a design.
@@ -22,6 +22,11 @@ least 45% RANSAC inliers, at least five inliers in each of three separated regio
 and a feature hull covering at least 12% of the template board area. Ambiguous
 profile matches require review. The result retains the matched regions, counts,
 spatial coverage, projected board visibility, and image sharpness.
+
+The Pi layouts share many lower-board features. Their upper connector patches must
+also give positive gradient agreement (provisional score >= 0.15); this is an
+additional check after distributed feature matching, never a standalone identity
+decision. Frontal and perspective calibration views share canonical coordinates.
 
 `DIFFERENT_BOARD` requires **both** images to positively identify different
 supported layouts with adequate visibility and detail. A four-point homography,
@@ -64,9 +69,9 @@ that uploads both designs under the same filename.
 | ACDC5 with deliberately shifted alignment points | REVIEW | Not called |
 | Unrecognized random texture | REVIEW | Not called |
 
-The reference ACCC5 has 1,710 consistent stable-region features across four regions;
-MBCC5 independently matches the Raspberry Pi template with 33 inliers across three
-regions. The blue angle controls retain 182–907 inliers in three or four regions.
+The reference ACCC5 has 1,710 consistent stable-region features across four regions.
+MBCC5 independently matches its frontal Raspberry Pi calibration. The blue angle
+controls retain 182–907 inliers in three or four regions.
 The processor erasure is a clearly labeled demo fixture, **not a verified real
 missing-component photo**. The component layer retains its conservative REVIEW
 policy for ambiguous absence evidence.
@@ -83,8 +88,9 @@ Set-Location frontend
 npx playwright test tests/board-compatibility.spec.js
 ```
 
-Blue-board controls use reviewed manual landmarks. This change does not retrain
-the existing Raspberry Pi YOLO profile or claim automatic blue-board landmarks.
+The original controls used reviewed manual landmarks. The follow-up
+[mounting-hole correction](MOUNT_CALIBRATION.md) also verifies the blue angle
+controls through Automatic mode without changing YOLO weights.
 
-Final verification: **55 backend tests, 4 frontend unit tests, and 11 browser tests passed**.
-The production build and `git diff --check` also passed.
+The original compatibility change passed 55 backend, 4 frontend unit and 11 browser tests.
+See the follow-up report for the current verification totals.

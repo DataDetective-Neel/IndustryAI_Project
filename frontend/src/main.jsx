@@ -269,7 +269,7 @@ function App() {
       ? photo?.points || []
       : photo?.detection?.status === "ok"
         ? photo.detection.landmarks.map((p) => [p.x, p.y])
-        : (photo?.detection?.diagnostics?.candidates?.[0]?.landmarks || []).map((p) => [p.x, p.y]);
+        : [];
   const radius = photo ? Math.max(photo.width, photo.height) / 85 : 10;
   const runHint = !health ? "Connect the local backend to begin."
     : !reference ? "Upload a known-good reference first."
@@ -499,10 +499,15 @@ function App() {
                             {photo.detection.reason}{" "}
                             <span>
                               Scoring will be skipped. Switch to Manual to
-                              correct the tentative points; verify all four mounting holes.
+                              mark or correct the points; verify all four mounting holes. Rejected model proposals are available in the diagnostics below.
                             </span>
                           </div>
                         )}
+                      {mode === "automatic" && photo.detection?.status === "ok" && photo.detection?.source === "calibrated_layout_mounts" && (
+                        <div className="message notice">
+                          All four mounting holes verified against the {photo.detection.calibrated_mounting.layout.name} calibration.
+                        </div>
+                      )}
                       {mode === "automatic" && photo.detection?.diagnostics && (
                         <details>
                           <summary>Raw landmark diagnostics (rejected points are tentative)</summary>

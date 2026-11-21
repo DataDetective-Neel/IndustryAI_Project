@@ -18,7 +18,7 @@
   "validation_accurate": 1,
   "checkpoint_path": "models/pcb-mounting-holes-yolo26n-pose.pt",
   "refine_mounting_holes": true,
-  "scope": "Raspberry Pi micropcb_M gold mounting rims; four-view demo",
+  "scope": "YOLO26 Raspberry Pi M; verified calibrated A, B and H mounting-hole correction",
   "fine_tuning_training_images": [
     "MBCC5",
     "MCCB5"
@@ -30,5 +30,6 @@
     "MDCC5"
   ],
   "parent_dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
-  "mounting_reference": "mounting-holes-M.png"
+  "mounting_reference": "mounting-holes-M.png",
+  "calibrated_mounting_holes": true
 }

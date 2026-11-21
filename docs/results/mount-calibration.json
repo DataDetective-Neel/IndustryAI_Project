@@ -1,0 +1,5416 @@
+{
+  "checkpoint": "A:\\IndustryAI_Project\\models\\pcb-mounting-holes-yolo26n-pose.pt",
+  "present": true,
+  "loadable": true,
+  "sha256": "a3035f835ff92d57b452f7c43edf566cf83e50b9752623b00e044e4ee6d773a3",
+  "model": "YOLO26 four-keypoint pose, unchanged weights",
+  "correction": "known-layout registration plus four bounded local hole-patch checks; not retraining",
+  "calibration_images": [
+    {
+      "layout": "micropcb_A",
+      "image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/ACCC5.txt"
+    },
+    {
+      "layout": "micropcb_M",
+      "image": "PCB_Dataset_Pilot/images/train/MCCB5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/MCCB5.txt"
+    },
+    {
+      "layout": "micropcb_E",
+      "image": "PCB_Dataset_Pilot/images/val/ECCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/val/ECCC5.txt"
+    },
+    {
+      "layout": "micropcb_B",
+      "image": "PCB_Dataset_Pilot/images/train/BCCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/BCCC5.txt"
+    },
+    {
+      "layout": "micropcb_H",
+      "image": "PCB_Dataset_Pilot/images/train/HCCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/HCCC5.txt"
+    },
+    {
+      "layout": "micropcb_H",
+      "image": "PCB_Dataset_Pilot/images/train/HCCB5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/HCCB5.txt"
+    },
+    {
+      "layout": "micropcb_M",
+      "image": "PCB_Dataset_Pilot/images/train/MBCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/MBCC5.txt"
+    }
+  ],
+  "cases": [
+    {
+      "image": "ACCC5.jpg",
+      "image_sha256": "f7f39fa3471f2a4962e07cc089664d57505f86aac1d29db124852f1e629a1cb7",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          187.39764337,
+          362.88148992000004
+        ],
+        [
+          782.3107903800001,
+          380.72812032
+        ],
+        [
+          775.766747,
+          1296.85515264
+        ],
+        [
+          178.47394698,
+          1377.16498944
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 187.0000000000006,
+          "y": 363.0000000000007,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 781.9999999999997,
+          "y": 380.99999999999994,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 775.9999999999997,
+          "y": 1297.0,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 178.00000000000037,
+          "y": 1376.9999999999995,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.41492757050627493,
+        0.4129276216211061,
+        0.2745682423512064,
+        0.5018438553598398
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9036867022514343,
+          "bbox_xyxy": [
+            144.89878845214844,
+            167.19818115234375,
+            906.5015258789062,
+            1315.8768310546875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 218.48497009277344,
+              "y": 435.23931884765625,
+              "confidence": 0.9203795790672302,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 790.47412109375,
+              "y": 418.19561767578125,
+              "confidence": 0.8380376100540161,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 848.5775756835938,
+              "y": 1007.2348022460938,
+              "confidence": 0.8800762891769409,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 204.0121612548828,
+              "y": 1075.4671630859375,
+              "confidence": 0.9736252427101135,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.00521130533888936,
+          "bbox_xyxy": [
+            208.8270263671875,
+            509.31884765625,
+            830.50927734375,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 484.87054443359375,
+              "y": 1072.5665283203125,
+              "confidence": 0.5559148788452148,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 650.6578369140625,
+              "y": 1096.42138671875,
+              "confidence": 0.4080534279346466,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 647.6243286132812,
+              "y": 1330.812744140625,
+              "confidence": 0.5392313003540039,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 439.1417236328125,
+              "y": 1288.545166015625,
+              "confidence": 0.5234423279762268,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        78.75326843942686,
+        38.34649040587061,
+        298.6324900875332,
+        302.77678050853876
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "low_landmark_confidence",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 1.0,
+          "edge_score": 0.9999998807907104,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 1.0000001192092896,
+          "edge_score": 1.0,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 1.0,
+          "edge_score": 1.0000001192092896,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 1.0,
+          "edge_score": 1.0,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_A",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 290
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 542
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 420
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 453
+        }
+      ]
+    },
+    {
+      "image": "ABCC5.jpg",
+      "image_sha256": "23617e89655ca5985895f9ecb852225a98426aa3c9fc65dd60dc522193b79a6d",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          202.596978,
+          440.925696
+        ],
+        [
+          761.82597792,
+          340.13455872000003
+        ],
+        [
+          936.8761356000001,
+          1197.11467008
+        ],
+        [
+          394.7432052,
+          1390.86077952
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 202.27675334520904,
+          "y": 441.08730179190025,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 761.5307199380848,
+          "y": 339.494300550007,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 936.2900198914152,
+          "y": 1197.3706019910783,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 394.2748251667023,
+          "y": 1390.7761641550974,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.35869243302820186,
+        0.7050587210491864,
+        0.6395566956557807,
+        0.47596177952596097
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.8884920477867126,
+          "bbox_xyxy": [
+            157.55160522460938,
+            134.5338592529297,
+            1000.3058471679688,
+            1356.4376220703125
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 156.71568298339844,
+              "y": 382.8547058105469,
+              "confidence": 0.9112547039985657,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 843.89697265625,
+              "y": 338.9674072265625,
+              "confidence": 0.9270294308662415,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 916.9495239257812,
+              "y": 1038.86865234375,
+              "confidence": 0.9610826373100281,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 252.9456329345703,
+              "y": 1158.4263916015625,
+              "confidence": 0.9863431453704834,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        74.00900711389116,
+        82.07929348871252,
+        159.49568013647473,
+        272.27246681842155
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "mounting_holes_not_verified",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9843701720237732,
+          "edge_score": 0.9699315428733826,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.9088845252990723,
+          "edge_score": 0.8682922720909119,
+          "offset_template_px": [
+            0,
+            -1
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9376147985458374,
+          "edge_score": 0.8323875665664673,
+          "offset_template_px": [
+            -1,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9722103476524353,
+          "edge_score": 0.9674491286277771,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_A",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 166
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 290
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 195
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 254
+        }
+      ]
+    },
+    {
+      "image": "ACCB5.jpg",
+      "image_sha256": "bfdfd43f6e4ae25f7578790229fab9cc4089ad4842989bf00883a26884fe2e6e",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          199.26637122,
+          389.90298624
+        ],
+        [
+          756.9184459200001,
+          380.1768192
+        ],
+        [
+          767.26120338,
+          1298.22892032
+        ],
+        [
+          208.75232931,
+          1370.77753344
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 201.27514985715578,
+          "y": 390.0454583135409,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 759.8327245254319,
+          "y": 377.9276567626,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 770.035664966145,
+          "y": 1298.9904856549826,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 207.50390445814477,
+          "y": 1369.799943744327,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        2.013824695655631,
+        3.6812703595211294,
+        2.8770851312467776,
+        1.5856374818399752
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.92486572265625,
+          "bbox_xyxy": [
+            157.56698608398438,
+            162.64625549316406,
+            891.1149291992188,
+            1323.10107421875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 204.05479431152344,
+              "y": 419.87738037109375,
+              "confidence": 0.9260633587837219,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 799.9972534179688,
+              "y": 411.94622802734375,
+              "confidence": 0.881962776184082,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 847.2945556640625,
+              "y": 1018.301513671875,
+              "confidence": 0.8927984833717346,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 214.856689453125,
+              "y": 1080.6844482421875,
+              "confidence": 0.9772302508354187,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.003069134894758463,
+          "bbox_xyxy": [
+            182.57798767089844,
+            611.3930053710938,
+            788.593505859375,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 375.1282653808594,
+              "y": 1078.5357666015625,
+              "confidence": 0.5709531307220459,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 599.5191650390625,
+              "y": 1070.7542724609375,
+              "confidence": 0.5114954710006714,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 585.3289184570312,
+              "y": 1319.619873046875,
+              "confidence": 0.5993393659591675,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 370.9787902832031,
+              "y": 1326.783447265625,
+              "confidence": 0.5694534778594971,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 2,
+          "class_id": 0,
+          "board_confidence": 0.0017043913248926401,
+          "bbox_xyxy": [
+            185.28541564941406,
+            338.2413635253906,
+            839.2466430664062,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 487.6240234375,
+              "y": 995.110595703125,
+              "confidence": 0.5805879831314087,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 641.538818359375,
+              "y": 1027.69921875,
+              "confidence": 0.38842108845710754,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 636.2965087890625,
+              "y": 1252.607421875,
+              "confidence": 0.5199626684188843,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 429.4084777832031,
+              "y": 1198.6055908203125,
+              "confidence": 0.5257257223129272,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        30.354460944473733,
+        53.52643265421253,
+        291.1437625479372,
+        290.1573043925352
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "mounting_holes_not_verified",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.8429994583129883,
+          "edge_score": 0.6606478691101074,
+          "offset_template_px": [
+            2,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.7823464274406433,
+          "edge_score": 0.604427695274353,
+          "offset_template_px": [
+            3,
+            -4
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.8353146314620972,
+          "edge_score": 0.6850265264511108,
+          "offset_template_px": [
+            3,
+            1
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.6918477416038513,
+          "edge_score": 0.5253427028656006,
+          "offset_template_px": [
+            0,
+            -1
+          ]
+        }
+      ],
+      "layout_id": "micropcb_A",
+      "layout_regions": [
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 91
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 29
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 59
+        }
+      ]
+    },
+    {
+      "image": "ACDC5.jpg",
+      "image_sha256": "29867d3e45f8b4fa6ae726139e167fedd3c372ae9818f296efa64413301ea8d2",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          192.98467348000003,
+          359.79598848
+        ],
+        [
+          763.50523632,
+          388.00321536
+        ],
+        [
+          759.13461456,
+          1287.2468275200001
+        ],
+        [
+          185.16679736,
+          1375.8100992
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 192.70652737132778,
+          "y": 359.96178520470465,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 765.0497166906682,
+          "y": 385.63114032386073,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 760.3406160100005,
+          "y": 1285.387213301863,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 184.66608890681357,
+          "y": 1375.6599477194818,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.3238113828948912,
+        2.8305758411416253,
+        2.216439608403691,
+        0.5227374314071519
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9136404395103455,
+          "bbox_xyxy": [
+            169.69468688964844,
+            161.35562133789062,
+            901.5643310546875,
+            1318.4664306640625
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 259.5225524902344,
+              "y": 451.2111511230469,
+              "confidence": 0.9063043594360352,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 784.7327880859375,
+              "y": 454.1072998046875,
+              "confidence": 0.8044981956481934,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 820.0542602539062,
+              "y": 1008.3005981445312,
+              "confidence": 0.8192674517631531,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 215.1314239501953,
+              "y": 1042.8284912109375,
+              "confidence": 0.9702390432357788,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.006598783191293478,
+          "bbox_xyxy": [
+            148.8182830810547,
+            163.50308227539062,
+            903.2048950195312,
+            1353.4295654296875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 348.629638671875,
+              "y": 609.2831420898438,
+              "confidence": 0.8460586667060852,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 699.3649291992188,
+              "y": 615.6076049804688,
+              "confidence": 0.4665113687515259,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 742.5812377929688,
+              "y": 1002.49560546875,
+              "confidence": 0.6380758285522461,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 283.2572937011719,
+              "y": 1036.8045654296875,
+              "confidence": 0.9056389927864075,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 2,
+          "class_id": 0,
+          "board_confidence": 0.0041196015663445,
+          "bbox_xyxy": [
+            188.3235321044922,
+            351.879638671875,
+            851.375244140625,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 487.52227783203125,
+              "y": 990.97705078125,
+              "confidence": 0.5787087082862854,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 646.42919921875,
+              "y": 1021.8236083984375,
+              "confidence": 0.39068952202796936,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 641.5574340820312,
+              "y": 1255.7113037109375,
+              "confidence": 0.5204142928123474,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 432.0093078613281,
+              "y": 1202.0992431640625,
+              "confidence": 0.5351177453994751,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 3,
+          "class_id": 0,
+          "board_confidence": 0.0028894159477204084,
+          "bbox_xyxy": [
+            181.7218780517578,
+            600.7899169921875,
+            800.0831909179688,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 375.8701171875,
+              "y": 1076.8626708984375,
+              "confidence": 0.5685685276985168,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 603.1064453125,
+              "y": 1068.876708984375,
+              "confidence": 0.5151930451393127,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 588.9580688476562,
+              "y": 1319.9659423828125,
+              "confidence": 0.5945059061050415,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 374.9822692871094,
+              "y": 1328.8115234375,
+              "confidence": 0.5707200765609741,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 4,
+          "class_id": 0,
+          "board_confidence": 0.0010446710512042046,
+          "bbox_xyxy": [
+            213.18841552734375,
+            537.8460083007812,
+            828.1456909179688,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 485.92218017578125,
+              "y": 1068.94970703125,
+              "confidence": 0.5630980730056763,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 652.6420288085938,
+              "y": 1096.0675048828125,
+              "confidence": 0.402156263589859,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 651.617431640625,
+              "y": 1332.220947265625,
+              "confidence": 0.5335298776626587,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 436.81634521484375,
+              "y": 1288.474365234375,
+              "confidence": 0.525848925113678,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        113.0664464119895,
+        69.4288047876811,
+        285.5209311316121,
+        334.32713037632993
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "low_landmark_confidence",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9696939587593079,
+          "edge_score": 0.9543763399124146,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.721927285194397,
+          "edge_score": 0.6525540351867676,
+          "offset_template_px": [
+            2,
+            -3
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.7819822430610657,
+          "edge_score": 0.478170245885849,
+          "offset_template_px": [
+            1,
+            -2
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9225888252258301,
+          "edge_score": 0.8364103436470032,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_A",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 29
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 173
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 98
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 85
+        }
+      ]
+    },
+    {
+      "image": "ADCC5.jpg",
+      "image_sha256": "6b7645df0bd00aa8a54b29bd7b5cc918490be850a34fe9573ab31cff3e1ee995",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          436.09889536,
+          295.27217664
+        ],
+        [
+          998.53544832,
+          456.824064
+        ],
+        [
+          768.5541100800001,
+          1327.37997312
+        ],
+        [
+          180.20664,
+          1257.45017856
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 435.40882663927187,
+          "y": 296.1629240709869,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 998.0854880582183,
+          "y": 457.0007000304592,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 768.6167633507084,
+          "y": 1327.5767947088023,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 179.72590873177558,
+          "y": 1257.2287729337088,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        1.1267767414785739,
+        0.48338858534210594,
+        0.20655306860252895,
+        0.5292664769301704
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9014235734939575,
+          "bbox_xyxy": [
+            288.8551940917969,
+            146.50686645507812,
+            1098.77685546875,
+            1307.953857421875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 487.63665771484375,
+              "y": 466.0720520019531,
+              "confidence": 0.9085050821304321,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 935.079833984375,
+              "y": 503.26190185546875,
+              "confidence": 0.7780125737190247,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 925.685791015625,
+              "y": 1027.0511474609375,
+              "confidence": 0.7409732937812805,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 370.98223876953125,
+              "y": 938.9593505859375,
+              "confidence": 0.9519939422607422,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.6403985023498535,
+          "bbox_xyxy": [
+            229.7213134765625,
+            141.1044464111328,
+            1057.785400390625,
+            1363.7855224609375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 477.149169921875,
+              "y": 646.5405883789062,
+              "confidence": 0.7520198225975037,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 827.580078125,
+              "y": 635.870361328125,
+              "confidence": 0.5425999164581299,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 816.7318725585938,
+              "y": 1019.5497436523438,
+              "confidence": 0.5839073657989502,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 375.24310302734375,
+              "y": 1015.777587890625,
+              "confidence": 0.8740373253822327,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 2,
+          "class_id": 0,
+          "board_confidence": 0.014564492739737034,
+          "bbox_xyxy": [
+            234.79966735839844,
+            624.6568603515625,
+            887.664794921875,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 488.7218017578125,
+              "y": 1071.535400390625,
+              "confidence": 0.5584431290626526,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 675.0318603515625,
+              "y": 1086.9801025390625,
+              "confidence": 0.4245486259460449,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 678.2974243164062,
+              "y": 1336.5936279296875,
+              "confidence": 0.5568149089813232,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 447.46844482421875,
+              "y": 1308.0218505859375,
+              "confidence": 0.550250768661499,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 3,
+          "class_id": 0,
+          "board_confidence": 0.002553233178332448,
+          "bbox_xyxy": [
+            215.34552001953125,
+            473.5442199707031,
+            923.4462890625,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 477.1202697753906,
+              "y": 990.5426025390625,
+              "confidence": 0.5815609693527222,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 680.912841796875,
+              "y": 1001.1004638671875,
+              "confidence": 0.44997814297676086,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 673.7042236328125,
+              "y": 1259.3592529296875,
+              "confidence": 0.5673449039459229,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 439.2593994140625,
+              "y": 1232.0062255859375,
+              "confidence": 0.5894530415534973,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        178.4061051987938,
+        78.63261267058587,
+        338.9509827031138,
+        371.2569684052773
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "low_landmark_confidence",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9742657542228699,
+          "edge_score": 0.9554679989814758,
+          "offset_template_px": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.909950315952301,
+          "edge_score": 0.8649800419807434,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9474270343780518,
+          "edge_score": 0.8986188173294067,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9688445329666138,
+          "edge_score": 0.9518896341323853,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_A",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 153
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 291
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 201
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 226
+        }
+      ]
+    },
+    {
+      "image": "BCCC5.jpg",
+      "image_sha256": "817df65aa3ee2179cb5e201e310228269ecb99c43090cb9a633240af6f664a45",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          181.29502743,
+          362.60061696
+        ],
+        [
+          781.6490718299999,
+          377.46129408
+        ],
+        [
+          784.62112146,
+          1295.851392
+        ],
+        [
+          181.29502743,
+          1376.09906688
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 180.99999999999986,
+          "y": 362.9999999999994,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 781.9999999999999,
+          "y": 376.99999999999983,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 785.0000000000003,
+          "y": 1296.0,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 180.99999999999952,
+          "y": 1376.0000000000005,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.49653599778023527,
+        0.5796057356020121,
+        0.4069806945504293,
+        0.31121605222985993
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9245755076408386,
+          "bbox_xyxy": [
+            127.73430633544922,
+            147.5892791748047,
+            883.242431640625,
+            1333.3709716796875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 176.3822021484375,
+              "y": 469.51837158203125,
+              "confidence": 0.8285366296768188,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 736.6018676757812,
+              "y": 438.76824951171875,
+              "confidence": 0.8602650761604309,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 764.70703125,
+              "y": 1004.195556640625,
+              "confidence": 0.8820772171020508,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 195.06826782226562,
+              "y": 1080.5692138671875,
+              "confidence": 0.962257444858551,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.007671760860830545,
+          "bbox_xyxy": [
+            206.3148193359375,
+            526.2898559570312,
+            832.7262573242188,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 482.419189453125,
+              "y": 1074.801025390625,
+              "confidence": 0.5589869618415833,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 650.0081787109375,
+              "y": 1095.0115966796875,
+              "confidence": 0.4096364378929138,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 645.1386108398438,
+              "y": 1330.1807861328125,
+              "confidence": 0.5434551239013672,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 439.70758056640625,
+              "y": 1290.5699462890625,
+              "confidence": 0.5264884829521179,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        107.03056622135584,
+        76.07754850426375,
+        292.3349060376932,
+        295.8506315232024
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "low_landmark_confidence",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9999997615814209,
+          "edge_score": 0.9999999403953552,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 1.0000007152557373,
+          "edge_score": 1.0,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 1.0000003576278687,
+          "edge_score": 1.0,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 1.0,
+          "edge_score": 1.0000001192092896,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_B",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 244
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 659
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 445
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 449
+        }
+      ]
+    },
+    {
+      "image": "BBCC5.jpg",
+      "image_sha256": "be67945f2341b894066904def4075d10465a58120b9ea01a65a7b5b3c04842df",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          203.14870875,
+          436.78399487999997
+        ],
+        [
+          769.74582375,
+          338.72812032
+        ],
+        [
+          943.87329,
+          1200.8003020800002
+        ],
+        [
+          391.559175,
+          1389.45682944
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 202.95241782284643,
+          "y": 437.0522393888926,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 770.1043925396955,
+          "y": 338.441197394058,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 944.1526314118252,
+          "y": 1200.7847655829892,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 391.1412192693292,
+          "y": 1389.579841104163,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.3323932078635957,
+        0.45923451783898617,
+        0.27977313505739804,
+        0.43568206564039025
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9120001196861267,
+          "bbox_xyxy": [
+            119.75566864013672,
+            166.9362335205078,
+            1008.5059204101562,
+            1395.3538818359375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 162.51280212402344,
+              "y": 475.52587890625,
+              "confidence": 0.8955655097961426,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 813.8358154296875,
+              "y": 418.5532531738281,
+              "confidence": 0.8976240158081055,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 905.471435546875,
+              "y": 1068.0919189453125,
+              "confidence": 0.9662291407585144,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 288.0626525878906,
+              "y": 1212.90673828125,
+              "confidence": 0.9731910228729248,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        56.14454991553938,
+        91.19199088432174,
+        138.1528768417873,
+        204.6496148043363
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "mounting_holes_not_verified",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9918844699859619,
+          "edge_score": 0.9815270900726318,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.987420380115509,
+          "edge_score": 0.9383805990219116,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9892561435699463,
+          "edge_score": 0.9645429253578186,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9943612217903137,
+          "edge_score": 0.9839512705802917,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_B",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 96
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 323
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 169
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 197
+        }
+      ]
+    },
+    {
+      "image": "BCCB5.jpg",
+      "image_sha256": "340c7827d52165f3f8c3a5b89ae90c1e46601221a08e555271ee35e81177b4ab",
+      "direct_and_app_identical": true,
+      "status": "failure",
+      "reason": "local_mount_patch_not_verified",
+      "source": "YOLO26 with rim/orientation verification",
+      "labels_px": [
+        [
+          195.7571266,
+          391.31862528
+        ],
+        [
+          762.8698867999999,
+          377.28872448
+        ],
+        [
+          788.5539031999999,
+          1300.2856396799998
+        ],
+        [
+          219.1945518,
+          1373.83629312
+        ]
+      ],
+      "accepted_points": [],
+      "error_px": null,
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9270005822181702,
+          "bbox_xyxy": [
+            139.6116180419922,
+            143.61233520507812,
+            886.0103149414062,
+            1337.530517578125
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 162.14938354492188,
+              "y": 450.1706237792969,
+              "confidence": 0.8532394170761108,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 744.1561889648438,
+              "y": 430.5545654296875,
+              "confidence": 0.872621476650238,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 782.622314453125,
+              "y": 1005.58349609375,
+              "confidence": 0.8958793878555298,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 204.68580627441406,
+              "y": 1092.1392822265625,
+              "confidence": 0.9695786237716675,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "local_mount_patch_not_verified"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.0043708630837500095,
+          "bbox_xyxy": [
+            214.00982666015625,
+            520.0404663085938,
+            839.5110473632812,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 495.90692138671875,
+              "y": 1074.3070068359375,
+              "confidence": 0.5574734210968018,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 659.0445556640625,
+              "y": 1096.8978271484375,
+              "confidence": 0.4028726816177368,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 655.1962890625,
+              "y": 1331.9114990234375,
+              "confidence": 0.5400398969650269,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 448.8074951171875,
+              "y": 1288.1854248046875,
+              "confidence": 0.522697389125824,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "local_mount_patch_not_verified"
+        }
+      ],
+      "raw_error_px": [
+        67.77195674183677,
+        56.45752650216741,
+        294.76183127975145,
+        282.07039838136797
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "mounting_holes_not_verified",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.7445143461227417,
+          "edge_score": 0.36589932441711426,
+          "offset_template_px": [
+            4,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_B",
+      "layout_regions": [
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 67
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 35
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 38
+        }
+      ]
+    },
+    {
+      "image": "BCDC5.jpg",
+      "image_sha256": "88c4fb1571e4a148f06d9b8c6d8ba20a1b6e4ba94816809e7185290130fc60e3",
+      "direct_and_app_identical": true,
+      "status": "failure",
+      "reason": "local_mount_patch_not_verified",
+      "source": "YOLO26 with rim/orientation verification",
+      "labels_px": [
+        [
+          204.40754496,
+          358.01134079999997
+        ],
+        [
+          781.96629072,
+          386.48534015999996
+        ],
+        [
+          779.9406319999999,
+          1289.4299596800001
+        ],
+        [
+          197.04150704,
+          1374.79056384
+        ]
+      ],
+      "accepted_points": [],
+      "error_px": null,
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9057803750038147,
+          "bbox_xyxy": [
+            184.0792236328125,
+            155.59585571289062,
+            908.0325927734375,
+            1320.0780029296875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 242.46299743652344,
+              "y": 434.6707763671875,
+              "confidence": 0.9090809226036072,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 802.0655517578125,
+              "y": 428.9801330566406,
+              "confidence": 0.8444694876670837,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 838.8125,
+              "y": 1016.7813110351562,
+              "confidence": 0.8575230836868286,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 233.8238525390625,
+              "y": 1066.396728515625,
+              "confidence": 0.9765353798866272,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "local_mount_patch_not_verified"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.007314315065741539,
+          "bbox_xyxy": [
+            224.1478729248047,
+            537.59619140625,
+            844.0427856445312,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 491.66357421875,
+              "y": 1073.570068359375,
+              "confidence": 0.5516757965087891,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 661.3680419921875,
+              "y": 1094.7255859375,
+              "confidence": 0.4095347821712494,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 657.1264038085938,
+              "y": 1330.4759521484375,
+              "confidence": 0.5439034104347229,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 447.4522399902344,
+              "y": 1290.5032958984375,
+              "confidence": 0.526861310005188,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "local_mount_patch_not_verified"
+        },
+        {
+          "board_id": 2,
+          "class_id": 0,
+          "board_confidence": 0.0015549614327028394,
+          "bbox_xyxy": [
+            199.44532775878906,
+            360.1813659667969,
+            865.1201782226562,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 489.9363098144531,
+              "y": 995.5146484375,
+              "confidence": 0.574108362197876,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 658.4058227539062,
+              "y": 1018.7532958984375,
+              "confidence": 0.4136267304420471,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 648.5774536132812,
+              "y": 1252.3929443359375,
+              "confidence": 0.5422548055648804,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 440.78802490234375,
+              "y": 1206.073486328125,
+              "confidence": 0.540145993232727,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "local_mount_patch_not_verified"
+        }
+      ],
+      "raw_error_px": [
+        85.58555091061055,
+        47.00837922747933,
+        278.93221837871107,
+        310.5796171780919
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "low_landmark_confidence",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.7012965679168701,
+          "edge_score": 0.8168497681617737,
+          "offset_template_px": [
+            0,
+            -1
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.509711742401123,
+          "edge_score": 0.3850635886192322,
+          "offset_template_px": [
+            0,
+            -1
+          ]
+        }
+      ],
+      "layout_id": "micropcb_B",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 25
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 194
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 89
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 46
+        }
+      ]
+    },
+    {
+      "image": "BDCC5.jpg",
+      "image_sha256": "f7f7c4a9b58d9e92d52d2147a50956c860709cc739fd9cfdef617c25a5ad5503",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          384.84110784,
+          298.51903488000005
+        ],
+        [
+          965.5272598399999,
+          436.64683008000003
+        ],
+        [
+          779.01098408,
+          1330.37323776
+        ],
+        [
+          175.77047732,
+          1283.01176832
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 384.4663608864864,
+          "y": 298.81565394461353,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 965.9592688022339,
+          "y": 436.2574270508504,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 779.3225514698786,
+          "y": 1330.675204000525,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 175.45615989553212,
+          "y": 1282.8133894857067,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.4779311128812236,
+        0.5816067937716225,
+        0.43388690790638407,
+        0.3716848197326984
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.913863480091095,
+          "bbox_xyxy": [
+            214.9552459716797,
+            102.3023452758789,
+            1044.50439453125,
+            1324.5941162109375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 415.2698059082031,
+              "y": 548.4263916015625,
+              "confidence": 0.7463687062263489,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 853.5760498046875,
+              "y": 530.2894287109375,
+              "confidence": 0.7184196710586548,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 840.1140747070312,
+              "y": 980.223388671875,
+              "confidence": 0.7228480577468872,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 349.2177429199219,
+              "y": 990.8482666015625,
+              "confidence": 0.9202959537506104,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.0172350462526083,
+          "bbox_xyxy": [
+            229.78594970703125,
+            666.1964721679688,
+            867.3248291015625,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 440.2889709472656,
+              "y": 1071.041259765625,
+              "confidence": 0.5791664719581604,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 667.1183471679688,
+              "y": 1071.6258544921875,
+              "confidence": 0.4920103847980499,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 661.3630981445312,
+              "y": 1331.6751708984375,
+              "confidence": 0.5922752022743225,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 424.0655517578125,
+              "y": 1325.37158203125,
+              "confidence": 0.583248496055603,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 2,
+          "class_id": 0,
+          "board_confidence": 0.007536851800978184,
+          "bbox_xyxy": [
+            212.23184204101562,
+            524.3862915039062,
+            895.0751953125,
+            1523.3768310546875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 425.1600646972656,
+              "y": 991.482421875,
+              "confidence": 0.5963801741600037,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 678.0918579101562,
+              "y": 983.3995361328125,
+              "confidence": 0.5355365872383118,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 663.1964721679688,
+              "y": 1252.1810302734375,
+              "confidence": 0.6030997037887573,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 418.00531005859375,
+              "y": 1260.10888671875,
+              "confidence": 0.6166170835494995,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 3,
+          "class_id": 0,
+          "board_confidence": 0.0012418754631653428,
+          "bbox_xyxy": [
+            277.4965515136719,
+            592.0453491210938,
+            888.38720703125,
+            1536.0
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 554.738525390625,
+              "y": 1067.2265625,
+              "confidence": 0.5638183355331421,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 717.7135620117188,
+              "y": 1098.1710205078125,
+              "confidence": 0.40409421920776367,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 725.8478393554688,
+              "y": 1333.2818603515625,
+              "confidence": 0.5270072817802429,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 505.99615478515625,
+              "y": 1294.3349609375,
+              "confidence": 0.5159143805503845,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        251.7530389283993,
+        145.9520801726563,
+        355.44128136812117,
+        339.7697244906752
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "low_landmark_confidence",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9979491829872131,
+          "edge_score": 0.9911931157112122,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.9976580142974854,
+          "edge_score": 0.9740085601806641,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9978430867195129,
+          "edge_score": 0.988089919090271,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9985872507095337,
+          "edge_score": 0.9922401905059814,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_B",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 142
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 377
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 240
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 241
+        }
+      ]
+    },
+    {
+      "image": "HCCC5.jpg",
+      "image_sha256": "a702cf53e4f9947a1ad5a156fd807b25c4c339f3460b9482ec879ab8e2a6e9cc",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          262.31632218,
+          511.28888832000007
+        ],
+        [
+          980.3095216199999,
+          510.57778176
+        ],
+        [
+          981.73129428,
+          1361.77777152
+        ],
+        [
+          263.73809484000003,
+          1366.75554816
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 261.9999999999999,
+          "y": 510.9999999999994,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 979.9999999999999,
+          "y": 510.9999999999994,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 982.0,
+          "y": 1362.0000000000002,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 263.99999999999994,
+          "y": 1367.0000000000005,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.4283878884758988,
+        0.5235187441110715,
+        0.34869508353848694,
+        0.3582610988011298
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9211242198944092,
+          "bbox_xyxy": [
+            179.4620361328125,
+            222.80918884277344,
+            1136.599609375,
+            1411.69189453125
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 314.5440673828125,
+              "y": 469.50299072265625,
+              "confidence": 0.9777266383171082,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 962.9137573242188,
+              "y": 443.1380920410156,
+              "confidence": 0.9290403127670288,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1019.3285522460938,
+              "y": 1222.6612548828125,
+              "confidence": 0.9469519853591919,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 307.2155456542969,
+              "y": 1264.97802734375,
+              "confidence": 0.9930593967437744,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        66.88646056554055,
+        69.64714182812718,
+        144.10745646160666,
+        110.67498575925728
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "mounting_pattern_not_verified",
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 297.43195860566163,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                314.5440673828125,
+                469.50299072265625
+              ],
+              "refined_xy": [
+                262.5262145996094,
+                513.1290283203125
+              ],
+              "shift_px": 67.89026561037385
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                962.9137573242188,
+                443.1380920410156
+              ],
+              "refined_xy": [
+                981.4501342773438,
+                512.2757568359375
+              ],
+              "shift_px": 71.57942416535163
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                1019.3285522460938,
+                1222.6612548828125
+              ],
+              "refined_xy": [
+                982.3180541992188,
+                1360.5694580078125
+              ],
+              "shift_px": 142.7881278497761
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                307.2155456542969,
+                1264.97802734375
+              ],
+              "refined_xy": [
+                264.75128173828125,
+                1365.0504150390625
+              ],
+              "shift_px": 108.70922908828835
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "failure",
+          "scores": [
+            0.2864547092193707,
+            0.06027237358511568,
+            -0.013369890590710374,
+            0.027129674468129375
+          ],
+          "cyclic_shift": 0,
+          "score": 0.2864547092193707,
+          "margin": 0.22618233563425505
+        }
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9999998211860657,
+          "edge_score": 0.9999998807907104,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 1.0000001192092896,
+          "edge_score": 1.0,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 1.0000001192092896,
+          "edge_score": 0.9999998807907104,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 1.0000001192092896,
+          "edge_score": 1.0,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_H",
+      "layout_regions": [
+        {
+          "name": "upper board silkscreen and connector solder footprints",
+          "kind": "connector_and_silkscreen",
+          "inliers": 491
+        },
+        {
+          "name": "GPIO header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 228
+        },
+        {
+          "name": "audio HDMI and power footprints",
+          "kind": "connectors",
+          "inliers": 629
+        },
+        {
+          "name": "display connector and lower silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 261
+        }
+      ]
+    },
+    {
+      "image": "HBCC5.jpg",
+      "image_sha256": "9fa080b1a2fbcc215b0eb83b146ecfcfa3b45ba66b3c6d1e9655be1cecccfeae",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          288.67493415999996,
+          612.431616
+        ],
+        [
+          934.1914586400001,
+          462.96522239999996
+        ],
+        [
+          1111.79216432,
+          1228.07826432
+        ],
+        [
+          467.12854136,
+          1382.0063232
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 288.1189260557666,
+          "y": 611.5989201947787,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 933.6025919800451,
+          "y": 463.40802245093874,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 1112.1769815834305,
+          "y": 1228.1715984966806,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 467.5898366879352,
+          "y": 1381.8072303854979,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        1.0012628605947163,
+        0.7367739329794007,
+        0.3959742349835051,
+        0.5024254455749927
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9197276830673218,
+          "bbox_xyxy": [
+            177.79721069335938,
+            217.21743774414062,
+            1172.648193359375,
+            1444.476318359375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 260.5536804199219,
+              "y": 547.7122802734375,
+              "confidence": 0.9037848114967346,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 984.0455322265625,
+              "y": 463.2010803222656,
+              "confidence": 0.935371994972229,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1068.22119140625,
+              "y": 1135.78271484375,
+              "confidence": 0.9815346002578735,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 429.2593688964844,
+              "y": 1323.032958984375,
+              "confidence": 0.9764951467514038,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        70.56484485068582,
+        49.85463150133474,
+        102.06320656227517,
+        70.08517610722147
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "mounting_pattern_not_verified",
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 303.98527924884786,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                260.5536804199219,
+                547.7122802734375
+              ],
+              "refined_xy": [
+                289.2110900878906,
+                613.9609985351562
+              ],
+              "shift_px": 72.181298133231
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                984.0455322265625,
+                463.2010803222656
+              ],
+              "refined_xy": [
+                935.5050659179688,
+                463.9335632324219
+              ],
+              "shift_px": 48.545992632444914
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                1068.22119140625,
+                1135.78271484375
+              ],
+              "refined_xy": [
+                1111.7822265625,
+                1226.4525146484375
+              ],
+              "shift_px": 100.59113470135506
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                429.2593688964844,
+                1323.032958984375
+              ],
+              "refined_xy": [
+                467.7799987792969,
+                1379.9632568359375
+              ],
+              "shift_px": 68.73789158852816
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "failure",
+          "scores": [
+            0.28270689080432193,
+            0.058910202624571216,
+            -0.011329828481446784,
+            0.02656720836647518
+          ],
+          "cyclic_shift": 0,
+          "score": 0.28270689080432193,
+          "margin": 0.2237966881797507
+        }
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9845868349075317,
+          "edge_score": 0.9029957056045532,
+          "offset_template_px": [
+            0,
+            -1
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.9795206785202026,
+          "edge_score": 0.8899526000022888,
+          "offset_template_px": [
+            -1,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9916127324104309,
+          "edge_score": 0.9340742230415344,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9868949055671692,
+          "edge_score": 0.9119863510131836,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_H",
+      "layout_regions": [
+        {
+          "name": "upper board silkscreen and connector solder footprints",
+          "kind": "connector_and_silkscreen",
+          "inliers": 207
+        },
+        {
+          "name": "GPIO header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 101
+        },
+        {
+          "name": "audio HDMI and power footprints",
+          "kind": "connectors",
+          "inliers": 207
+        },
+        {
+          "name": "display connector and lower silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 133
+        }
+      ]
+    },
+    {
+      "image": "HCCB5.jpg",
+      "image_sha256": "207b2dac1a5bbc67de7fda51680ea5eda30658759ffff31b76f7dbf7f3c5f66e",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          240.22720726,
+          592.75034112
+        ],
+        [
+          866.65921951,
+          597.45103872
+        ],
+        [
+          847.25293911,
+          1381.0758604799998
+        ],
+        [
+          222.60921951,
+          1352.01103872
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 240.0,
+          "y": 593.0000000000006,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 867.0000000000005,
+          "y": 596.9999999999993,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 847.0000000000005,
+          "y": 1381.0000000000002,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 222.99999999999997,
+          "y": 1351.9999999999995,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.33756880092779734,
+        0.5653028120440151,
+        0.2640700774286313,
+        0.39093636912400975
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9150750041007996,
+          "bbox_xyxy": [
+            197.06231689453125,
+            326.0906066894531,
+            1005.6722412109375,
+            1404.464111328125
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 293.6991271972656,
+              "y": 522.6130981445312,
+              "confidence": 0.9602739214897156,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 890.2283935546875,
+              "y": 524.2018432617188,
+              "confidence": 0.9039230942726135,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 899.4307861328125,
+              "y": 1222.506591796875,
+              "confidence": 0.8963817954063416,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 234.02783203125,
+              "y": 1214.2186279296875,
+              "confidence": 0.9900586009025574,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        88.19568625492569,
+        76.94771341914111,
+        166.93334205795156,
+        138.26472139818122
+      ],
+      "model_postprocessing": {
+        "status": "ok",
+        "reason": null,
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 289.7189715914372,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                293.6991271972656,
+                522.6130981445312
+              ],
+              "refined_xy": [
+                242.33172607421875,
+                593.2889404296875
+              ],
+              "shift_px": 87.37095959672342
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                890.2283935546875,
+                524.2018432617188
+              ],
+              "refined_xy": [
+                870.4396362304688,
+                599.1791381835938
+              ],
+              "shift_px": 77.54475914101896
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                899.4307861328125,
+                1222.506591796875
+              ],
+              "refined_xy": [
+                850.598876953125,
+                1380.386474609375
+              ],
+              "shift_px": 165.25922894356606
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                234.02783203125,
+                1214.2186279296875
+              ],
+              "refined_xy": [
+                224.32852172851562,
+                1351.35546875
+              ],
+              "shift_px": 137.47941566112527
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "ok",
+          "scores": [
+            0.5728168136567067,
+            0.035859737670363344,
+            -0.003938062409680528,
+            0.03633327111016934
+          ],
+          "cyclic_shift": 0,
+          "score": 0.5728168136567067,
+          "margin": 0.5364835425465373
+        }
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 1.0,
+          "edge_score": 1.0000001192092896,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.9999997615814209,
+          "edge_score": 1.0000001192092896,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9999998211860657,
+          "edge_score": 1.0000001192092896,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 3,
+          "score": 1.0000008344650269,
+          "edge_score": 1.0,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_H",
+      "layout_regions": [
+        {
+          "name": "upper board silkscreen and connector solder footprints",
+          "kind": "connector_and_silkscreen",
+          "inliers": 344
+        },
+        {
+          "name": "GPIO header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 257
+        },
+        {
+          "name": "audio HDMI and power footprints",
+          "kind": "connectors",
+          "inliers": 596
+        },
+        {
+          "name": "display connector and lower silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 350
+        }
+      ]
+    },
+    {
+      "image": "HCDC5.jpg",
+      "image_sha256": "12ebe1b87fb7614f5ebe5fcac667497eebf5aadc89b3ec8bdee9d68ee384b7d1",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          321.25643303,
+          556.31714304
+        ],
+        [
+          973.53415523,
+          538.3374489600001
+        ],
+        [
+          1006.20072592,
+          1333.65815808
+        ],
+        [
+          353.92300372,
+          1373.6910796799998
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 323.4729352863428,
+          "y": 555.4032277076003,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 972.4103929229275,
+          "y": 537.0574829097941,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 1005.8529185470275,
+          "y": 1332.3494062627653,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 354.90533328124747,
+          "y": 1372.3114488110136,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        2.397524449753986,
+        1.7032776674626113,
+        1.3541791933895286,
+        1.6936211800636454
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9149037599563599,
+          "bbox_xyxy": [
+            248.1790313720703,
+            239.641845703125,
+            1136.074951171875,
+            1418.7098388671875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 360.6585388183594,
+              "y": 529.1986083984375,
+              "confidence": 0.9475845694541931,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 959.78173828125,
+              "y": 509.46380615234375,
+              "confidence": 0.8878615498542786,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 995.1539306640625,
+              "y": 1195.21044921875,
+              "confidence": 0.9235653281211853,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 364.50732421875,
+              "y": 1233.6085205078125,
+              "confidence": 0.9872708320617676,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        47.83242479388528,
+        31.98149810306563,
+        138.88772362723802,
+        140.48185372014999
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "mounting_pattern_not_verified",
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 298.09710246830645,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                360.6585388183594,
+                529.1986083984375
+              ],
+              "refined_xy": [
+                322.3751525878906,
+                557.79736328125
+              ],
+              "shift_px": 47.78604861377885
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                959.78173828125,
+                509.46380615234375
+              ],
+              "refined_xy": [
+                975.8271484375,
+                539.0010375976562
+              ],
+              "shift_px": 33.61403320841235
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                995.1539306640625,
+                1195.21044921875
+              ],
+              "refined_xy": [
+                1007.7992553710938,
+                1332.85693359375
+              ],
+              "shift_px": 138.22611510761408
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                364.50732421875,
+                1233.6085205078125
+              ],
+              "refined_xy": [
+                355.6881408691406,
+                1371.564208984375
+              ],
+              "shift_px": 138.2372959009123
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "failure",
+          "scores": [
+            0.3379812333101531,
+            0.04842439453511479,
+            -4.099398771501166e-05,
+            0.014958409439551512
+          ],
+          "cyclic_shift": 0,
+          "score": 0.3379812333101531,
+          "margin": 0.28955683877503835
+        }
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9028648734092712,
+          "edge_score": 0.42143937945365906,
+          "offset_template_px": [
+            3,
+            -2
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.9073002338409424,
+          "edge_score": 0.47173798084259033,
+          "offset_template_px": [
+            -2,
+            -1
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9570115804672241,
+          "edge_score": 0.7206696271896362,
+          "offset_template_px": [
+            -4,
+            -2
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9400413036346436,
+          "edge_score": 0.6774462461471558,
+          "offset_template_px": [
+            2,
+            -2
+          ]
+        }
+      ],
+      "layout_id": "micropcb_H",
+      "layout_regions": [
+        {
+          "name": "upper board silkscreen and connector solder footprints",
+          "kind": "connector_and_silkscreen",
+          "inliers": 55
+        },
+        {
+          "name": "GPIO header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 37
+        },
+        {
+          "name": "audio HDMI and power footprints",
+          "kind": "connectors",
+          "inliers": 13
+        },
+        {
+          "name": "display connector and lower silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 38
+        }
+      ]
+    },
+    {
+      "image": "HDCC5.jpg",
+      "image_sha256": "1817cffbe3744bb26451702c4ebb62237d750eb0117652f4a80a899248d4abdd",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "calibrated_layout_mounts",
+      "labels_px": [
+        [
+          445.00606932,
+          445.36897536000004
+        ],
+        [
+          1065.97478886,
+          646.10138112
+        ],
+        [
+          828.23801574,
+          1382.72282112
+        ],
+        [
+          206.30103678,
+          1184.44388352
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 444.78895345438673,
+          "y": 444.99561880725537,
+          "confidence": null
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 1065.3680890770813,
+          "y": 646.3644077153266,
+          "confidence": null
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 827.957824559152,
+          "y": 1383.8124650542393,
+          "confidence": null
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 206.41232987581859,
+          "y": 1184.8716061622388,
+          "confidence": null
+        }
+      ],
+      "error_px": [
+        0.43189630072319357,
+        0.6612621389756376,
+        1.1250915523856913,
+        0.4419647178910548
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9065836071968079,
+          "bbox_xyxy": [
+            243.84423828125,
+            197.19448852539062,
+            1159.03173828125,
+            1420.208984375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 525.8950805664062,
+              "y": 679.8561401367188,
+              "confidence": 0.8348947763442993,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 910.1764526367188,
+              "y": 680.1835327148438,
+              "confidence": 0.6585732102394104,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 892.1354370117188,
+              "y": 1127.70703125,
+              "confidence": 0.6956465840339661,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 432.7572937011719,
+              "y": 1086.1038818359375,
+              "confidence": 0.9137489199638367,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.001307986443862319,
+          "bbox_xyxy": [
+            91.94608306884766,
+            0.0,
+            359.5251770019531,
+            786.73974609375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 138.5801544189453,
+              "y": 180.40538024902344,
+              "confidence": 0.4837142825126648,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 292.4225158691406,
+              "y": 177.61355590820312,
+              "confidence": 0.2958938479423523,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 280.02374267578125,
+              "y": 433.15869140625,
+              "confidence": 0.4961419999599457,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 42.76611328125,
+              "y": 387.88720703125,
+              "confidence": 0.612186074256897,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "replaced_by_verified_calibrated_mounts"
+        }
+      ],
+      "raw_error_px": [
+        248.04689593995178,
+        159.4826467904157,
+        262.8990938139488,
+        246.8870029587812
+      ],
+      "model_postprocessing": {
+        "status": "failure",
+        "reason": "low_landmark_confidence",
+        "refinement": null,
+        "orientation_verification": null
+      },
+      "local_verification": [
+        {
+          "id": 0,
+          "score": 0.9851730465888977,
+          "edge_score": 0.9175478219985962,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 1,
+          "score": 0.9798550009727478,
+          "edge_score": 0.8915203809738159,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "score": 0.9895498156547546,
+          "edge_score": 0.9235897064208984,
+          "offset_template_px": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": 3,
+          "score": 0.9865320920944214,
+          "edge_score": 0.9122341871261597,
+          "offset_template_px": [
+            0,
+            0
+          ]
+        }
+      ],
+      "layout_id": "micropcb_H",
+      "layout_regions": [
+        {
+          "name": "upper board silkscreen and connector solder footprints",
+          "kind": "connector_and_silkscreen",
+          "inliers": 222
+        },
+        {
+          "name": "GPIO header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 105
+        },
+        {
+          "name": "audio HDMI and power footprints",
+          "kind": "connectors",
+          "inliers": 245
+        },
+        {
+          "name": "display connector and lower silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 125
+        }
+      ]
+    },
+    {
+      "image": "MBCC5.jpg",
+      "image_sha256": "81d87d6ad5cc4434c50c48713c7ebc8663a818724cb406f6954a52fc0a6f51cb",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "YOLO26 with rim/orientation verification",
+      "labels_px": [
+        [
+          264.9785856,
+          351.50747487
+        ],
+        [
+          1088.9157580800002,
+          196.90698594
+        ],
+        [
+          1277.30092032,
+          1166.3206149
+        ],
+        [
+          452.95062528000005,
+          1329.76249491
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 264.1756896972656,
+          "y": 352.6345520019531,
+          "confidence": 0.9831356406211853,
+          "raw_landmark_id": 0
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 1084.0328369140625,
+          "y": 195.92803955078125,
+          "confidence": 0.9842411875724792,
+          "raw_landmark_id": 1
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 1271.4154052734375,
+          "y": 1164.4453125,
+          "confidence": 0.9976359605789185,
+          "raw_landmark_id": 2
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 454.104736328125,
+          "y": 1328.4173583984375,
+          "confidence": 0.9978284239768982,
+          "raw_landmark_id": 3
+        }
+      ],
+      "error_px": [
+        1.3838152665725525,
+        4.980085857264553,
+        6.177058074420103,
+        1.7723895018145863
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9372938275337219,
+          "bbox_xyxy": [
+            153.2311553955078,
+            98.0469741821289,
+            1372.67919921875,
+            1391.9144287109375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 229.4941864013672,
+              "y": 293.0884094238281,
+              "confidence": 0.9831356406211853,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 1145.9761962890625,
+              "y": 146.5198211669922,
+              "confidence": 0.9842411875724792,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1298.104736328125,
+              "y": 1192.1126708984375,
+              "confidence": 0.9976359605789185,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 434.40380859375,
+              "y": 1378.9805908203125,
+              "confidence": 0.9978284239768982,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "raw_error_px": [
+        68.35151639936048,
+        76.12332088442056,
+        33.136519327268765,
+        52.59662892458113
+      ],
+      "model_postprocessing": {
+        "status": "ok",
+        "reason": null,
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 324.8816130531243,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                229.4941864013672,
+                293.0884094238281
+              ],
+              "refined_xy": [
+                264.1756896972656,
+                352.6345520019531
+              ],
+              "shift_px": 68.90972185982037
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                1145.9761962890625,
+                146.5198211669922
+              ],
+              "refined_xy": [
+                1084.0328369140625,
+                195.92803955078125
+              ],
+              "shift_px": 79.23478916814628
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                1298.104736328125,
+                1192.1126708984375
+              ],
+              "refined_xy": [
+                1271.4154052734375,
+                1164.4453125
+              ],
+              "shift_px": 38.44220483913867
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                434.40380859375,
+                1378.9805908203125
+              ],
+              "refined_xy": [
+                454.104736328125,
+                1328.4173583984375
+              ],
+              "shift_px": 54.26570764804986
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "ok",
+          "scores": [
+            0.4284367717284762,
+            0.06446357438264676,
+            -0.020554124733079108,
+            0.03407630168824675
+          ],
+          "cyclic_shift": 0,
+          "score": 0.4284367717284762,
+          "margin": 0.36397319734582945
+        }
+      },
+      "local_verification": null,
+      "layout_id": "micropcb_M",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and USB/audio footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 518
+        },
+        {
+          "name": "GPIO header and adjacent silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 392
+        },
+        {
+          "name": "HDMI and power connector footprints",
+          "kind": "connectors",
+          "inliers": 698
+        },
+        {
+          "name": "lower display connector and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 355
+        }
+      ]
+    },
+    {
+      "image": "MCCB5.jpg",
+      "image_sha256": "3e8470a2163234c795ed392698f03ca62b826ed62a8fb4e78b723c352cc3f9e9",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "YOLO26 with rim/orientation verification",
+      "labels_px": [
+        [
+          289.18239744,
+          291.82844124
+        ],
+        [
+          1143.21641472,
+          243.1903677
+        ],
+        [
+          1190.96305152,
+          1302.41950776
+        ],
+        [
+          333.3255168,
+          1324.9371315600001
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 291.8246765136719,
+          "y": 292.71490478515625,
+          "confidence": 0.9940522313117981,
+          "raw_landmark_id": 0
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 1143.1990966796875,
+          "y": 240.58262634277344,
+          "confidence": 0.9853940010070801,
+          "raw_landmark_id": 1
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 1189.25537109375,
+          "y": 1300.8067626953125,
+          "confidence": 0.9881483912467957,
+          "raw_landmark_id": 2
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 336.2198181152344,
+          "y": 1323.1488037109375,
+          "confidence": 0.9975305199623108,
+          "raw_landmark_id": 3
+        }
+      ],
+      "error_px": [
+        2.787015665556137,
+        2.607798861244878,
+        2.348854844785202,
+        3.402219363753662
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.8570886850357056,
+          "bbox_xyxy": [
+            205.1566162109375,
+            137.3232421875,
+            1305.2802734375,
+            1414.3536376953125
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 322.4463806152344,
+              "y": 361.20513916015625,
+              "confidence": 0.9940522313117981,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 1136.6590576171875,
+              "y": 281.0088806152344,
+              "confidence": 0.9853940010070801,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1195.876953125,
+              "y": 1311.915283203125,
+              "confidence": 0.9881483912467957,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 317.778564453125,
+              "y": 1328.0155029296875,
+              "confidence": 0.9975305199623108,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.7114236950874329,
+          "bbox_xyxy": [
+            216.85946655273438,
+            114.2757568359375,
+            1314.5712890625,
+            1391.9906005859375
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 366.481689453125,
+              "y": 340.1352233886719,
+              "confidence": 0.9887895584106445,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 1098.8072509765625,
+              "y": 299.2998046875,
+              "confidence": 0.9672365188598633,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1168.0865478515625,
+              "y": 1211.1243896484375,
+              "confidence": 0.9790496230125427,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 386.7655029296875,
+              "y": 1233.642822265625,
+              "confidence": 0.9967241883277893,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "no_confident_board"
+        }
+      ],
+      "raw_error_px": [
+        76.93905894269103,
+        38.38279368797374,
+        10.691874496545426,
+        15.848788520442598
+      ],
+      "model_postprocessing": {
+        "status": "ok",
+        "reason": null,
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 325.5167622412093,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                322.4463806152344,
+                361.20513916015625
+              ],
+              "refined_xy": [
+                291.8246765136719,
+                292.71490478515625
+              ],
+              "shift_px": 75.02400260467367
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                1136.6590576171875,
+                281.0088806152344
+              ],
+              "refined_xy": [
+                1143.1990966796875,
+                240.58262634277344
+              ],
+              "shift_px": 40.951851550823584
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                1195.876953125,
+                1311.915283203125
+              ],
+              "refined_xy": [
+                1189.25537109375,
+                1300.8067626953125
+              ],
+              "shift_px": 12.932307468857356
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                317.778564453125,
+                1328.0155029296875
+              ],
+              "refined_xy": [
+                336.2198181152344,
+                1323.1488037109375
+              ],
+              "shift_px": 19.07261381971659
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "ok",
+          "scores": [
+            0.9068017772125251,
+            0.03531234170223901,
+            -0.01045630479711259,
+            0.03182341734145401
+          ],
+          "cyclic_shift": 0,
+          "score": 0.9068017772125251,
+          "margin": 0.8714894355102861
+        }
+      },
+      "local_verification": null,
+      "layout_id": "micropcb_M",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and USB/audio footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 354
+        },
+        {
+          "name": "GPIO header and adjacent silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 99
+        },
+        {
+          "name": "HDMI and power connector footprints",
+          "kind": "connectors",
+          "inliers": 981
+        },
+        {
+          "name": "lower display connector and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 388
+        }
+      ]
+    },
+    {
+      "image": "MCDC5.jpg",
+      "image_sha256": "c7ef941a2b5e8c866a9f5fe1fec6ca027a0790f4c9a9205713eb00efa7ed2849",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "YOLO26 with rim/orientation verification",
+      "labels_px": [
+        [
+          322.30087679999997,
+          281.06954304000004
+        ],
+        [
+          1163.0352537600002,
+          246.404886
+        ],
+        [
+          1224.2429337600001,
+          1258.64833458
+        ],
+        [
+          384.8488704,
+          1325.92277896
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 322.94659423828125,
+          "y": 282.4588317871094,
+          "confidence": 0.9876797199249268,
+          "raw_landmark_id": 0
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 1160.114501953125,
+          "y": 243.7437744140625,
+          "confidence": 0.985145092010498,
+          "raw_landmark_id": 1
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 1220.098388671875,
+          "y": 1257.7857666015625,
+          "confidence": 0.9948664903640747,
+          "raw_landmark_id": 2
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 386.6448059082031,
+          "y": 1324.01708984375,
+          "confidence": 0.9993409514427185,
+          "raw_landmark_id": 3
+        }
+      ],
+      "error_px": [
+        1.5320163944766259,
+        3.9512410696103233,
+        4.23335298610073,
+        2.6185941566837605
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9358046650886536,
+          "bbox_xyxy": [
+            211.91583251953125,
+            107.1397705078125,
+            1355.3460693359375,
+            1396.694091796875
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 309.2362976074219,
+              "y": 251.51873779296875,
+              "confidence": 0.9876797199249268,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 1198.3125,
+              "y": 166.7086639404297,
+              "confidence": 0.985145092010498,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1278.510986328125,
+              "y": 1276.455810546875,
+              "confidence": 0.9948664903640747,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 331.58660888671875,
+              "y": 1352.7747802734375,
+              "confidence": 0.9993409514427185,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "raw_error_px": [
+        32.3099569827494,
+        87.15487314456907,
+        57.1150394366282,
+        59.64812215020699
+      ],
+      "model_postprocessing": {
+        "status": "ok",
+        "reason": null,
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 325.6227418347803,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                309.2362976074219,
+                251.51873779296875
+              ],
+              "refined_xy": [
+                322.94659423828125,
+                282.4588317871094
+              ],
+              "shift_px": 33.84171464439133
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                1198.3125,
+                166.7086639404297
+              ],
+              "refined_xy": [
+                1160.114501953125,
+                243.7437744140625
+              ],
+              "shift_px": 85.98543656034944
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                1278.510986328125,
+                1276.455810546875
+              ],
+              "refined_xy": [
+                1220.098388671875,
+                1257.7857666015625
+              ],
+              "shift_px": 61.32374830252015
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                331.58660888671875,
+                1352.7747802734375
+              ],
+              "refined_xy": [
+                386.6448059082031,
+                1324.01708984375
+              ],
+              "shift_px": 62.1160995081495
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "ok",
+          "scores": [
+            0.48638918587284075,
+            0.050885464782121394,
+            -0.00024108422788941475,
+            0.006620574855363715
+          ],
+          "cyclic_shift": 0,
+          "score": 0.48638918587284075,
+          "margin": 0.43550372109071933
+        }
+      },
+      "local_verification": null,
+      "layout_id": "micropcb_M",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and USB/audio footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 6
+        },
+        {
+          "name": "GPIO header and adjacent silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 32
+        },
+        {
+          "name": "HDMI and power connector footprints",
+          "kind": "connectors",
+          "inliers": 26
+        },
+        {
+          "name": "lower display connector and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 33
+        }
+      ]
+    },
+    {
+      "image": "MDCC5.jpg",
+      "image_sha256": "e381f3db0bce5202d40c0fc8b7959e2d6c2a557dbf19e7c8d2da94aa571bbc11",
+      "direct_and_app_identical": true,
+      "status": "ok",
+      "reason": null,
+      "source": "YOLO26 with rim/orientation verification",
+      "labels_px": [
+        [
+          497.9056128,
+          185.4484929
+        ],
+        [
+          1267.08232704,
+          394.1957151
+        ],
+        [
+          1029.3082675199998,
+          1300.8066588000002
+        ],
+        [
+          256.05230592,
+          1101.08082645
+        ]
+      ],
+      "accepted_points": [
+        {
+          "name": "upper_left_mount",
+          "x": 496.94171142578125,
+          "y": 187.91098022460938,
+          "confidence": 0.985069990158081,
+          "raw_landmark_id": 0
+        },
+        {
+          "name": "upper_right_mount",
+          "x": 1264.3995361328125,
+          "y": 391.5907897949219,
+          "confidence": 0.9522815346717834,
+          "raw_landmark_id": 1
+        },
+        {
+          "name": "lower_right_mount",
+          "x": 1025.2838134765625,
+          "y": 1298.427734375,
+          "confidence": 0.9370419979095459,
+          "raw_landmark_id": 2
+        },
+        {
+          "name": "lower_left_mount",
+          "x": 257.6381530761719,
+          "y": 1099.7587890625,
+          "confidence": 0.9864663481712341,
+          "raw_landmark_id": 3
+        }
+      ],
+      "error_px": [
+        2.644418590745917,
+        3.7393853634955483,
+        4.674987889567362,
+        2.064629278269117
+      ],
+      "raw_candidates": [
+        {
+          "board_id": 0,
+          "class_id": 0,
+          "board_confidence": 0.9394946694374084,
+          "bbox_xyxy": [
+            289.2603454589844,
+            135.49966430664062,
+            1323.2730712890625,
+            1349.1378173828125
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 542.35546875,
+              "y": 473.89892578125,
+              "confidence": 0.9282714128494263,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 1026.5234375,
+              "y": 503.63543701171875,
+              "confidence": 0.8082705140113831,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1030.191650390625,
+              "y": 1103.199462890625,
+              "confidence": 0.8409931659698486,
+              "point_rejection_reasons": [
+                "low_landmark_confidence"
+              ]
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 486.8377685546875,
+              "y": 1041.322998046875,
+              "confidence": 0.9818761944770813,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": false,
+          "rejection_reason": "low_landmark_confidence"
+        },
+        {
+          "board_id": 1,
+          "class_id": 0,
+          "board_confidence": 0.8066926598548889,
+          "bbox_xyxy": [
+            325.6574401855469,
+            165.63406372070312,
+            1344.2603759765625,
+            1329.957275390625
+          ],
+          "landmarks": [
+            {
+              "id": 0,
+              "name": "upper_left_mount",
+              "x": 548.0017700195312,
+              "y": 388.6885986328125,
+              "confidence": 0.985069990158081,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 1,
+              "name": "upper_right_mount",
+              "x": 1164.56201171875,
+              "y": 420.5291442871094,
+              "confidence": 0.9522815346717834,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 2,
+              "name": "lower_right_mount",
+              "x": 1171.106689453125,
+              "y": 1126.9188232421875,
+              "confidence": 0.9370419979095459,
+              "point_rejection_reasons": []
+            },
+            {
+              "id": 3,
+              "name": "lower_left_mount",
+              "x": 430.74383544921875,
+              "y": 1076.6529541015625,
+              "confidence": 0.9864663481712341,
+              "point_rejection_reasons": []
+            }
+          ],
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "raw_error_px": [
+        291.8551728569433,
+        264.2832421263829,
+        197.60917043614722,
+        238.3965767769413
+      ],
+      "model_postprocessing": {
+        "status": "ok",
+        "reason": null,
+        "refinement": {
+          "status": "ok",
+          "method": "local gold mounting rim ellipse center",
+          "max_shift_px": 320.4710946403747,
+          "points": [
+            {
+              "id": 0,
+              "raw_xy": [
+                548.0017700195312,
+                388.6885986328125
+              ],
+              "refined_xy": [
+                496.94171142578125,
+                187.91098022460938
+              ],
+              "shift_px": 207.1684861103812
+            },
+            {
+              "id": 1,
+              "raw_xy": [
+                1164.56201171875,
+                420.5291442871094
+              ],
+              "refined_xy": [
+                1264.3995361328125,
+                391.5907897949219
+              ],
+              "shift_px": 103.94690780318592
+            },
+            {
+              "id": 2,
+              "raw_xy": [
+                1171.106689453125,
+                1126.9188232421875
+              ],
+              "refined_xy": [
+                1025.2838134765625,
+                1298.427734375
+              ],
+              "shift_px": 225.12134007250157
+            },
+            {
+              "id": 3,
+              "raw_xy": [
+                430.74383544921875,
+                1076.6529541015625
+              ],
+              "refined_xy": [
+                257.6381530761719,
+                1099.7587890625
+              ],
+              "shift_px": 174.64093700813757
+            }
+          ]
+        },
+        "orientation_verification": {
+          "status": "ok",
+          "scores": [
+            0.4570031565916889,
+            0.057033992821128456,
+            -0.0186030434574869,
+            0.021261194081001376
+          ],
+          "cyclic_shift": 0,
+          "score": 0.4570031565916889,
+          "margin": 0.3999691637705604
+        }
+      },
+      "local_verification": null,
+      "layout_id": "micropcb_M",
+      "layout_regions": [
+        {
+          "name": "upper mounting holes and USB/audio footprints",
+          "kind": "mounting_and_connectors",
+          "inliers": 40
+        },
+        {
+          "name": "GPIO header and adjacent silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 45
+        },
+        {
+          "name": "HDMI and power connector footprints",
+          "kind": "connectors",
+          "inliers": 53
+        },
+        {
+          "name": "lower display connector and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "inliers": 43
+        }
+      ]
+    }
+  ],
+  "inspection_batches": [
+    {
+      "reference": "ACCC5",
+      "images": [
+        "ABCC5",
+        "ACCB5",
+        "ACDC5",
+        "ADCC5",
+        "MBCC5"
+      ],
+      "results": [
+        {
+          "image": "ABCC5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 0.5862622500215183,
+            "p90_error_px": 0.999097488077214,
+            "tolerance_px": 18.107945769744287,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              959,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                1.02407126717378,
+                -0.21677455379861077,
+                75.34704123618314
+              ],
+              [
+                0.21773763223030324,
+                1.0209181351913437,
+                -131.59733597745543
+              ],
+              [
+                2.7516102032656845e-08,
+                -1.5117994109682957e-06,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9870871078814738
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.98165904620339,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Processor",
+              "bbox_xyxy_px": [
+                390,
+                705,
+                620,
+                935
+              ],
+              "overlap": 1.0,
+              "score": 0.9385532736778259,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                0,
+                0
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        },
+        {
+          "image": "ACCB5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 2.2319138565949928,
+            "p90_error_px": 3.779962269712793,
+            "tolerance_px": 18.107945769744287,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              959,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                1.140867677386962,
+                -0.015797562599510952,
+                -33.36631948656783
+              ],
+              [
+                0.08411463060947036,
+                1.0577169491356775,
+                -60.469813430718304
+              ],
+              [
+                7.464676488615091e-05,
+                3.9846293778898395e-06,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9974935914146681
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.5578406052592629,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Processor",
+              "bbox_xyxy_px": [
+                390,
+                705,
+                620,
+                935
+              ],
+              "overlap": 1.0,
+              "score": 0.7784903049468994,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                -4,
+                2
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        },
+        {
+          "image": "ACDC5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 1.5173073128491565,
+            "p90_error_px": 2.6705361217105814,
+            "tolerance_px": 18.107945769744287,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              959,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                1.0069404468074803,
+                -0.0006960438486216245,
+                -7.965418360784128
+              ],
+              [
+                -0.0260263076146852,
+                0.9929345765719964,
+                8.321928477981308
+              ],
+              [
+                -3.347749915212611e-05,
+                5.11474045588202e-07,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9987956747480013
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.6968621981874115,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Processor",
+              "bbox_xyxy_px": [
+                390,
+                705,
+                620,
+                935
+              ],
+              "overlap": 1.0,
+              "score": 0.8097764253616333,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                -1,
+                1
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        },
+        {
+          "image": "ADCC5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 0.11182395337233822,
+            "p90_error_px": 0.6999577907038722,
+            "tolerance_px": 18.107945769744287,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              959,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                0.9898010845769268,
+                0.2539352820858508,
+                -318.8324096880741
+              ],
+              [
+                -0.24961928297612504,
+                0.9905164012924081,
+                178.9959280438211
+              ],
+              [
+                3.5904310747880865e-06,
+                8.95338590013839e-07,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9766453228189086
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.9817750137703658,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Processor",
+              "bbox_xyxy_px": [
+                390,
+                705,
+                620,
+                935
+              ],
+              "overlap": 1.0,
+              "score": 0.9513709545135498,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                0,
+                0
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        },
+        {
+          "image": "MBCC5",
+          "outcome": "DIFFERENT_BOARD",
+          "reason": "Inspection board does not match the reference design.",
+          "components_evaluated": false,
+          "board_status": "DIFFERENT_BOARD",
+          "alignment_evidence": null,
+          "alignment": {
+            "status": "not_attempted",
+            "reason": "Board compatibility must pass before component scoring."
+          },
+          "alignment_validation": null,
+          "components": []
+        }
+      ]
+    },
+    {
+      "reference": "HCCC5",
+      "images": [
+        "HBCC5",
+        "HCCB5",
+        "HCDC5",
+        "HDCC5"
+      ],
+      "results": [
+        {
+          "image": "HBCC5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 0.5815664100999828,
+            "p90_error_px": 1.0010489028675416,
+            "tolerance_px": 19.82879724037744,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              1254,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                1.0550605161595614,
+                -0.24306548049718255,
+                106.72958579300827
+              ],
+              [
+                0.24160783973216599,
+                1.0562671305697506,
+                -204.51852144837937
+              ],
+              [
+                -1.5041972522079666e-06,
+                1.0449862517099512e-06,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9810564526847422
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.8810373630422583,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Main IC",
+              "bbox_xyxy_px": [
+                490,
+                950,
+                730,
+                1180
+              ],
+              "overlap": 1.0,
+              "score": 0.9516555070877075,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                0,
+                0
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        },
+        {
+          "image": "HCCB5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 0.4811028539865063,
+            "p90_error_px": 0.7754151749658901,
+            "tolerance_px": 19.82879724037744,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              1254,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                1.221880180819029,
+                0.0287038771341928,
+                -44.857325610707775
+              ],
+              [
+                0.025080469329735407,
+                1.1361603705155061,
+                -162.10124079220353
+              ],
+              [
+                6.328873059657489e-05,
+                -3.631930110042228e-06,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9979087752525253
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.517839841096523,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Main IC",
+              "bbox_xyxy_px": [
+                490,
+                950,
+                730,
+                1180
+              ],
+              "overlap": 1.0,
+              "score": 0.7788521647453308,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                0,
+                0
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        },
+        {
+          "image": "HCDC5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 2.7866685637364594,
+            "p90_error_px": 3.884705138907706,
+            "tolerance_px": 19.82879724037744,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              1254,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                1.0674754723290003,
+                -0.037203617610219376,
+                -64.3168755009218
+              ],
+              [
+                0.01356874957590197,
+                1.0480531451717106,
+                -78.75873843665421
+              ],
+              [
+                -3.124086645689207e-05,
+                6.646684152296085e-06,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9990987174375332
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.5314606731195435,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Main IC",
+              "bbox_xyxy_px": [
+                490,
+                950,
+                730,
+                1180
+              ],
+              "overlap": 1.0,
+              "score": 0.820676863193512,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                0,
+                2
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        },
+        {
+          "image": "HDCC5",
+          "outcome": "ok",
+          "reason": null,
+          "components_evaluated": true,
+          "board_status": "SAME_DESIGN",
+          "alignment_evidence": {
+            "median_error_px": 0.1494948878370174,
+            "p90_error_px": 0.6476337020788591,
+            "tolerance_px": 19.82879724037744,
+            "method": "independent distributed layout feature controls"
+          },
+          "alignment": {
+            "status": "ok",
+            "reference_wh": [
+              1254,
+              1536
+            ],
+            "homography_inspection_to_reference": [
+              [
+                1.0525905596258434,
+                0.3419282137819213,
+                -357.74899494986215
+              ],
+              [
+                -0.33891230745087964,
+                1.0508246615803305,
+                195.27929883595704
+              ],
+              [
+                3.5575019969224852e-06,
+                1.4892062983489808e-06,
+                1.0
+              ]
+            ],
+            "valid_overlap_fraction": 0.9758211224082934
+          },
+          "alignment_validation": {
+            "reliable": true,
+            "overlay_score": 0.9661287498374926,
+            "reason": "overlay_or_consistent_local_matches"
+          },
+          "components": [
+            {
+              "id": "processor",
+              "name": "Main IC",
+              "bbox_xyxy_px": [
+                490,
+                950,
+                730,
+                1180
+              ],
+              "overlap": 1.0,
+              "score": 0.9292058944702148,
+              "status": "present",
+              "reason": "convincing_bounded_local_match",
+              "best_match_offset_px": [
+                0,
+                0
+              ],
+              "search_radius_px": 6,
+              "display_status": "Present"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "python_tests": 60,
+    "frontend_unit_tests": 4,
+    "browser_tests": 12,
+    "production_build": "passed",
+    "result": "all passed"
+  }
+}

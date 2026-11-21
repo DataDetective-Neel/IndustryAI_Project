@@ -27,6 +27,7 @@ class TrainingTests(unittest.TestCase):
             project = Path(folder).relative_to(Path.cwd()) if Path(folder).is_absolute() else Path(folder)
             with patch('sys.argv', ['train', '--project', str(project), '--name', 'smoke']), \
                  patch('pcb_landmarks.train.audit', return_value={}), \
+                 patch('torch.cuda.is_available', return_value=False), \
                  patch('ultralytics.YOLO') as yolo:
                 yolo.return_value.train.side_effect = train
                 with contextlib.redirect_stdout(io.StringIO()):

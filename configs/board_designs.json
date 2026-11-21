@@ -1,5 +1,5 @@
 {
-  "description": "Positive visual evidence only; main processors excluded from stable identity regions.",
+  "description": "Distributed stable layout regions; Mega target IC excluded; calibrated Pi connector checks distinguish shared lower-board features.",
   "designs": [
     {
       "id": "micropcb_A",
@@ -65,7 +65,8 @@
             1440
           ]
         }
-      ]
+      ],
+      "automatic_mounts": true
     },
     {
       "id": "micropcb_M",
@@ -131,6 +132,12 @@
             1400
           ]
         }
+      ],
+      "identity_box": [
+        470,
+        160,
+        1220,
+        440
       ]
     },
     {
@@ -197,6 +204,294 @@
             1430
           ]
         }
+      ]
+    },
+    {
+      "id": "micropcb_B",
+      "name": "Black Mega2560 board",
+      "image": "PCB_Dataset_Pilot/images/train/BCCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/BCCC5.txt",
+      "board_polygon": [
+        [
+          145,
+          175
+        ],
+        [
+          825,
+          175
+        ],
+        [
+          825,
+          1440
+        ],
+        [
+          145,
+          1440
+        ]
+      ],
+      "regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "box": [
+            150,
+            100,
+            820,
+            425
+          ]
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            145,
+            430,
+            385,
+            1220
+          ]
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            615,
+            430,
+            825,
+            1220
+          ]
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            160,
+            1200,
+            810,
+            1440
+          ]
+        }
+      ],
+      "automatic_mounts": true,
+      "mount_channel": "gray"
+    },
+    {
+      "id": "micropcb_H",
+      "name": "Raspberry Pi dual USB board",
+      "image": "PCB_Dataset_Pilot/images/train/HCCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/HCCC5.txt",
+      "automatic_mounts": true,
+      "board_polygon": [
+        [
+          215,
+          185
+        ],
+        [
+          1070,
+          185
+        ],
+        [
+          1070,
+          1445
+        ],
+        [
+          215,
+          1445
+        ]
+      ],
+      "regions": [
+        {
+          "name": "upper board silkscreen and connector solder footprints",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            410,
+            500,
+            820,
+            850
+          ]
+        },
+        {
+          "name": "GPIO header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            220,
+            500,
+            410,
+            1380
+          ]
+        },
+        {
+          "name": "audio HDMI and power footprints",
+          "kind": "connectors",
+          "box": [
+            820,
+            510,
+            1065,
+            1370
+          ]
+        },
+        {
+          "name": "display connector and lower silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            410,
+            1160,
+            820,
+            1430
+          ]
+        }
+      ],
+      "identity_box": [
+        230,
+        200,
+        1050,
+        470
+      ]
+    },
+    {
+      "id": "micropcb_H",
+      "name": "Raspberry Pi dual USB board",
+      "image": "PCB_Dataset_Pilot/images/train/HCCB5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/HCCB5.txt",
+      "automatic_mounts": true,
+      "board_polygon": [
+        [
+          208,
+          303
+        ],
+        [
+          956,
+          296
+        ],
+        [
+          925,
+          1462
+        ],
+        [
+          180,
+          1419
+        ]
+      ],
+      "regions": [
+        {
+          "name": "upper board silkscreen and connector solder footprints",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            358,
+            584,
+            723,
+            906
+          ]
+        },
+        {
+          "name": "GPIO header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            186,
+            582,
+            366,
+            1370
+          ]
+        },
+        {
+          "name": "audio HDMI and power footprints",
+          "kind": "connectors",
+          "box": [
+            702,
+            596,
+            944,
+            1393
+          ]
+        },
+        {
+          "name": "display connector and lower silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            345,
+            1174,
+            707,
+            1435
+          ]
+        }
+      ],
+      "view": "perspective calibration",
+      "identity_box": [
+        214,
+        310,
+        938,
+        560
+      ]
+    },
+    {
+      "id": "micropcb_M",
+      "name": "Raspberry Pi board",
+      "image": "PCB_Dataset_Pilot/images/train/MBCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/MBCC5.txt",
+      "board_polygon": [
+        [
+          197,
+          297
+        ],
+        [
+          1129,
+          125
+        ],
+        [
+          1341,
+          1218
+        ],
+        [
+          410,
+          1405
+        ]
+      ],
+      "regions": [
+        {
+          "name": "upper mounting holes and USB/audio footprints",
+          "kind": "mounting_and_connectors",
+          "box": [
+            186,
+            98,
+            1218,
+            520
+          ]
+        },
+        {
+          "name": "GPIO header and adjacent silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            227,
+            479,
+            581,
+            1362
+          ]
+        },
+        {
+          "name": "HDMI and power connector footprints",
+          "kind": "connectors",
+          "box": [
+            886,
+            372,
+            1343,
+            1220
+          ]
+        },
+        {
+          "name": "lower display connector and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            522,
+            902,
+            1140,
+            1381
+          ]
+        }
+      ],
+      "view": "front calibration",
+      "identity_box": [
+        427,
+        111,
+        1188,
+        468
       ]
     }
   ]

@@ -51,10 +51,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -112,43 +131,67 @@
           "layout_id": "micropcb_M",
           "matched_regions": [
             {
+              "name": "upper mounting holes and USB/audio footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 518
+            },
+            {
               "name": "GPIO header and adjacent silkscreen",
               "kind": "connector_and_silkscreen",
-              "inliers": 8
+              "inliers": 392
             },
             {
               "name": "HDMI and power connector footprints",
               "kind": "connectors",
-              "inliers": 5
+              "inliers": 698
             },
             {
               "name": "lower display connector and silkscreen",
               "kind": "connector_and_silkscreen",
-              "inliers": 18
+              "inliers": 355
             }
           ],
           "sharpness": 57.40513610839844,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Raspberry Pi board",
-          "inliers": 33,
-          "match_count": 59,
-          "spatial_coverage": 0.47223917811123356,
+          "connector_identity_score": 1.0,
+          "template_image": "PCB_Dataset_Pilot/images/train/MBCC5.jpg",
+          "inliers": 1963,
+          "match_count": 1963,
+          "spatial_coverage": 0.9311655070808659,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              1.0000000000000078,
+              8.195107559622889e-16,
+              -3.164162447591872e-12
+            ],
+            [
+              3.2625167192054264e-15,
+              1.000000000000005,
+              -3.17115346862847e-12
+            ],
+            [
+              4.217066322322906e-18,
+              1.127082914334707e-18,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
-              1.0410161187595277,
-              0.14042906468844438,
-              -73.96797631405067
+              1.0278361753849898,
+              0.1402360217592122,
+              -70.18345865891496
             ],
             [
-              -0.11271300318786089,
-              0.971197308789853,
-              102.89313969105517
+              -0.12022559770991183,
+              0.9631823397577673,
+              109.16357760824128
             ],
             [
-              5.0896170393526696e-05,
-              -1.9137665420331607e-06,
-              1.0
+              4.04982645344681e-05,
+              -1.4006231155864368e-06,
+              0.9999999999999998
             ]
           ],
           "template_controls": [
@@ -232,10 +275,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -293,43 +355,67 @@
           "layout_id": "micropcb_M",
           "matched_regions": [
             {
+              "name": "upper mounting holes and USB/audio footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 518
+            },
+            {
               "name": "GPIO header and adjacent silkscreen",
               "kind": "connector_and_silkscreen",
-              "inliers": 8
+              "inliers": 392
             },
             {
               "name": "HDMI and power connector footprints",
               "kind": "connectors",
-              "inliers": 5
+              "inliers": 698
             },
             {
               "name": "lower display connector and silkscreen",
               "kind": "connector_and_silkscreen",
-              "inliers": 18
+              "inliers": 355
             }
           ],
           "sharpness": 57.40513610839844,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Raspberry Pi board",
-          "inliers": 33,
-          "match_count": 59,
-          "spatial_coverage": 0.47223917811123356,
+          "connector_identity_score": 1.0,
+          "template_image": "PCB_Dataset_Pilot/images/train/MBCC5.jpg",
+          "inliers": 1963,
+          "match_count": 1963,
+          "spatial_coverage": 0.9311655070808659,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              1.0000000000000078,
+              8.195107559622889e-16,
+              -3.164162447591872e-12
+            ],
+            [
+              3.2625167192054264e-15,
+              1.000000000000005,
+              -3.17115346862847e-12
+            ],
+            [
+              4.217066322322906e-18,
+              1.127082914334707e-18,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
-              1.0410161187595277,
-              0.14042906468844438,
-              -73.96797631405067
+              1.0278361753849898,
+              0.1402360217592122,
+              -70.18345865891496
             ],
             [
-              -0.11271300318786089,
-              0.971197308789853,
-              102.89313969105517
+              -0.12022559770991183,
+              0.9631823397577673,
+              109.16357760824128
             ],
             [
-              5.0896170393526696e-05,
-              -1.9137665420331607e-06,
-              1.0
+              4.04982645344681e-05,
+              -1.4006231155864368e-06,
+              0.9999999999999998
             ]
           ],
           "template_controls": [
@@ -413,10 +499,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -497,10 +602,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -646,10 +770,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -730,10 +873,29 @@
           "sharpness": 894.2698974609375,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 907,
           "match_count": 939,
           "spatial_coverage": 0.8995149151575956,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.935373308910249,
+              0.1975106005885928,
+              -44.313213356599654
+            ],
+            [
+              -0.19701488158295458,
+              0.9343668833865768,
+              138.8001133365976
+            ],
+            [
+              1.3182240931866752e-06,
+              -3.90496016621194e-07,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.935373308910249,
@@ -879,10 +1041,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -958,10 +1139,29 @@
           "sharpness": 537.6192016601562,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 182,
           "match_count": 225,
           "spatial_coverage": 0.574353187636857,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.8851419346065406,
+              0.015513966031734302,
+              26.16849921203738
+            ],
+            [
+              -0.06318385575731576,
+              0.9548171980702741,
+              51.157694974596204
+            ],
+            [
+              -5.45897362791849e-05,
+              -1.4591129810725036e-06,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.8851419346065406,
@@ -1107,10 +1307,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -1191,10 +1410,29 @@
           "sharpness": 831.3623657226562,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 386,
           "match_count": 432,
           "spatial_coverage": 0.7944219537947255,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.990692722864281,
+              0.0003357541623925671,
+              8.417299298976044
+            ],
+            [
+              0.03140626521905215,
+              1.004032446205597,
+              -8.334833089308733
+            ],
+            [
+              3.478615627993797e-05,
+              -2.3068272019544532e-06,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.990692722864281,
@@ -1340,10 +1578,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -1424,10 +1681,29 @@
           "sharpness": 596.5750122070312,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 873,
           "match_count": 899,
           "spatial_coverage": 0.8938223079954418,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9503509714569216,
+              -0.24385796721128106,
+              346.30533264384655
+            ],
+            [
+              0.24216217670526038,
+              0.9506370978368102,
+              -95.25680669374978
+            ],
+            [
+              -1.9661653142010967e-06,
+              5.000753007881812e-08,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9503509714569216,
@@ -1573,10 +1849,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -1657,10 +1952,29 @@
           "sharpness": 895.7025756835938,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1708,
           "match_count": 1708,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999913105047933,
+              -2.0229018707798793e-06,
+              0.002807319729174119
+            ],
+            [
+              -6.18243202094343e-06,
+              0.9999917882985256,
+              0.0033339547305493078
+            ],
+            [
+              -7.052605395717582e-09,
+              -3.3202028590436494e-09,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999913105047933,
@@ -1806,10 +2120,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -1887,126 +2220,216 @@
       "components_evaluated": false,
       "board_compatibility": {
         "status": "REVIEW",
-        "message": "Board compatibility needs review.",
-        "reason": "inspection: landmarks outside decoded image bounds",
-        "evidence": {
-          "status": "UNVERIFIED",
-          "message": "Board layout needs review.",
-          "reference": {
-            "status": "IDENTIFIED",
-            "layout_id": "micropcb_A",
-            "matched_regions": [
-              {
-                "name": "upper mounting holes and power/USB footprints",
-                "kind": "mounting_and_connectors",
-                "inliers": 290
-              },
-              {
-                "name": "left header and Mega2560 silkscreen",
-                "kind": "connector_and_silkscreen",
-                "inliers": 542
-              },
-              {
-                "name": "right header and pin silkscreen",
-                "kind": "connector_and_silkscreen",
-                "inliers": 420
-              },
-              {
-                "name": "lower header and digital-pin silkscreen",
-                "kind": "connector_and_silkscreen",
-                "inliers": 453
-              }
-            ],
-            "sharpness": 1056.8419189453125,
-            "method": "SIFT ratio matches and RANSAC across stable layout regions",
-            "name": "Blue Mega2560 board",
-            "inliers": 1710,
-            "match_count": 1710,
-            "spatial_coverage": 0.9208435156365715,
-            "visible_fraction": 1.0,
-            "template_to_image": [
-              [
-                0.9999999999999959,
-                -3.7444480281501405e-16,
-                1.3989547395329671e-12
-              ],
-              [
-                -1.9321885517051724e-15,
-                0.9999999999999973,
-                1.73685872824991e-12
-              ],
-              [
-                -2.0668978154559995e-18,
-                -6.84095161918506e-19,
-                1.0
-              ]
-            ],
-            "template_controls": [
-              [
-                187.39764337,
-                362.88148992000004
-              ],
-              [
-                782.3107903800001,
-                380.72812032
-              ],
-              [
-                775.766747,
-                1296.85515264
-              ],
-              [
-                178.47394698,
-                1377.16498944
-              ],
-              [
-                485.0,
-                262.5
-              ],
-              [
-                265.0,
-                825.0
-              ],
-              [
-                720.0,
-                825.0
-              ],
-              [
-                485.0,
-                1320.0
-              ]
-            ]
-          },
-          "inspection": {
-            "status": "UNKNOWN",
-            "layout_id": null,
-            "matched_regions": [],
-            "sharpness": 58.9371452331543,
-            "method": "SIFT ratio matches and RANSAC across stable layout regions",
-            "reason": "insufficient_positive_layout_evidence"
-          }
-        }
-      },
-      "components": [
-        {
-          "id": "processor",
-          "name": "Main processor",
-          "bbox_xyxy_px": [
-            390,
-            705,
-            620,
-            935
+        "message": "Board layout needs review because of blur, clipping, or ambiguous evidence.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
           ],
-          "status": "not_evaluated",
-          "display_status": "Not evaluated",
-          "score": null,
-          "overlap": null,
-          "reason": "inspection: landmarks outside decoded image bounds"
-        }
-      ],
-      "reason": null,
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "REVIEW",
+          "layout_id": "micropcb_M",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and USB/audio footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 243
+            },
+            {
+              "name": "HDMI and power connector footprints",
+              "kind": "connectors",
+              "inliers": 562
+            },
+            {
+              "name": "lower display connector and silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 97
+            }
+          ],
+          "sharpness": 58.9371452331543,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Raspberry Pi board",
+          "connector_identity_score": 0.5723210573196411,
+          "template_image": "PCB_Dataset_Pilot/images/train/MBCC5.jpg",
+          "inliers": 902,
+          "match_count": 922,
+          "spatial_coverage": 0.43961126750866375,
+          "visible_fraction": 0.4997717641123491,
+          "calibration_to_image": [
+            [
+              0.9999641541994294,
+              -1.079640962697922e-05,
+              -767.9650070312126
+            ],
+            [
+              -9.699963072447121e-05,
+              0.9999161804028466,
+              0.12024584953972779
+            ],
+            [
+              -2.2178033830013265e-08,
+              -2.3958249253308434e-08,
+              1.0
+            ]
+          ],
+          "template_to_image": [
+            [
+              0.9966993797712591,
+              0.14129622551646676,
+              -838.1471284825617
+            ],
+            [
+              -0.12031035042998062,
+              0.9630878349406169,
+              109.28148118025779
+            ],
+            [
+              4.047834954383106e-05,
+              -1.4268094373951772e-06,
+              0.9999989411629188
+            ]
+          ],
+          "template_controls": [
+            [
+              289.18239744,
+              291.82844124
+            ],
+            [
+              1143.21641472,
+              243.1903677
+            ],
+            [
+              1190.96305152,
+              1302.41950776
+            ],
+            [
+              333.3255168,
+              1324.9371315600001
+            ],
+            [
+              740.0,
+              305.0
+            ],
+            [
+              345.0,
+              895.0
+            ],
+            [
+              1080.0,
+              880.0
+            ],
+            [
+              740.0,
+              1195.0
+            ]
+          ],
+          "reason": "board_layout_clipped"
+        },
+        "reason": "blur_crop_or_ambiguous_layout"
+      },
+      "components": [],
+      "reason": "Board layout needs review because of blur, clipping, or ambiguous evidence.",
       "alignment": {
-        "status": "failure",
-        "reason": "inspection: landmarks outside decoded image bounds"
+        "status": "not_attempted",
+        "reason": "Board compatibility must pass before component scoring."
       }
     },
     {
@@ -2046,10 +2469,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -2130,10 +2572,29 @@
           "sharpness": 831.3623657226562,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 386,
           "match_count": 432,
           "spatial_coverage": 0.7944219537947255,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.990692722864281,
+              0.0003357541623925671,
+              8.417299298976044
+            ],
+            [
+              0.03140626521905215,
+              1.004032446205597,
+              -8.334833089308733
+            ],
+            [
+              3.478615627993797e-05,
+              -2.3068272019544532e-06,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.990692722864281,
@@ -2259,10 +2720,29 @@
           "sharpness": 1056.8419189453125,
           "method": "SIFT ratio matches and RANSAC across stable layout regions",
           "name": "Blue Mega2560 board",
+          "connector_identity_score": null,
+          "template_image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
           "inliers": 1710,
           "match_count": 1710,
           "spatial_coverage": 0.9208435156365715,
           "visible_fraction": 1.0,
+          "calibration_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
           "template_to_image": [
             [
               0.9999999999999959,
@@ -2420,9 +2900,9 @@
     }
   ],
   "verification": {
-    "python_tests": 55,
-    "browser_tests": 11,
+    "python_tests": 60,
     "frontend_unit_tests": 4,
+    "browser_tests": 12,
     "production_build": "passed",
     "result": "all passed"
   }

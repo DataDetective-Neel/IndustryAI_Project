@@ -9,6 +9,7 @@ import numpy as np
 import cv2
 
 from .data import DEFAULT_DATA, load_data, read_image
+from .compatibility import calibrated_mounts
 
 # Set before importing Ultralytics: even its startup connectivity probe stays offline.
 os.environ['YOLO_OFFLINE'] = 'true'
@@ -152,7 +153,7 @@ def assess_mounts(image, boxes, scores, keypoints, names, board_conf, point_conf
 
 class LandmarkDetector:
     def __init__(self, checkpoint, data=DEFAULT_DATA, device='cpu', imgsz=640, expected_sha256=None,
-                 refine_mounting_holes=False, mounting_reference=None):
+                 refine_mounting_holes=False, mounting_reference=None, calibrated_mounting_holes=False):
         path = Path(checkpoint).resolve(strict=True)
         if not path.is_file() or path.suffix.lower() != '.pt':
             raise ValueError('Checkpoint must be an existing local .pt file')
@@ -171,6 +172,7 @@ class LandmarkDetector:
             raise ValueError('Checkpoint is not the trained PCB four-landmark schema')
         self.device, self.imgsz = device, imgsz
         self.refine_mounting_holes = refine_mounting_holes
+        self.calibrated_mounting_holes = calibrated_mounting_holes
         self.mounting_reference = np.asarray(read_image(mounting_reference)) if mounting_reference else None
         if self.mounting_reference is not None and self.mounting_reference.shape != (256, 256, 3):
             raise ValueError('Mounting reference must be the calibrated 256x256 RGB board pattern')
@@ -202,6 +204,21 @@ class LandmarkDetector:
                 ordered = result['landmarks'][shift:] + result['landmarks'][:shift]
                 result['landmarks'] = [dict(p, name=name, raw_landmark_id=(i+shift) % 4)
                                        for i, (name, p) in enumerate(zip(self.names, ordered))]
+        model_verdict = dict(status=result['status'], reason=result['reason'],
+                             refinement=result.get('refinement'),
+                             orientation_verification=result.get('orientation_verification'))
+        if getattr(self, 'calibrated_mounting_holes', False):
+            points, evidence = calibrated_mounts(image)
+            if points is not None:
+                result.pop('orientation_verification', None)
+                result.pop('board_confidence', None)
+                result.update(status='ok', reason=None, source='calibrated_layout_mounts',
+                              refinement=dict(status='ok', method=evidence['method'], points=evidence['points']),
+                              landmarks=[dict(name=name, x=float(p[0]), y=float(p[1]), confidence=None)
+                                         for name, p in zip(self.names, points)])
+            elif evidence['reason'] != 'layout_not_calibrated_for_automatic_mounts' or evidence['layout']['status'] == 'REVIEW':
+                result.update(status='failure', reason=evidence['reason'], landmarks=[])
+            result['calibrated_mounting'] = evidence
         candidates = []
         for i, (box, score) in enumerate(zip(boxes, scores)):
             points = keypoints[i] if i < len(keypoints) else []
@@ -222,16 +239,20 @@ class LandmarkDetector:
                                  point_rejection_reasons=reasons))
             candidates.append(dict(board_id=i, class_id=0, board_confidence=float(score),
                                    bbox_xyxy=np.asarray(box).tolist(), landmarks=rows,
-                                   accepted=result['status'] == 'ok' and verdict['status'] == 'ok'
+                                   accepted=result.get('source') != 'calibrated_layout_mounts'
+                                            and result['status'] == 'ok' and verdict['status'] == 'ok'
                                             and i == result.get('selected_board_id', i),
-                                   rejection_reason=(result['reason'] or verdict['reason'] or
+                                   rejection_reason=(('replaced_by_verified_calibrated_mounts' if result.get('source') == 'calibrated_layout_mounts' else None)
+                                                     or result['reason'] or verdict['reason'] or
                                                      ('duplicate_board_proposal' if i != result.get('selected_board_id', i) else None))))
         result['diagnostics'] = dict(checkpoint_path=self.checkpoint, format='one pcb detection; four keypoints',
                                    landmark_order=self.names, board_conf=board_conf, point_conf=point_conf,
                                    raw_minimum_confidence=0.001, imgsz=self.imgsz,
                                    coordinates='decoded original RGB pixels; Ultralytics reverses letterbox',
                                    refinement=result.get('refinement'),
-                                   orientation_verification=result.get('orientation_verification'),
+                                   orientation_verification=model_verdict.get('orientation_verification'),
+                                   model_postprocessing=model_verdict,
+                                   calibrated_mounting=result.get('calibrated_mounting'),
                                    candidates=candidates)
         result['image_wh'] = list(image.size)
         result['checkpoint_sha256'] = self.sha256
@@ -253,7 +274,8 @@ def main():
                                     expected_sha256=config['checkpoint_sha256'],
                                     refine_mounting_holes=config.get('refine_mounting_holes', False),
                                     mounting_reference=(Path(args.config).resolve().parent/config['mounting_reference']
-                                                        if config.get('mounting_reference') else None))
+                                                        if config.get('mounting_reference') else None),
+                                    calibrated_mounting_holes=config.get('calibrated_mounting_holes', False))
         if config['checkpoint_sha256'] != detector.sha256 or config['landmark_order'] != detector.names:
             raise ValueError('Configuration does not match checkpoint hash/landmark order')
         result = detector.predict(args.source, config['board_conf'], config['point_conf'])
