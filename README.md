@@ -115,9 +115,12 @@ no convincing local matches cannot yield PRESENT or MISSING.
 
 ## Automatic mode: optional local checkpoint
 
-Manual mode works without weights. Automatic uses the unchanged frozen hash and
+Manual mode works without weights. Automatic uses the checkpoint path, hash and
 settings in `configs/landmarks.json`; it never downloads a model or silently
-substitutes Manual points. Default checkpoint: `runs/landmarks/full/weights/best.pt`.
+substitutes Manual points. Current checkpoint: `models/pcb-mounting-holes-yolo26n-pose.pt`.
+The tuned profile targets the Raspberry Pi board shown in MCCB5, with mandatory
+OpenCV verification of visible gold mounting rims and a known-board orientation
+pattern stored in `configs/mounting-holes-M.png`. See [fine-tuning evidence](docs/LANDMARK_FINE_TUNING.md).
 For another local path, set it before launching in the same PowerShell terminal:
 
 ```powershell
@@ -128,10 +131,11 @@ $env:PCB_CHECKPOINT = 'A:\Local Models\best.pt'
 That file must match the frozen checkpoint hash/schema. Automatic schema loading
 also uses the repository's small `PCB_Dataset_Pilot/dataset.yaml` metadata file;
 dataset photographs are not needed. With no checkpoint, the app displays
-`checkpoint_unavailable` and offers **Switch to Manual**. The trained pilot still
-rejects the documented development pair (`Reference: no_confident_board`). No
-thresholds were relaxed for this demo. Failed alignment skips component scoring
-for that photo and preserves successful siblings.
+`checkpoint_unavailable` and offers **Switch to Manual**. The tuned confidence
+gates are board >0.75 and keypoints >=0.85, followed by mandatory unique visible
+rim verification. Failed visual verification or alignment skips component scoring
+for that photo and preserves successful siblings. The earlier BeagleBone saved
+regions remain available for the Manual benchmark; they are not applied to the Raspberry Pi.
 
 ## Verification and limitations
 

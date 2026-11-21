@@ -34,9 +34,9 @@ def main():
     data = resolved_yaml(args.data, run / 'dataset.resolved.yaml')
     model = YOLO(args.weights, task='pose')
     metrics = model.train(data=data, imgsz=args.imgsz, epochs=args.epochs,
-                          batch=args.batch, device=device, seed=args.seed,
+                          batch=args.batch, nbs=args.batch, device=device, seed=args.seed,
                           deterministic=True, workers=0, fliplr=0.0, flipud=0.0,
-                          amp=False, optimizer='AdamW', lr0=0.001, lrf=0.01,
+                          amp=False, optimizer='AdamW', lr0=0.001, lrf=0.01, warmup_bias_lr=0.001,
                           patience=args.patience, project=str(Path(args.project).resolve()), name=args.name,
                           exist_ok=True, val=True, plots=False, save=True, cache=False)
     best = run / 'weights/best.pt'

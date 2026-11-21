@@ -1,5 +1,7 @@
 # One-board inspection evidence — November 21, 2026
 
+**Historical baseline before mounting-hole fine-tuning.** Current Raspberry Pi automatic-mode results are in [LANDMARK_FINE_TUNING.md](LANDMARK_FINE_TUNING.md).
+
 Target submission: November 24. Scope: micropcb_E, ECCC5 known-good reference, eight named component regions.
 
 ## Confirmed findings

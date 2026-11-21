@@ -24,7 +24,8 @@ from .infer import LandmarkDetector
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CHECKPOINT = Path(os.environ.get('PCB_CHECKPOINT', ROOT/'runs/landmarks/full/weights/best.pt'))
+CHECKPOINT = Path(os.environ.get('PCB_CHECKPOINT', ROOT/json.loads(
+    (ROOT/'configs/landmarks.json').read_text()).get('checkpoint_path', 'runs/landmarks/full/weights/best.pt')))
 MAX_UPLOAD = 12 * 1024 * 1024
 MAX_PIXELS = 20_000_000
 MAX_PHOTOS = 15
@@ -50,7 +51,10 @@ class InspectionRequest(BaseModel):
 def _detector(checkpoint):
     config = json.loads((ROOT/'configs/landmarks.json').read_text())
     detector = LandmarkDetector(checkpoint, ROOT/'PCB_Dataset_Pilot/dataset.yaml', 'cpu', config['imgsz'],
-                                expected_sha256=config['checkpoint_sha256'])
+                                expected_sha256=config['checkpoint_sha256'],
+                                refine_mounting_holes=config.get('refine_mounting_holes', False),
+                                mounting_reference=(ROOT/'configs'/config['mounting_reference']
+                                                    if config.get('mounting_reference') else None))
     if detector.names != config['landmark_order']:
         raise ValueError('Frozen configuration landmark order does not match checkpoint')
     return detector, config

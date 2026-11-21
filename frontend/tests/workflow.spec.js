@@ -321,7 +321,7 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
   const automatic = await inspect(page);
   expect(automatic.photos[0].outcome).toBe("review");
   expect(automatic.photos[0].alignment.reason).toMatch(
-    /no_confident_board|low_landmark_confidence|checkpoint_unavailable/,
+    /no_confident_board|low_landmark_confidence|checkpoint_unavailable|mounting_holes_not_verified|mounting_pattern_not_verified/,
   );
   await expect(
     page

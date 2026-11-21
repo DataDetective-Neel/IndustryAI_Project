@@ -370,14 +370,14 @@ function App() {
               <p>
                 {mode === "manual"
                   ? "Mark four points on every photo in the displayed order."
-                  : "Local YOLO with frozen pilot settings. Rejected sets are never used for scoring."}
+                  : "Mounting holes must pass model and visual checks. Rejected sets are never used for scoring."}
               </p>
             </div>
             {mode === "automatic" && (
               <div className="message notice">
                 {detecting
                   ? "Detecting landmarks with the local model…"
-                  : `Frozen pilot model: ${health?.checkpoint_available ? "local checkpoint available; inspect each detection result." : "checkpoint unavailable."}`}
+                  : `Mounting-hole model: ${health?.checkpoint_available ? "local checkpoint available; inspect each detection result." : "checkpoint unavailable."}`}
                 <button
                   className="secondary"
                   onClick={() => switchMode("manual")}

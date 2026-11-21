@@ -15,6 +15,8 @@ class TrainingTests(unittest.TestCase):
             self.assertTrue(Path(settings['project']).is_absolute())
             self.assertEqual(settings['fliplr'], 0)
             self.assertEqual(settings['flipud'], 0)
+            self.assertEqual(settings['nbs'], settings['batch'])
+            self.assertEqual(settings['warmup_bias_lr'], settings['lr0'])
             weights = Path(settings['project']) / settings['name'] / 'weights'
             weights.mkdir()
             for name in ['best.pt', 'last.pt']:

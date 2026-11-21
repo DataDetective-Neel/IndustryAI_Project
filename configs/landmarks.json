@@ -1,6 +1,6 @@
 {
-  "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e",
-  "dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+  "checkpoint_sha256": "a3035f835ff92d57b452f7c43edf566cf83e50b9752623b00e044e4ee6d773a3",
+  "dataset_sha256": "2b43750a0b23a4f002c458b9906d0eaa9e98521bd724863bea5eb8ea68204600",
   "landmark_order": [
     "upper_left_mount",
     "upper_right_mount",
@@ -8,12 +8,27 @@
     "lower_left_mount"
   ],
   "imgsz": 640,
-  "selected_on": "val",
-  "board_conf": 0.95,
-  "point_conf": 0.99,
+  "selected_on": "fine-tuning validation MCDC5",
+  "board_conf": 0.75,
+  "point_conf": 0.85,
   "tolerance_fraction": 0.01,
   "match_iou": 0.5,
-  "selection_policy": "min inaccurate accepted; max accurate accepted; conservative confidence ties",
-  "validation_usable": 0,
-  "validation_accurate": 0
+  "selection_policy": "four visually verified mounting rims; <=6px validation center error; minimize raw validation error",
+  "validation_usable": 1,
+  "validation_accurate": 1,
+  "checkpoint_path": "models/pcb-mounting-holes-yolo26n-pose.pt",
+  "refine_mounting_holes": true,
+  "scope": "Raspberry Pi micropcb_M gold mounting rims; four-view demo",
+  "fine_tuning_training_images": [
+    "MBCC5",
+    "MCCB5"
+  ],
+  "fine_tuning_validation_images": [
+    "MCDC5"
+  ],
+  "fine_tuning_test_images": [
+    "MDCC5"
+  ],
+  "parent_dataset_sha256": "9fbd4a497e6f714d30a975153a3d4f80750fcc4f42e792edabad77d622abc3c6",
+  "mounting_reference": "mounting-holes-M.png"
 }
