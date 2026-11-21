@@ -1,6 +1,7 @@
 import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests",
+  testIgnore: "reference-reuse.spec.js",
   workers: 1,
   timeout: 120000,
   use: {

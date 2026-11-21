@@ -61,29 +61,36 @@ function App() {
       .catch((e) => setError(`Local backend unavailable: ${e.message}`));
   }, []);
   function changePhoto(id, update) {
+    const referencePointsChanged = id === reference?.id && update.points &&
+      JSON.stringify(update.points) !== JSON.stringify(reference.points);
     setReference((p) => (p?.id === id ? { ...p, ...update } : p));
     setInspections((items) =>
-      items.map((p) => (p.id === id ? { ...p, ...update } : p)),
+      items.map((p) => id === reference?.id && (update.points || update.board_polygon)
+        ? { ...p, ...(referencePointsChanged ? { points: [] } : {}), projected: null } : p.id === id ? { ...p, ...update } : p),
     );
     setBatch(null);
   }
   const photoIds = photos.map((p) => p.id).join(",");
   useEffect(() => {
-    if (mode !== "automatic" || !photoIds) {
+    if (!photoIds) {
       setDetecting(false);
       return;
     }
     let cancelled = false;
     setDetecting(true);
     Promise.all(
-      photoIds.split(",").map(async (id) => {
+      photoIds.split(",").filter((id) => mode === "automatic" || id === reference?.id).map(async (id) => {
         let detection;
         try {
           detection = await api(`/api/landmarks/${id}`, { method: "POST" });
         } catch (e) {
           detection = { status: "failure", reason: e.message, landmarks: [] };
         }
-        if (!cancelled) changePhoto(id, { detection });
+        if (!cancelled) {
+          changePhoto(id, { detection });
+          setReference((p) => p?.id === id && !p.points?.length && detection.status === "ok"
+            ? { ...p, points: detection.landmarks.map((v) => [v.x, v.y]) } : p);
+        }
       }),
     ).finally(() => {
       if (!cancelled) setDetecting(false);
@@ -130,7 +137,10 @@ function App() {
       if (failures.length) setError(failures.join(" "));
       if (!uploaded.length) return;
       if (isReference) {
-        setReference(uploaded[0]);
+        setReference({ ...uploaded[0], board_polygon: [], confirmed: false });
+        setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null })));
+        const setup = await api(`/api/references/${uploaded[0].id}`);
+        setReference((p) => p?.id === uploaded[0].id ? { ...p, board_polygon: setup.board_polygon } : p);
         try {
           const preset = await api(`/api/photos/${uploaded[0].id}/regions`);
           setComponents(preset.components);
@@ -153,7 +163,7 @@ function App() {
   function switchMode(next) {
     if (next === "manual") {
       for (const p of photos) {
-        const points = p.detection?.status === "ok" ? p.detection.landmarks : p.detection?.diagnostics?.candidates?.[0]?.landmarks;
+        const points = p.projected ? p.projected.map(([x, y]) => ({ x, y })) : p.detection?.status === "ok" ? p.detection.landmarks : p.detection?.diagnostics?.candidates?.[0]?.landmarks;
         if (!p.points?.length && points?.length === 4 && points.every((v) => Number.isFinite(v.x) && Number.isFinite(v.y)))
           changePhoto(p.id, { points: points.map((v) => [v.x, v.y]) });
       }
@@ -163,12 +173,16 @@ function App() {
     setError("");
   }
   function setPoint(index, position) {
-    const points = [...(photo.points || [])];
+    const points = [...(tool === "outline" ? reference.board_polygon || [] : photo.points || [])];
     points[index] = [
       Math.min(photo.width - 1, position[0]),
       Math.min(photo.height - 1, position[1]),
     ];
-    changePhoto(photo.id, { points });
+    if (tool === "outline" && referenceSelected) {
+      const outline = [...(reference.board_polygon || [])];
+      outline[index] = points[index];
+      changePhoto(photo.id, { board_polygon: outline, confirmed: false });
+    } else changePhoto(photo.id, { points, ...(referenceSelected ? { confirmed: false } : {}) });
   }
   function updateRegion(update) {
     setComponents((items) =>
@@ -203,7 +217,7 @@ function App() {
   function startPointer(event) {
     if (busy || !photo || photo.error || event.button !== 0) return;
     const position = pointerPosition(event);
-    if (tool === "landmarks" && mode === "manual") {
+    if ((tool === "landmarks" && (mode === "manual" || referenceSelected)) || (tool === "outline" && referenceSelected)) {
       drag.current = { kind: "point", index: pointIndex };
       setPoint(pointIndex, position);
     } else if (tool === "boxes" && referenceSelected) {
@@ -230,6 +244,19 @@ function App() {
     drag.current = null;
     setDraft(null);
   }
+  async function confirmReference() {
+    setBusy(true);
+    setError("");
+    try {
+      const saved = await api(`/api/references/${reference.id}`, jsonPost({
+        points: reference.points, board_polygon: reference.board_polygon,
+      }));
+      changePhoto(reference.id, saved);
+      setMode("automatic");
+      setTool("landmarks");
+    } catch (e) { setError(e.message); }
+    finally { setBusy(false); }
+  }
   async function run() {
     setBusy(true);
     setError("");
@@ -251,6 +278,10 @@ function App() {
         }),
       );
       setBatch(result);
+      setInspections((items) => items.map((p) => ({ ...p, projected:
+        result.photos.find((r) => r.photo_id === p.id)?.alignment?.landmark_kind === "projected"
+          ? result.photos.find((r) => r.photo_id === p.id).alignment.inspection_points : null })));
+
       setTimeout(
         () =>
           document
@@ -264,21 +295,22 @@ function App() {
       setBusy(false);
     }
   }
-  const displayedPoints =
-    mode === "manual"
-      ? photo?.points || []
-      : photo?.detection?.status === "ok"
-        ? photo.detection.landmarks.map((p) => [p.x, p.y])
-        : [];
+  const editingOutline = tool === "outline" && referenceSelected;
+  const pointNames = editingOutline ? ["outline upper left", "outline upper right", "outline lower right", "outline lower left"] : names;
+  const displayedPoints = editingOutline ? reference.board_polygon || []
+    : referenceSelected || mode === "manual" ? photo?.points || []
+    : photo?.projected || (photo?.detection?.status === "ok"
+      ? photo.detection.landmarks.map((p) => [p.x, p.y]) : []);
   const radius = photo ? Math.max(photo.width, photo.height) / 85 : 10;
   const runHint = !health ? "Connect the local backend to begin."
     : !reference ? "Upload a known-good reference first."
     : !inspections.length ? "Add at least one inspection photo."
     : !components.length ? "Draw or add an expected component box on the reference."
+    : mode === "automatic" && !reference.confirmed ? "Confirm the reference landmarks and PCB outline once. Inspection points will be found automatically."
     : detecting ? "Wait for landmark detection to finish."
     : mode === "manual" && photos.some((p) => !p.error && Array.from({ length: 4 }, (_, i) => p.points?.[i]).some((point) => !point || !point.every(Number.isFinite)))
-      ? "Mark all four mounting holes on each photo before running."
-      : "Ready to inspect. Review the mounting holes and expected parts before running.";
+      ? "Mark all four landmarks on each photo before running."
+      : "Ready to inspect. Review the reference landmarks and expected parts before running.";
 
   return (
     <div className="app-shell">
@@ -361,8 +393,7 @@ function App() {
                 2. Define landmarks and expected parts
               </h2>
               <p>
-                Point identities stay attached to the same mounting holes when a
-                board rotates.
+                Confirm four stable reference points once. The PCB outline is separate from these landmarks.
               </p>
             </div>
             <div className="mode-row">
@@ -383,8 +414,8 @@ function App() {
               </fieldset>
               <p>
                 {mode === "manual"
-                  ? "Mark four points on every photo in the displayed order."
-                  : "Mounting holes must pass model and visual checks. Rejected sets are never used for scoring."}
+                  ? "Mark points manually, or confirm the reference setup to align inspection photos automatically."
+                  : "Confirm the reference once. Inspection photos use verified YOLO landmarks or reference registration before manual review."}
               </p>
             </div>
             {mode === "automatic" && (
@@ -418,11 +449,13 @@ function App() {
                     <small>
                       {p.error
                         ? "Photo error"
+                        : p.id === reference?.id && p.confirmed ? "Reference confirmed"
+                        : p.projected && mode === "automatic" ? "Projected from reference"
                         : mode === "manual"
                           ? `${p.points.filter(Boolean).length}/4 points`
                           : p.detection?.status === "ok"
                             ? "Landmarks accepted"
-                            : "Needs review"}
+                            : p.id === reference?.id ? "Mark or correct reference" : "Will try reference registration"}
                     </small>
                   </button>
                   <div className="photo-actions">
@@ -435,6 +468,7 @@ function App() {
                       onClick={() => {
                         if (p.id === reference?.id) {
                           setReference(null);
+                          setInspections((items) => items.map((item) => ({ ...item, points: [], projected: null })));
                           setComponents([]);
                           setRegionId(null);
                         }
@@ -493,13 +527,12 @@ function App() {
                   ) : (
                     <>
                       {mode === "automatic" &&
-                        photo.detection?.status === "failure" && (
+                        photo.detection?.status === "failure" && !photo.projected && !(referenceSelected && reference.confirmed) && (
                           <div className="message notice">
                             <strong>Landmarks need review.</strong>{" "}
                             {photo.detection.reason}{" "}
                             <span>
-                              Scoring will be skipped. Switch to Manual to
-                              mark or correct the points; verify all four mounting holes. Rejected model proposals are available in the diagnostics below.
+                              {referenceSelected ? "Mark or correct the four reference points here, then confirm the setup." : "Reference registration will be tried automatically before manual alignment is requested."}
                             </span>
                           </div>
                         )}
@@ -517,9 +550,9 @@ function App() {
                       <p className="canvas-instruction">
                         {tool === "boxes"
                           ? "Drag a rectangle around an expected part on the reference."
-                          : mode === "manual"
-                            ? `Mark L${pointIndex}: ${names[pointIndex]}. Choose any point in the panel to correct it.`
-                            : "Automatic landmarks are read-only. Manual correction requires switching modes."}
+                          : mode === "manual" || referenceSelected
+                            ? `Mark ${editingOutline ? "outline corner" : "L"}${pointIndex}: ${pointNames[pointIndex]}. Choose any point in the panel to correct it.`
+                            : photo.projected ? "Projected from the confirmed reference after alignment verification." : "Automatic landmarks are read-only. Manual correction requires switching modes."}
                       </p>
                       <div
                         className="preview-container"
@@ -586,6 +619,9 @@ function App() {
                               strokeWidth={radius / 4}
                             />
                           )}
+                          {referenceSelected && reference.board_polygon?.length >= 3 && <polygon
+                            points={reference.board_polygon.filter(Boolean).map((p) => p.join(",")).join(" ")}
+                            fill="none" stroke="#5ce7ff" strokeDasharray="10 5" strokeWidth={radius / 4} pointerEvents="none" />}
                           {displayedPoints.map(
                             (point, index) =>
                               point && point.every(Number.isFinite) && (
@@ -600,7 +636,7 @@ function App() {
                                         : "landmark"
                                     }
                                     strokeWidth={radius / 4}
-                                    style={mode === "automatic" && photo.detection?.status !== "ok" ? {stroke: "#ff5050", strokeDasharray: "6 4"} : undefined}
+                                    style={mode === "automatic" && !referenceSelected && !photo.projected && photo.detection?.status !== "ok" ? {stroke: "#ff5050", strokeDasharray: "6 4"} : undefined}
                                   />
                                   <text
                                     x={point[0] + radius * 1.4}
@@ -608,7 +644,7 @@ function App() {
                                     fontSize={radius * 1.7}
                                     className="canvas-label"
                                   >
-                                    L{index}{mode === "automatic" && photo.detection?.status !== "ok" ? " tentative" : ""}
+                                    {editingOutline ? "Outline " : "L"}{index}{photo.projected && !referenceSelected && mode === "automatic" ? " projected" : ""}
                                   </text>
                                 </g>
                               ),
@@ -637,22 +673,32 @@ function App() {
                   )}
                 </div>
                 <aside className="annotation-panel">
-                  <h3>Four mounting-hole identities</h3>
+                  <h3>{editingOutline ? "PCB surface outline" : "Four landmark identities"}</h3>
+                  {referenceSelected && <div className="message notice">
+                    <p>{reference.confirmed ? "Reference saved. Its points and surface features will be reused." : "Review or correct the four landmarks and the PCB outline, then confirm once."}</p>
+                    <button className="secondary" onClick={() => {
+                      setTool("outline"); setPointIndex(0);
+                      changePhoto(reference.id, { board_polygon: [], confirmed: false });
+                    }}>Mark PCB outline</button>
+                    <button className="secondary" disabled={reference.points?.filter(Boolean).length !== 4 || (reference.board_polygon?.filter(Boolean).length || 0) < 3}
+                      onClick={confirmReference}>Confirm reference setup</button>
+                    <p className="muted">Outline only the PCB surface, excluding background and off-board watermarks. Landmarks can be interior board details.</p>
+                  </div>}
                   <p className="muted">
                     Board-relative order, clockwise. Select a point, then click
                     its center.
                   </p>
                   <ol className="point-list">
-                    {names.map((name, index) => (
+                    {pointNames.map((name, index) => (
                       <li
                         key={name}
                         className={pointIndex === index ? "active-point" : ""}
                       >
                         <button
-                          disabled={mode !== "manual" || !!photo.error}
+                          disabled={(mode !== "manual" && !referenceSelected) || !!photo.error}
                           onClick={() => {
                             setPointIndex(index);
-                            setTool("landmarks");
+                            if (!editingOutline) setTool("landmarks");
                           }}
                           aria-pressed={pointIndex === index}
                         >
@@ -670,14 +716,14 @@ function App() {
                                 max={
                                   (axisIndex ? photo.height : photo.width) - 1
                                 }
-                                disabled={mode !== "manual" || !!photo.error}
+                                disabled={(mode !== "manual" && !referenceSelected) || !!photo.error}
                                 value={
                                   displayedPoints[index]?.[axisIndex] ?? ""
                                 }
                                 onChange={(e) => {
                                   const value = Number(e.target.value);
                                   const point = [
-                                    ...(photo.points[index] || [0, 0]),
+                                    ...(displayedPoints[index] || [0, 0]),
                                   ];
                                   point[axisIndex] = value;
                                   setPoint(index, point);
@@ -841,6 +887,7 @@ function App() {
                 inspections.length === 0 ||
                 components.length === 0 ||
                 detecting ||
+                (mode === "automatic" && !reference?.confirmed) ||
                 !health
               }
               onClick={run}
@@ -880,7 +927,9 @@ function App() {
             {batch.photos.map((result, index) => (
               <Comparison key={`${result.photo_id}-${index}`} result={result} reference={reference}
                 inspection={inspections.find((p) => p.id === result.photo_id)} index={index}
-                mode={batch.mode} onManual={() => switchMode("manual")} />
+                mode={batch.mode} onManual={() => {
+                  switchMode("manual"); setSelected(result.photo_id); setTool("landmarks");
+                }} />
             ))}
             <p className="muted">
               Review evidence before acting. Low similarity can also come from

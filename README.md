@@ -54,6 +54,18 @@ process is required for inspection. Photos, annotations and reports stay under
 ignored `runs/web/`. Refreshing the page resets the editor; completed report URLs
 and annotation snapshots remain on disk. There is no automatic retention cleanup.
 
+## Reuse a confirmed reference automatically
+
+YOLO proposes the reference landmarks as usual. Correct or mark its four ordered
+points, review the separate cyan PCB outline, and click **Confirm reference setup**.
+Inspection photos then use verified YOLO candidates or offline reference feature
+registration before requesting manual clicks. Projected landmarks are labeled;
+component boxes remain in original reference pixels. Replacing the reference
+clears its setup and stale inspection points.
+
+See [reference registration and verification](docs/reference-registration.md) for
+workflow details, tested designs, rejection cases and remaining limitations.
+
 ## Reproducible synthetic demo without dataset or weights
 
 Generate the original shareable fixture locally after setup; use a new output

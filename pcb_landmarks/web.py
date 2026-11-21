@@ -17,7 +17,8 @@ from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, Field, StrictBool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from .align import align_images, blend_overlay
+from .align import _points, align_images, blend_overlay
+from .registration import board_polygon, surface_mask, reference_features, register_inspection
 from .compare import _validate_regions, annotated_overlay, compare_regions, load_config
 from .compatibility import check_compatibility, identify_board
 from .data import open_image, read_image
@@ -36,6 +37,11 @@ MODEL_LOCK = threading.Lock()
 class PhotoPoints(BaseModel):
     photo_id: str
     points: list[list[float]] = Field(default_factory=list, max_length=4)
+
+
+class ReferenceSetup(BaseModel):
+    points: list[list[float]] = Field(min_length=4, max_length=4)
+    board_polygon: list[list[float]] = Field(min_length=3, max_length=12)
 
 
 class InspectionRequest(BaseModel):
@@ -73,7 +79,7 @@ def create_app(storage=None):
     async def local_requests(request, call_next):
         if request.method == 'POST':
             origin = request.headers.get('origin')
-            if origin and origin not in ['http://127.0.0.1:5173', 'http://localhost:5173',
+            if origin and origin != str(request.base_url).rstrip('/') and origin not in ['http://127.0.0.1:5173', 'http://localhost:5173',
                                          'http://127.0.0.1:8000', 'http://localhost:8000']:
                 return JSONResponse({'detail': 'Only local app origins are accepted'}, status_code=403)
             length = request.headers.get('content-length')
@@ -113,6 +119,46 @@ def create_app(storage=None):
             except Exception as error:
                 return dict(status='failure', reason=f'{type(error).__name__}: {error}'.replace(str(ROOT), '<project>'),
                             landmarks=[])
+
+    @lru_cache(maxsize=4)
+    def cached_reference(identifier, polygon_json):
+        _, path = photo(identifier)
+        return reference_features(read_image(path/'image.png'), json.loads(polygon_json))
+
+    @app.get('/api/references/{identifier}')
+    def reference_setup(identifier: str):
+        record, path = photo(identifier)
+        if (path/'reference.json').is_file():
+            return json.loads((path/'reference.json').read_text())
+        polygon, reason = [], None
+        if not record['error']:
+            try:
+                polygon = board_polygon(read_image(path/'image.png'))
+            except ValueError as error:
+                reason = str(error)
+        return dict(points=[], board_polygon=polygon, confirmed=False, reason=reason)
+
+    @app.post('/api/references/{identifier}')
+    def save_reference(identifier: str, setup: ReferenceSetup):
+        record, path = photo(identifier)
+        try:
+            if record['error']:
+                raise ValueError(record['error'])
+            image = read_image(path/'image.png')
+            points = _points(setup.points, np.asarray(image), 'reference')
+            surface_mask(image, setup.board_polygon)
+            if any(cv2.pointPolygonTest(np.float32(setup.board_polygon), (float(x), float(y)), False) < 0 for x, y in points):
+                raise ValueError('Reference landmarks must be inside the PCB surface outline.')
+            features = cached_reference(identifier, json.dumps(setup.board_polygon))
+            saved = dict(points=setup.points, board_polygon=setup.board_polygon, confirmed=True,
+                         coordinate_system='decoded_original_image_pixels',
+                         feature_count=len(features['xy']))
+            temporary = path/'reference.tmp'
+            temporary.write_text(json.dumps(saved, allow_nan=False), encoding='utf-8')
+            temporary.replace(path/'reference.json')
+            return saved
+        except (ValueError, cv2.error) as error:
+            raise HTTPException(422, str(error)) from error
 
     @app.get('/api/health')
     def health():
@@ -196,6 +242,8 @@ def create_app(storage=None):
         batch_path = storage/'batches'/batch_id
         batch_path.mkdir()
         reference_detection = None
+        saved_reference = (json.loads((reference_path/'reference.json').read_text())
+                           if (reference_path/'reference.json').is_file() else None)
         reference_layout = identify_board(ref_image) if ref_image is not None else None
         results = []
         for index, item in enumerate(request.inspections):
@@ -214,7 +262,7 @@ def create_app(storage=None):
                 inspection_layout = identify_board(inspection_image)
                 compatibility = check_compatibility(reference_layout, inspection_layout)
                 result['board_compatibility'] = compatibility
-                if compatibility['status'] in ['DIFFERENT_BOARD', 'REVIEW']:
+                if compatibility['status'] == 'DIFFERENT_BOARD' or (compatibility['status'] == 'REVIEW' and not saved_reference):
                     result.update(outcome='DIFFERENT_BOARD' if compatibility['status'] == 'DIFFERENT_BOARD' else 'review',
                                   reason=compatibility['message'],
                                   alignment=dict(status='not_attempted',
@@ -222,27 +270,40 @@ def create_app(storage=None):
                     results.append(result)
                     continue
                 rp, ip = request.reference_points, item.points
-                if request.mode == 'automatic':
-                    if reference_detection is None:
-                        reference_detection = detect(request.reference_id)
+                registration = None
+                if request.mode == 'automatic' and saved_reference:
+                    rp = saved_reference['points']
                     detection = detect(item.photo_id)
-                    result['landmark_diagnostics'] = dict(reference=reference_detection, inspection=detection)
-                    if reference_detection['status'] != 'ok':
-                        raise ValueError('Reference: ' + reference_detection['reason'])
-                    if detection['status'] != 'ok':
-                        raise ValueError(detection['reason'])
-                    rp = [[p['x'], p['y']] for p in reference_detection['landmarks']]
-                    ip = [[p['x'], p['y']] for p in detection['landmarks']]
-                aligned, homography, mask = align_images(ref_image, inspection_image, rp, ip)
+                    result['landmark_diagnostics'] = dict(reference=dict(status='confirmed', landmarks=rp), inspection=detection)
+                    features = cached_reference(request.reference_id, json.dumps(saved_reference['board_polygon']))
+                    aligned, homography, mask, registration = register_inspection(
+                        ref_image, inspection_image, rp, features, detection)
+                else:
+                    if request.mode == 'automatic':
+                        if reference_detection is None:
+                            reference_detection = detect(request.reference_id)
+                        detection = detect(item.photo_id)
+                        result['landmark_diagnostics'] = dict(reference=reference_detection, inspection=detection)
+                        if reference_detection['status'] != 'ok':
+                            raise ValueError('Reference: ' + reference_detection['reason'])
+                        if detection['status'] != 'ok':
+                            raise ValueError(detection['reason'])
+                        rp = [[p['x'], p['y']] for p in reference_detection['landmarks']]
+                        ip = [[p['x'], p['y']] for p in detection['landmarks']]
+                    aligned, homography, mask = align_images(ref_image, inspection_image, rp, ip)
                 alignment = dict(status='ok', reference_wh=list(ref_image.size),
                                  homography_inspection_to_reference=homography.tolist(),
                                  valid_overlap_fraction=float((mask > 0).mean()))
+                if registration:
+                    alignment.update(registration)
                 output = batch_path/str(index)
                 output.mkdir()
                 Image.fromarray(blend_overlay(np.asarray(ref_image), aligned, mask)).save(output/'alignment.png')
                 result.update(alignment=alignment, alignment_overlay_url=f'/api/batches/{batch_id}/{index}/alignment')
-                compatibility = check_compatibility(reference_layout, inspection_layout, ref_image,
-                                                     aligned, mask, homography, rp)
+                compatibility = (dict(status='SAME_DESIGN', message='Verified against the active reference PCB.',
+                                      alignment_evidence=registration['verification']) if registration else
+                                 check_compatibility(reference_layout, inspection_layout, ref_image,
+                                                     aligned, mask, homography, rp))
                 result['board_compatibility'] = compatibility
                 if compatibility['status'] != 'SAME_DESIGN':
                     result['reason'] = compatibility['message']

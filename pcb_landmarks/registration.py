@@ -1,0 +1,169 @@
+"""Offline registration against a user-confirmed reference, without a board catalog."""
+import cv2
+import numpy as np
+
+from .align import _points, align_images
+
+
+def board_polygon(image):
+    """Conservative proposal for colored solder mask; operator can correct the outline."""
+    rgb = np.asarray(image)
+    scale = min(1., 1000/max(rgb.shape[:2]))
+    small = cv2.resize(rgb, None, fx=scale, fy=scale)
+    # shortcut: colored convex solder mask; broaden segmentation for pale/black boards or colored clutter.
+    hsv = cv2.cvtColor(small, cv2.COLOR_RGB2HSV)
+    mask = cv2.inRange(hsv, (0, 45, 25), (179, 255, 245))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        raise ValueError('PCB surface not found; mark its outline separately from the landmarks.')
+    contour = max(contours, key=cv2.contourArea)
+    polygon = cv2.approxPolyDP(cv2.convexHull(contour), .015*cv2.arcLength(contour, True), True)
+    if cv2.contourArea(polygon) < .15*mask.size or not 3 <= len(polygon) <= 12:
+        raise ValueError('PCB surface is ambiguous; mark its outline or retake the photo.')
+    return (polygon[:, 0]/scale).tolist()
+
+
+def surface_mask(image, polygon):
+    rgb = np.asarray(image)
+    p = np.asarray(polygon, np.float32)
+    if p.ndim != 2 or p.shape[1] != 2 or not 3 <= len(p) <= 12 or not np.isfinite(p).all():
+        raise ValueError('PCB outline must contain 3 to 12 finite ordered points.')
+    height, width = rgb.shape[:2]
+    if (p < 0).any() or (p[:, 0] >= width).any() or (p[:, 1] >= height).any():
+        raise ValueError('PCB outline is outside the original image.')
+    if not cv2.isContourConvex(p) or cv2.contourArea(p) < .02*width*height:
+        raise ValueError('PCB outline must be a non-crossing convex surface with usable area.')
+    mask = np.zeros((height, width), np.uint8)
+    cv2.fillConvexPoly(mask, np.round(p).astype(np.int32), 255)
+    # Exclude the board edge and the adjacent background from feature evidence.
+    radius = max(3, round(.008*min(height, width)))
+    return cv2.erode(mask, np.ones((2*radius+1, 2*radius+1), np.uint8))
+
+
+def reference_features(image, polygon):
+    rgb = np.asarray(image)
+    mask = surface_mask(rgb, polygon)
+    scale = min(1., 1200/max(rgb.shape[:2]))
+    gray = cv2.cvtColor(cv2.resize(rgb, None, fx=scale, fy=scale), cv2.COLOR_RGB2GRAY)
+    small_mask = cv2.resize(mask, (gray.shape[1], gray.shape[0]), interpolation=cv2.INTER_NEAREST)
+    keys, descriptors = cv2.SIFT_create(nfeatures=3500, contrastThreshold=.025).detectAndCompute(gray, small_mask)
+    # SIFT's mask checks only keypoint centers; reject descriptors whose support reaches off-board.
+    distance = cv2.distanceTransform(small_mask, cv2.DIST_L2, 5)
+    keep = [i for i, k in enumerate(keys) if distance[round(k.pt[1]), round(k.pt[0])] >= 5.5*k.size]
+    xy = np.float32([keys[i].pt for i in keep]).reshape(-1, 2)/scale
+    descriptors = descriptors[keep] if descriptors is not None and keep else None
+    return dict(xy=xy, descriptors=descriptors, mask=mask, polygon=polygon)
+
+
+def match_surfaces(features, inspection):
+    try:
+        other = reference_features(inspection, board_polygon(inspection))
+    except ValueError as error:
+        raise ValueError('Inspection PCB surface could not be isolated; use manual alignment or retake the photo.') from error
+    a, b = features['descriptors'], other['descriptors']
+    if a is None or b is None or min(len(a), len(b)) < 25:
+        raise ValueError('Insufficient on-board features; use manual alignment or a sharper photo.')
+    matcher = cv2.BFMatcher()
+    forward = [p[0] for p in matcher.knnMatch(a, b, k=2) if len(p) == 2 and p[0].distance < .72*p[1].distance]
+    reverse = {p[0].queryIdx: p[0].trainIdx for p in matcher.knnMatch(b, a, k=2)
+               if len(p) == 2 and p[0].distance < .72*p[1].distance}
+    matches, seen_a, seen_b = [], set(), set()
+    for m in sorted(forward, key=lambda m: m.distance):
+        x = tuple(np.round(features['xy'][m.queryIdx], 1))
+        y = tuple(np.round(other['xy'][m.trainIdx], 1))
+        if reverse.get(m.trainIdx) == m.queryIdx and x not in seen_a and y not in seen_b:
+            matches.append(m)
+            seen_a.add(x)
+            seen_b.add(y)
+    if len(matches) < 35:
+        raise ValueError('Insufficient unique reciprocal on-board matches; manual alignment required.')
+    return (np.float64([features['xy'][m.queryIdx] for m in matches]),
+            np.float64([other['xy'][m.trainIdx] for m in matches]), other)
+
+
+def verify_alignment(reference, inspection, features, matches, homography, aligned, valid):
+    ref_xy, inspection_xy, other = matches
+    recovered = cv2.perspectiveTransform(inspection_xy[None], homography)[0]
+    error = np.linalg.norm(recovered-ref_xy, axis=1)
+    limit = max(3., .003*np.hypot(*np.asarray(reference).shape[:2]))
+    good = error <= limit
+    # Every third correspondence is held out of homography fitting.
+    holdout = np.arange(len(error)) % 3 == 0
+    if good.sum() < 25 or good.mean() < .45 or (good & holdout).sum() < 8 or good[holdout].mean() < .45:
+        raise ValueError('Distributed on-board reprojection check failed (including held-out matches).')
+    mask = features['mask']
+    hull = cv2.contourArea(cv2.convexHull(np.float32(ref_xy[good])))
+    if hull/max(1, cv2.countNonZero(mask)) < .2:
+        raise ValueError('Matches are concentrated in too small a part of the PCB.')
+    ys, xs = np.nonzero(mask)
+    bounds = (xs.min(), ys.min(), xs.max()+1, ys.max()+1)
+    x1, y1, x2, y2 = bounds
+    cells = set(zip(np.minimum(2, ((ref_xy[good, 0]-x1)*3/(x2-x1)).astype(int)),
+                    np.minimum(2, ((ref_xy[good, 1]-y1)*3/(y2-y1)).astype(int))))
+    if len(cells) < 6 or len({x for x, y in cells}) < 2 or len({y for x, y in cells}) < 2:
+        raise ValueError('On-board matches do not cover enough separated PCB regions.')
+    warped_surface = cv2.warpPerspective(other['mask'], homography, (mask.shape[1], mask.shape[0]))
+    support = (mask > 0) & (warped_surface >= 254) & (valid == 255)
+    overlap = support.sum()/max(1, cv2.countNonZero(mask))
+    if overlap < .85:
+        raise ValueError('Insufficient visible PCB overlap; board may be clipped or misaligned.')
+    scores = []
+    for row in range(3):
+        for col in range(3):
+            left, right = np.linspace(x1, x2, 4).astype(int)[col:col+2]
+            top, bottom = np.linspace(y1, y2, 4).astype(int)[row:row+2]
+            local = support[top:bottom, left:right]
+            if local.mean() < .8:
+                continue
+            # Masked NCC of stable edges is independent of the four fitted landmarks.
+            def edges(image):
+                gray = cv2.cvtColor(np.asarray(image)[top:bottom, left:right], cv2.COLOR_RGB2GRAY)
+                return cv2.magnitude(cv2.Sobel(gray, cv2.CV_32F, 1, 0), cv2.Sobel(gray, cv2.CV_32F, 0, 1))[local]
+            a, b = edges(reference), edges(aligned)
+            score = float(np.corrcoef(a, b)[0, 1]) if min(a.std(), b.std()) > 1 else 0.
+            scores.append(dict(row=row, column=col, score=score, matches=score >= .35))
+    stable = [s for s in scores if s['matches']]
+    if len(stable) < 5 or len({s['row'] for s in stable}) < 2 or len({s['column'] for s in stable}) < 2:
+        raise ValueError('Stable PCB details disagree after alignment; manual review required.')
+    return dict(method='reciprocal on-board SIFT; held-out reprojection and stable edge regions',
+                matches=len(error), inliers=int(good.sum()), held_out_inliers=int((good & holdout).sum()),
+                median_error_px=float(np.median(error[good])), p90_error_px=float(np.percentile(error[good], 90)),
+                tolerance_px=limit, spatial_coverage=float(hull/cv2.countNonZero(mask)),
+                occupied_cells=len(cells), board_overlap=float(overlap), stable_regions=scores)
+
+
+def register_inspection(reference, inspection, points, features, detection):
+    rp = _points(points, np.asarray(reference), 'confirmed reference')
+    matches = match_surfaces(features, inspection)
+    attempts = []
+    if detection['status'] == 'ok':
+        ip = [[p['x'], p['y']] for p in detection['landmarks']]
+        try:
+            candidate = cv2.getPerspectiveTransform(np.float32(ip), np.float32(rp))
+            errors = np.linalg.norm(cv2.perspectiveTransform(matches[1][None], candidate)[0]-matches[0], axis=1)
+            if np.median(errors) > max(3., .003*np.hypot(*np.asarray(reference).shape[:2])):
+                raise ValueError('YOLO landmark transform disagrees with on-board matches.')
+            aligned, matrix, valid = align_images(reference, inspection, rp, ip)
+            evidence = verify_alignment(reference, inspection, features, matches, matrix, aligned, valid)
+            return aligned, matrix, valid, dict(source='yolo_landmarks', inspection_points=ip,
+                                                verification=evidence, attempts=attempts)
+        except (ValueError, cv2.error, np.linalg.LinAlgError) as error:
+            attempts.append(dict(source='yolo_landmarks', status='failure', reason=str(error)))
+    else:
+        attempts.append(dict(source='yolo_landmarks', status='failure', reason=detection['reason']))
+    ref_xy, inspection_xy, _ = matches
+    training = np.arange(len(ref_xy)) % 3 != 0
+    matrix, _ = cv2.findHomography(inspection_xy[training], ref_xy[training], cv2.RANSAC,
+                                   max(3., .003*np.hypot(*np.asarray(reference).shape[:2])))
+    if matrix is None or not np.isfinite(matrix).all():
+        raise ValueError('No robust on-board homography; use manual alignment.')
+    try:
+        ip = cv2.perspectiveTransform(rp[None], np.linalg.inv(matrix))[0]
+    except np.linalg.LinAlgError as error:
+        raise ValueError('Singular reference transform; use manual alignment.') from error
+    # Reuse the existing geometry, horizon and bilinear-support validation.
+    aligned, matrix, valid = align_images(reference, inspection, rp, ip)
+    evidence = verify_alignment(reference, inspection, features, matches, matrix, aligned, valid)
+    return aligned, matrix, valid, dict(source='reference_registration', inspection_points=ip.tolist(),
+                                        landmark_kind='projected', verification=evidence, attempts=attempts)

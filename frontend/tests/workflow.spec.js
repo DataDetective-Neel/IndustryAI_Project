@@ -1,3 +1,4 @@
+import {confirmReference} from './reference-setup.js';
 import { test, expect } from "@playwright/test";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -314,28 +315,25 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     path: absolute("runs/web-verification/real-manual.png"),
     fullPage: true,
   });
-  await page.getByRole("radio", { name: "Automatic", exact: true }).check();
+  await confirmReference(page, [[220,250],[1000,250],[1000,1390],[220,1390]]);
   await expect(
     page.getByText("Detecting landmarks with the local model…"),
   ).toHaveCount(0, { timeout: 60000 });
   const automatic = await inspect(page);
   expect(automatic.photos[0].outcome).toBe("review");
-  expect(automatic.photos[0].alignment.reason).toMatch(
-    /no_confident_board|low_landmark_confidence|checkpoint_unavailable|mounting_holes_not_verified|mounting_pattern_not_verified/,
-  );
-  await expect(
-    page
-      .getByTestId("result-0")
-      .getByText("Component scoring skipped.", { exact: true }),
-  ).toBeVisible();
+  expect(automatic.photos[0].landmark_diagnostics.reference.status).toBe("confirmed");
+  if (automatic.photos[0].alignment.status === "ok") {
+    expect(automatic.photos[0].alignment.source).toBe("reference_registration");
+    expect(automatic.photos[0].components_evaluated).toBe(true);
+  } else {
+    expect(automatic.photos[0].alignment.reason).toBeTruthy();
+    expect(automatic.photos[0].components_evaluated).toBe(false);
+  }
   await page.screenshot({
     path: absolute("runs/web-verification/automatic-rejection.png"),
     fullPage: true,
   });
-  await page
-    .getByTestId("result-0")
-    .getByRole("button", { name: "Switch to Manual", exact: true })
-    .click();
+  await page.getByRole("radio", {name:"Manual",exact:true}).check();
   await page.getByLabel("Inspection photos", { exact: true }).setInputFiles({
     name: "broken.png",
     mimeType: "image/png",

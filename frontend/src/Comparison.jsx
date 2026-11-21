@@ -19,13 +19,15 @@ export default function Comparison({ result, reference, inspection, index, mode,
   const part = parts[selected];
   const box = findingBox(part?.bbox_xyxy_px, reference?.width, reference?.height);
   const outcome = result.board_compatibility?.status === 'DIFFERENT_BOARD' ? 'DIFFERENT_BOARD' : result.outcome;
+  const alignmentReview = outcome === 'review' && result.components_evaluated === false;
   const failed = result.alignment?.status !== 'ok';
   const unreliable = result.alignment_validation?.reliable === false;
   return <article className="result-sheet" data-testid={`result-${index}`}>
     <div className="result-heading">
       <h3>{result.filename}</h3>
-      <strong className={`status ${outcome}`}>{outcomes[outcome] || outcome || 'Outcome unavailable'}</strong>
+      <strong className={`status ${outcome}`}>{alignmentReview ? 'Needs alignment review' : outcomes[outcome] || outcome || 'Outcome unavailable'}</strong>
     </div>
+    {result.alignment?.source && <p className="alignment-summary">Alignment: {result.alignment.source === 'reference_registration' ? 'Reference registration · landmarks projected from confirmed reference' : 'YOLO landmarks verified against reference'}</p>}
     {result.reason && <p className="result-reason">{result.reason}</p>}
     {result.board_compatibility && <details>
       <summary>Board compatibility evidence</summary>

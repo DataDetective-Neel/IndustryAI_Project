@@ -1,3 +1,4 @@
+import {confirmReference} from './reference-setup.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -59,7 +60,7 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   expect(batch.photos[6].components_evaluated).toBe(false);
   await fs.writeFile(path.join(output,'browser-report.json'),JSON.stringify(batch,null,2));
   await page.getByTestId('result-0').screenshot({path:path.join(output,'wrong-board.png')});
-  await page.getByRole('radio',{name:'Automatic',exact:true}).check();
+  await confirmReference(page, [[140,180],[825,180],[825,1435],[140,1435]]);
   await expect(page.getByText('Detecting landmarks with the local model…')).toHaveCount(0,{timeout:60000});
   const automaticPending=page.waitForResponse(r=>r.url().endsWith('/api/inspections') && r.request().method()==='POST');
   await page.getByRole('button',{name:'Run Inspection',exact:true}).click();
