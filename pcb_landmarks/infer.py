@@ -53,6 +53,7 @@ class LandmarkDetector:
         path = Path(checkpoint).resolve(strict=True)
         if not path.is_file() or path.suffix.lower() != '.pt':
             raise ValueError('Checkpoint must be an existing local .pt file')
+        self.checkpoint = str(path)
         self.sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
         if expected_sha256 is not None and self.sha256 != expected_sha256:
             raise ValueError('Checkpoint hash does not match frozen configuration')
@@ -80,7 +81,35 @@ class LandmarkDetector:
         if not (0 < board_conf <= 1 and 0 < point_conf <= 1):
             raise ValueError('Confidence thresholds must be in (0, 1]')
         image = read_image(image) if isinstance(image, (str, Path)) else image
-        result = assess(*self.raw(image, board_conf), self.names, image.size, board_conf, point_conf)
+        boxes, scores, keypoints = self.raw(image, 0.001)
+        result = assess(boxes, scores, keypoints, self.names, image.size, board_conf, point_conf)
+        candidates = []
+        for i, (box, score) in enumerate(zip(boxes, scores)):
+            points = keypoints[i] if i < len(keypoints) else []
+            verdict = assess([box], [score], [points], self.names, image.size, board_conf, point_conf)
+            rows = []
+            for identity, (name, point) in enumerate(zip(self.names, points)):
+                x, y, confidence = map(float, point)
+                reasons = []
+                if not np.isfinite(point).all():
+                    reasons.append('nonfinite_prediction')
+                if not point_conf <= confidence <= 1:
+                    reasons.append('low_landmark_confidence')
+                if not (0 < x < image.width and 0 < y < image.height):
+                    reasons.append('outside_or_clipped_image')
+                rows.append(dict(id=identity, name=name, x=x if np.isfinite(x) else None,
+                                 y=y if np.isfinite(y) else None,
+                                 confidence=confidence if np.isfinite(confidence) else None,
+                                 point_rejection_reasons=reasons))
+            candidates.append(dict(board_id=i, class_id=0, board_confidence=float(score),
+                                   bbox_xyxy=np.asarray(box).tolist(), landmarks=rows,
+                                   accepted=result['status'] == 'ok' and verdict['status'] == 'ok',
+                                   rejection_reason=result['reason'] or verdict['reason']))
+        result['diagnostics'] = dict(checkpoint_path=self.checkpoint, format='one pcb detection; four keypoints',
+                                   landmark_order=self.names, board_conf=board_conf, point_conf=point_conf,
+                                   raw_minimum_confidence=0.001, imgsz=self.imgsz,
+                                   coordinates='decoded original RGB pixels; Ultralytics reverses letterbox',
+                                   candidates=candidates)
         result['image_wh'] = list(image.size)
         result['checkpoint_sha256'] = self.sha256
         return result

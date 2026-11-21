@@ -1,0 +1,1423 @@
+{
+  "checkpoint_path": "A:\\IndustryAI_Project\\runs\\landmarks\\full\\weights\\best.pt",
+  "checkpoint_present": true,
+  "checkpoint_loadable": true,
+  "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e",
+  "checkpoint_schema": {
+    "task": "pose",
+    "names": {
+      "0": "pcb"
+    },
+    "kpt_shape": [
+      4,
+      3
+    ]
+  },
+  "cases": {
+    "identical_manual": {
+      "outcome": "ok",
+      "statuses": {
+        "U2": "present",
+        "AM335x": "present",
+        "U14": "present",
+        "U13": "present",
+        "U12": "present",
+        "U11": "present",
+        "Y3": "present",
+        "U16": "present"
+      },
+      "missing_count": 0,
+      "alignment_validation": {
+        "reliable": true,
+        "overlay_score": 1.0,
+        "reason": "overlay_or_consistent_local_matches"
+      },
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          1174,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 1.0
+      },
+      "report_url": "/api/batches/b8e92ce02e28425a9c53785894a4e5b7/report",
+      "synthetic": false
+    },
+    "identical_automatic": {
+      "outcome": "review",
+      "statuses": {
+        "U2": "not_evaluated",
+        "AM335x": "not_evaluated",
+        "U14": "not_evaluated",
+        "U13": "not_evaluated",
+        "U12": "not_evaluated",
+        "U11": "not_evaluated",
+        "Y3": "not_evaluated",
+        "U16": "not_evaluated"
+      },
+      "missing_count": 0,
+      "alignment_validation": null,
+      "alignment": {
+        "status": "failure",
+        "reason": "Reference: no_confident_board"
+      },
+      "report_url": "/api/batches/32700563db974b3a964aa1452728a264/report",
+      "synthetic": false
+    },
+    "mild_perspective_manual": {
+      "outcome": "ok",
+      "statuses": {
+        "U2": "present",
+        "AM335x": "present",
+        "U14": "present",
+        "U13": "present",
+        "U12": "present",
+        "U11": "present",
+        "Y3": "present",
+        "U16": "present"
+      },
+      "missing_count": 0,
+      "alignment_validation": {
+        "reliable": true,
+        "overlay_score": 0.9989703126306761,
+        "reason": "overlay_or_consistent_local_matches"
+      },
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          1174,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            1.0597866324912657,
+            -0.011319526635408052,
+            -25.095267068849083
+          ],
+          [
+            0.019595921988328026,
+            1.0357831305027012,
+            -31.543774600964756
+          ],
+          [
+            2.650427385018719e-06,
+            7.143073894801959e-06,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 1.0
+      },
+      "report_url": "/api/batches/e597e8395b14475ba9df0b40f7518c00/report",
+      "synthetic": true
+    },
+    "mild_perspective_automatic": {
+      "outcome": "review",
+      "statuses": {
+        "U2": "not_evaluated",
+        "AM335x": "not_evaluated",
+        "U14": "not_evaluated",
+        "U13": "not_evaluated",
+        "U12": "not_evaluated",
+        "U11": "not_evaluated",
+        "Y3": "not_evaluated",
+        "U16": "not_evaluated"
+      },
+      "missing_count": 0,
+      "alignment_validation": null,
+      "alignment": {
+        "status": "failure",
+        "reason": "Reference: no_confident_board"
+      },
+      "report_url": "/api/batches/ad8deaf2d95341fc882b5876cf7cceb8/report",
+      "synthetic": true
+    },
+    "badly_cropped_manual": {
+      "outcome": "review",
+      "statuses": {
+        "U2": "not_evaluated",
+        "AM335x": "not_evaluated",
+        "U14": "not_evaluated",
+        "U13": "not_evaluated",
+        "U12": "not_evaluated",
+        "U11": "not_evaluated",
+        "Y3": "not_evaluated",
+        "U16": "not_evaluated"
+      },
+      "missing_count": 0,
+      "alignment_validation": null,
+      "alignment": {
+        "status": "failure",
+        "reason": "inspection: landmarks outside decoded image bounds"
+      },
+      "report_url": "/api/batches/4b7d053b2020448488b684ea6cbe18f8/report",
+      "synthetic": true
+    },
+    "badly_cropped_automatic": {
+      "outcome": "review",
+      "statuses": {
+        "U2": "not_evaluated",
+        "AM335x": "not_evaluated",
+        "U14": "not_evaluated",
+        "U13": "not_evaluated",
+        "U12": "not_evaluated",
+        "U11": "not_evaluated",
+        "Y3": "not_evaluated",
+        "U16": "not_evaluated"
+      },
+      "missing_count": 0,
+      "alignment_validation": null,
+      "alignment": {
+        "status": "failure",
+        "reason": "Reference: no_confident_board"
+      },
+      "report_url": "/api/batches/cf2ca051afa144058e4821fcf5b9e99f/report",
+      "synthetic": true
+    },
+    "SIMULATED_erasure_manual": {
+      "outcome": "review",
+      "statuses": {
+        "U2": "uncertain",
+        "AM335x": "present",
+        "U14": "present",
+        "U13": "present",
+        "U12": "present",
+        "U11": "present",
+        "Y3": "present",
+        "U16": "present"
+      },
+      "missing_count": 0,
+      "alignment_validation": {
+        "reliable": true,
+        "overlay_score": 0.9972895233694076,
+        "reason": "overlay_or_consistent_local_matches"
+      },
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          1174,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            0.9999999999999976,
+            -2.965284471418382e-16,
+            7.553786155606312e-13
+          ],
+          [
+            -3.3223977971455314e-16,
+            0.9999999999999979,
+            1.0249110588000931e-12
+          ],
+          [
+            -1.0836082568056914e-18,
+            -1.02579329507191e-18,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 1.0
+      },
+      "report_url": "/api/batches/6443b2d79d684b229e9740fc851a34c5/report",
+      "synthetic": true
+    },
+    "SIMULATED_erasure_automatic": {
+      "outcome": "review",
+      "statuses": {
+        "U2": "not_evaluated",
+        "AM335x": "not_evaluated",
+        "U14": "not_evaluated",
+        "U13": "not_evaluated",
+        "U12": "not_evaluated",
+        "U11": "not_evaluated",
+        "Y3": "not_evaluated",
+        "U16": "not_evaluated"
+      },
+      "missing_count": 0,
+      "alignment_validation": null,
+      "alignment": {
+        "status": "failure",
+        "reason": "Reference: no_confident_board"
+      },
+      "report_url": "/api/batches/d5ca37d2805c47f2b118f6154118374b/report",
+      "synthetic": true
+    }
+  },
+  "direct_vs_app": {
+    "reference": {
+      "equal": true,
+      "decoded_raster_sha256": "7584874bf43e1f8b1d40a46083c0368606be367c2a225c86e6a93709d0a2f239",
+      "labeled_points_px": [
+        [
+          256.72576488,
+          376.88567808
+        ],
+        [
+          953.35461276,
+          373.4152704
+        ],
+        [
+          908.94799232,
+          1323.61138176
+        ],
+        [
+          308.07092489999997,
+          1324.99954176
+        ]
+      ],
+      "landmark_error_px": [
+        229.74539728522674,
+        306.3990564590322,
+        251.67916096998607,
+        250.22992695981551
+      ],
+      "app": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": [],
+        "diagnostics": {
+          "checkpoint_path": "A:\\IndustryAI_Project\\runs\\landmarks\\full\\weights\\best.pt",
+          "format": "one pcb detection; four keypoints",
+          "landmark_order": [
+            "upper_left_mount",
+            "upper_right_mount",
+            "lower_right_mount",
+            "lower_left_mount"
+          ],
+          "board_conf": 0.95,
+          "point_conf": 0.99,
+          "raw_minimum_confidence": 0.001,
+          "imgsz": 640,
+          "coordinates": "decoded original RGB pixels; Ultralytics reverses letterbox",
+          "candidates": [
+            {
+              "board_id": 0,
+              "class_id": 0,
+              "board_confidence": 0.9204082489013672,
+              "bbox_xyxy": [
+                201.248291015625,
+                118.94209289550781,
+                1003.8162841796875,
+                1448.7987060546875
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 264.7481689453125,
+                  "y": 606.490966796875,
+                  "confidence": 0.03586070239543915,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 960.5487060546875,
+                  "y": 679.7298583984375,
+                  "confidence": 0.19786366820335388,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 771.7836303710938,
+                  "y": 1112.593994140625,
+                  "confidence": 0.105935238301754,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 498.50927734375,
+                  "y": 1162.6781005859375,
+                  "confidence": 0.6176720857620239,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            }
+          ]
+        },
+        "image_wh": [
+          1174,
+          1536
+        ],
+        "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+      }
+    },
+    "identical": {
+      "equal": true,
+      "decoded_raster_sha256": "7584874bf43e1f8b1d40a46083c0368606be367c2a225c86e6a93709d0a2f239",
+      "labeled_points_px": [
+        [
+          256.72576488,
+          376.88567808
+        ],
+        [
+          953.35461276,
+          373.4152704
+        ],
+        [
+          908.94799232,
+          1323.61138176
+        ],
+        [
+          308.07092489999997,
+          1324.99954176
+        ]
+      ],
+      "landmark_error_px": [
+        229.74539728522674,
+        306.3990564590322,
+        251.67916096998607,
+        250.22992695981551
+      ],
+      "app": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": [],
+        "diagnostics": {
+          "checkpoint_path": "A:\\IndustryAI_Project\\runs\\landmarks\\full\\weights\\best.pt",
+          "format": "one pcb detection; four keypoints",
+          "landmark_order": [
+            "upper_left_mount",
+            "upper_right_mount",
+            "lower_right_mount",
+            "lower_left_mount"
+          ],
+          "board_conf": 0.95,
+          "point_conf": 0.99,
+          "raw_minimum_confidence": 0.001,
+          "imgsz": 640,
+          "coordinates": "decoded original RGB pixels; Ultralytics reverses letterbox",
+          "candidates": [
+            {
+              "board_id": 0,
+              "class_id": 0,
+              "board_confidence": 0.9204082489013672,
+              "bbox_xyxy": [
+                201.248291015625,
+                118.94209289550781,
+                1003.8162841796875,
+                1448.7987060546875
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 264.7481689453125,
+                  "y": 606.490966796875,
+                  "confidence": 0.03586070239543915,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 960.5487060546875,
+                  "y": 679.7298583984375,
+                  "confidence": 0.19786366820335388,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 771.7836303710938,
+                  "y": 1112.593994140625,
+                  "confidence": 0.105935238301754,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 498.50927734375,
+                  "y": 1162.6781005859375,
+                  "confidence": 0.6176720857620239,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            }
+          ]
+        },
+        "image_wh": [
+          1174,
+          1536
+        ],
+        "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+      }
+    },
+    "mild_perspective": {
+      "equal": true,
+      "decoded_raster_sha256": "7c41515281dfa4ed2fe0018c824cf7824889781270617094cd2b12c7494cdfb4",
+      "labeled_points_px": [
+        [
+          270.94262895466915,
+          390.4696870376859
+        ],
+        [
+          931.8919374698967,
+          375.1951789760827
+        ],
+        [
+          905.3621052589092,
+          1306.199609466516
+        ],
+        [
+          331.4222279162866,
+          1316.5626393034815
+        ]
+      ],
+      "landmark_error_px": [
+        179.48092822247818,
+        226.60977901997148,
+        276.8525141311827,
+        300.6612269051373,
+        865.891611193348,
+        330.4812226767513,
+        553.5829923552662,
+        929.0390055395585,
+        645.9839570546197,
+        1000.9116913593572,
+        821.8098562881477,
+        336.2302248404303,
+        883.8599791163715,
+        388.8814355362164,
+        485.5636638683801,
+        897.5022017582006,
+        904.4753927603821,
+        451.96752960905224,
+        419.8459633179059,
+        863.5780850495643,
+        928.832143793141,
+        516.7966659512241,
+        360.4809697921743,
+        833.3892316167818
+      ],
+      "app": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": [],
+        "diagnostics": {
+          "checkpoint_path": "A:\\IndustryAI_Project\\runs\\landmarks\\full\\weights\\best.pt",
+          "format": "one pcb detection; four keypoints",
+          "landmark_order": [
+            "upper_left_mount",
+            "upper_right_mount",
+            "lower_right_mount",
+            "lower_left_mount"
+          ],
+          "board_conf": 0.95,
+          "point_conf": 0.99,
+          "raw_minimum_confidence": 0.001,
+          "imgsz": 640,
+          "coordinates": "decoded original RGB pixels; Ultralytics reverses letterbox",
+          "candidates": [
+            {
+              "board_id": 0,
+              "class_id": 0,
+              "board_confidence": 0.8806149959564209,
+              "bbox_xyxy": [
+                249.0128936767578,
+                136.2616729736328,
+                1005.2481689453125,
+                1429.369384765625
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 351.2685852050781,
+                  "y": 550.9724731445312,
+                  "confidence": 0.038555584847927094,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 938.1087646484375,
+                  "y": 601.7196655273438,
+                  "confidence": 0.1736648976802826,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 790.859375,
+                  "y": 1054.13525390625,
+                  "confidence": 0.13822096586227417,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 512.6571044921875,
+                  "y": 1076.66455078125,
+                  "confidence": 0.5581549406051636,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            },
+            {
+              "board_id": 1,
+              "class_id": 0,
+              "board_confidence": 0.04459964856505394,
+              "bbox_xyxy": [
+                1136.1556396484375,
+                0.0,
+                1174.0,
+                1344.4505615234375
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 1115.17578125,
+                  "y": 582.9240112304688,
+                  "confidence": 0.511741042137146,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 1174.0,
+                  "y": 600.1430053710938,
+                  "confidence": 0.5499281883239746,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 1174.0,
+                  "y": 822.166748046875,
+                  "confidence": 0.3243502378463745,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 1174.0,
+                  "y": 925.1853637695312,
+                  "confidence": 0.3370039463043213,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            },
+            {
+              "board_id": 2,
+              "class_id": 0,
+              "board_confidence": 0.04240141808986664,
+              "bbox_xyxy": [
+                0.0,
+                349.9091491699219,
+                49.329010009765625,
+                1536.0
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 0.0,
+                  "y": 976.8870849609375,
+                  "confidence": 0.5370014309883118,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 133.9314422607422,
+                  "y": 979.4163818359375,
+                  "confidence": 0.40391045808792114,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 83.6111068725586,
+                  "y": 1296.3641357421875,
+                  "confidence": 0.37017133831977844,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 0.0,
+                  "y": 1259.9051513671875,
+                  "confidence": 0.5941287875175476,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            },
+            {
+              "board_id": 3,
+              "class_id": 0,
+              "board_confidence": 0.008730544708669186,
+              "bbox_xyxy": [
+                1137.5531005859375,
+                0.0,
+                1174.0,
+                1381.3765869140625
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 1112.9674072265625,
+                  "y": 659.1753540039062,
+                  "confidence": 0.524634599685669,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 1174.0,
+                  "y": 679.5181274414062,
+                  "confidence": 0.5294685959815979,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 1174.0,
+                  "y": 901.717529296875,
+                  "confidence": 0.33082833886146545,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 1170.060546875,
+                  "y": 996.881591796875,
+                  "confidence": 0.3484804332256317,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            },
+            {
+              "board_id": 4,
+              "class_id": 0,
+              "board_confidence": 0.0026465756818652153,
+              "bbox_xyxy": [
+                1138.592041015625,
+                49.61916732788086,
+                1174.0,
+                1412.6834716796875
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 1105.792724609375,
+                  "y": 738.4654541015625,
+                  "confidence": 0.5352519154548645,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 1174.0,
+                  "y": 756.8472900390625,
+                  "confidence": 0.5192545652389526,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 1174.0,
+                  "y": 983.547607421875,
+                  "confidence": 0.34466657042503357,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 1157.8419189453125,
+                  "y": 1065.9681396484375,
+                  "confidence": 0.3739648759365082,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            },
+            {
+              "board_id": 5,
+              "class_id": 0,
+              "board_confidence": 0.0019662899430841208,
+              "bbox_xyxy": [
+                1139.580078125,
+                115.58064270019531,
+                1174.0,
+                1440.3565673828125
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 1094.697509765625,
+                  "y": 819.6049194335938,
+                  "confidence": 0.5436292886734009,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 1174.0,
+                  "y": 831.7720947265625,
+                  "confidence": 0.5184378623962402,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 1174.0,
+                  "y": 1065.824462890625,
+                  "confidence": 0.3676285147666931,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence",
+                    "outside_or_clipped_image"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 1144.71484375,
+                  "y": 1134.6485595703125,
+                  "confidence": 0.41357937455177307,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            }
+          ]
+        },
+        "image_wh": [
+          1174,
+          1536
+        ],
+        "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+      }
+    },
+    "badly_cropped": {
+      "equal": true,
+      "decoded_raster_sha256": "617aaeb407c78acb4425c8298fec463252ea2d10356b5ab0e8be3f961f197163",
+      "labeled_points_px": [
+        [
+          -330.27423512,
+          376.88567808
+        ],
+        [
+          366.35461276,
+          373.4152704
+        ],
+        [
+          321.94799232,
+          1323.61138176
+        ],
+        [
+          -278.92907510000003,
+          1324.99954176
+        ]
+      ],
+      "landmark_error_px": [
+        478.3218098867377,
+        234.26070522934086,
+        173.52647732555587,
+        468.90727844730526,
+        850.5888077460424,
+        726.6653078508568,
+        56.329116570125265,
+        382.25487206060694,
+        873.4036394450596,
+        724.8161188868504,
+        27.11599048438987,
+        438.5096162233587
+      ],
+      "app": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": [],
+        "diagnostics": {
+          "checkpoint_path": "A:\\IndustryAI_Project\\runs\\landmarks\\full\\weights\\best.pt",
+          "format": "one pcb detection; four keypoints",
+          "landmark_order": [
+            "upper_left_mount",
+            "upper_right_mount",
+            "lower_right_mount",
+            "lower_left_mount"
+          ],
+          "board_conf": 0.95,
+          "point_conf": 0.99,
+          "raw_minimum_confidence": 0.001,
+          "imgsz": 640,
+          "coordinates": "decoded original RGB pixels; Ultralytics reverses letterbox",
+          "candidates": [
+            {
+              "board_id": 0,
+              "class_id": 0,
+              "board_confidence": 0.8713335990905762,
+              "bbox_xyxy": [
+                0.0,
+                111.75776672363281,
+                435.4716796875,
+                1416.4598388671875
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 106.2833251953125,
+                  "y": 572.3575439453125,
+                  "confidence": 0.05667972192168236,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 380.9632263183594,
+                  "y": 607.2200317382812,
+                  "confidence": 0.06000581756234169,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 388.40643310546875,
+                  "y": 1163.315673828125,
+                  "confidence": 0.13682051002979279,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 93.24942016601562,
+                  "y": 1039.7677001953125,
+                  "confidence": 0.3947220742702484,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            },
+            {
+              "board_id": 1,
+              "class_id": 0,
+              "board_confidence": 0.001126371673308313,
+              "bbox_xyxy": [
+                0.0,
+                657.3673095703125,
+                406.341552734375,
+                1419.1192626953125
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 122.0689697265625,
+                  "y": 1097.2237548828125,
+                  "confidence": 0.4392327666282654,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 289.9945373535156,
+                  "y": 1096.057373046875,
+                  "confidence": 0.39344972372055054,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 276.91802978515625,
+                  "y": 1357.4532470703125,
+                  "confidence": 0.5459206700325012,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 103.04259490966797,
+                  "y": 1310.2879638671875,
+                  "confidence": 0.5293409824371338,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            },
+            {
+              "board_id": 2,
+              "class_id": 0,
+              "board_confidence": 0.001124498201534152,
+              "bbox_xyxy": [
+                0.0,
+                863.9401245117188,
+                404.17913818359375,
+                1413.8746337890625
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 173.09056091308594,
+                  "y": 1090.6488037109375,
+                  "confidence": 0.5358707308769226,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 363.3937683105469,
+                  "y": 1098.225341796875,
+                  "confidence": 0.41902387142181396,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 338.9213562011719,
+                  "y": 1344.758056640625,
+                  "confidence": 0.5136830806732178,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 159.1988525390625,
+                  "y": 1306.7073974609375,
+                  "confidence": 0.5696642994880676,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            }
+          ]
+        },
+        "image_wh": [
+          587,
+          1536
+        ],
+        "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+      }
+    },
+    "SIMULATED_erasure": {
+      "equal": true,
+      "decoded_raster_sha256": "ab30f685ec915e9eed623f3fa91e3f9e84b5c9d686670e5ebf1acd475359fd32",
+      "labeled_points_px": [
+        [
+          256.72576488,
+          376.88567808
+        ],
+        [
+          953.35461276,
+          373.4152704
+        ],
+        [
+          908.94799232,
+          1323.61138176
+        ],
+        [
+          308.07092489999997,
+          1324.99954176
+        ]
+      ],
+      "landmark_error_px": [
+        227.4388073753256,
+        307.04501778287,
+        248.15595008823524,
+        247.36843607382738
+      ],
+      "app": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": [],
+        "diagnostics": {
+          "checkpoint_path": "A:\\IndustryAI_Project\\runs\\landmarks\\full\\weights\\best.pt",
+          "format": "one pcb detection; four keypoints",
+          "landmark_order": [
+            "upper_left_mount",
+            "upper_right_mount",
+            "lower_right_mount",
+            "lower_left_mount"
+          ],
+          "board_conf": 0.95,
+          "point_conf": 0.99,
+          "raw_minimum_confidence": 0.001,
+          "imgsz": 640,
+          "coordinates": "decoded original RGB pixels; Ultralytics reverses letterbox",
+          "candidates": [
+            {
+              "board_id": 0,
+              "class_id": 0,
+              "board_confidence": 0.9204616546630859,
+              "bbox_xyxy": [
+                201.4901123046875,
+                119.44636535644531,
+                1003.74658203125,
+                1447.5447998046875
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 264.5246276855469,
+                  "y": 604.1907348632812,
+                  "confidence": 0.03650541976094246,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 962.6591796875,
+                  "y": 680.3192749023438,
+                  "confidence": 0.19836924970149994,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 771.8321533203125,
+                  "y": 1116.776611328125,
+                  "confidence": 0.10650075972080231,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 492.9175109863281,
+                  "y": 1160.6131591796875,
+                  "confidence": 0.616001307964325,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            }
+          ]
+        },
+        "image_wh": [
+          1174,
+          1536
+        ],
+        "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+      }
+    },
+    "real_angle_ECCB5": {
+      "equal": true,
+      "decoded_raster_sha256": "8e7fdf58b93683efa1fc687953bdeda1c5d1fced66b9357f331fc3cd2aab5b54",
+      "labeled_points_px": [
+        [
+          245.45068926,
+          419.20727039999997
+        ],
+        [
+          889.7500350199999,
+          399.66706175999997
+        ],
+        [
+          849.8302686999999,
+          1339.62089472
+        ],
+        [
+          294.02438086,
+          1329.9903744
+        ]
+      ],
+      "landmark_error_px": [
+        169.26363015261697,
+        258.2937552637815,
+        211.3377045758718,
+        245.71188310745023
+      ],
+      "app": {
+        "status": "failure",
+        "reason": "no_confident_board",
+        "landmarks": [],
+        "diagnostics": {
+          "checkpoint_path": "A:\\IndustryAI_Project\\runs\\landmarks\\full\\weights\\best.pt",
+          "format": "one pcb detection; four keypoints",
+          "landmark_order": [
+            "upper_left_mount",
+            "upper_right_mount",
+            "lower_right_mount",
+            "lower_left_mount"
+          ],
+          "board_conf": 0.95,
+          "point_conf": 0.99,
+          "raw_minimum_confidence": 0.001,
+          "imgsz": 640,
+          "coordinates": "decoded original RGB pixels; Ultralytics reverses letterbox",
+          "candidates": [
+            {
+              "board_id": 0,
+              "class_id": 0,
+              "board_confidence": 0.9229341745376587,
+              "bbox_xyxy": [
+                160.50596618652344,
+                181.0271453857422,
+                954.711181640625,
+                1426.1488037109375
+              ],
+              "landmarks": [
+                {
+                  "id": 0,
+                  "name": "upper_left_mount",
+                  "x": 234.0648956298828,
+                  "y": 588.0875244140625,
+                  "confidence": 0.037587448954582214,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "upper_right_mount",
+                  "x": 949.8056640625,
+                  "y": 650.882080078125,
+                  "confidence": 0.10813547670841217,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "lower_right_mount",
+                  "x": 746.606689453125,
+                  "y": 1155.2069091796875,
+                  "confidence": 0.07940477877855301,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "lower_left_mount",
+                  "x": 484.4148254394531,
+                  "y": 1174.66552734375,
+                  "confidence": 0.614596962928772,
+                  "point_rejection_reasons": [
+                    "low_landmark_confidence"
+                  ]
+                }
+              ],
+              "accepted": false,
+              "rejection_reason": "no_confident_board"
+            }
+          ]
+        },
+        "image_wh": [
+          1162,
+          1536
+        ],
+        "checkpoint_sha256": "3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e"
+      }
+    }
+  },
+  "synthetic_defect": true,
+  "real_missing_example": null,
+  "matching_existing_app_uploads": [
+    "1e63ff0290e4421db6a6c8ff0a8bc71a",
+    "353b942c4c90420ca04ee2b642e4b601",
+    "53d932929f6745a4ae3f059999f43129",
+    "8d44a389854243ec981551a00c45a0b4",
+    "9073ec9460fc4f9ca532c41f4303e928",
+    "a51658aefd38471fb4f25158f03f0320",
+    "a88c9f1577774d3e859c4b4474fa9d38",
+    "ae67d1f27ad14d8f8e3348e1b89e588e",
+    "b8dcd886b3314bd899ee305452523015",
+    "c5a6c410f9ff4e8682a64b7efe7dfbc5",
+    "d5dd5384f6304ebaa69e7feb4ded609a",
+    "ed1c0f6c0b1f48ab845a729a70578c7f",
+    "ef6751c16cba40519199b9748fc67f3b",
+    "efc192359af5486ab9efa8cd10e96389"
+  ],
+  "beyond_landmarks": {
+    "local_match_offsets_px": {
+      "U2": [
+        0,
+        0
+      ],
+      "AM335x": [
+        0,
+        0
+      ],
+      "U14": [
+        0,
+        0
+      ],
+      "U13": [
+        0,
+        0
+      ],
+      "U12": [
+        0,
+        0
+      ],
+      "U11": [
+        0,
+        0
+      ],
+      "Y3": [
+        0,
+        0
+      ],
+      "U16": [
+        0,
+        0
+      ]
+    },
+    "method": "eight component centers, known saved perspective matrix",
+    "manual_error_px": [
+      1.1942121744248136e-05,
+      2.746346473316447e-05,
+      1.6792834530190606e-05,
+      2.488080372861004e-05,
+      2.7942802226407243e-05,
+      3.278295403173304e-05,
+      1.5067395973261535e-05,
+      1.8417965552197217e-05
+    ],
+    "manual_max_error_px": 3.278295403173304e-05,
+    "rejected_raw_hypothetical_error_px": [
+      68.24480292731472,
+      90.59810438879346,
+      63.095713067787514,
+      75.04007137865493,
+      70.801358914298,
+      49.02837877321073,
+      62.46561355620517,
+      106.68281160209723
+    ]
+  }
+}

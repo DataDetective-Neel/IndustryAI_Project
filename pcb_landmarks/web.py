@@ -96,11 +96,13 @@ def create_app(storage=None):
         if record['error']:
             return dict(status='failure', reason=record['error'], landmarks=[])
         if not CHECKPOINT.is_file():
-            return dict(status='failure', reason='checkpoint_unavailable: local PCB weights are missing', landmarks=[])
+            return dict(status='failure', reason=f'checkpoint_unavailable: {CHECKPOINT.resolve()}', landmarks=[])
         with MODEL_LOCK:
             try:
                 detector, config = _detector(str(CHECKPOINT.resolve()))
-                return detector.predict(path/'image.png', config['board_conf'], config['point_conf'])
+                result = detector.predict(path/'image.png', config['board_conf'], config['point_conf'])
+                (path/'landmarks.json').write_text(json.dumps(result, indent=2, allow_nan=False), encoding='utf-8')
+                return result
             except Exception as error:
                 return dict(status='failure', reason=f'{type(error).__name__}: {error}'.replace(str(ROOT), '<project>'),
                             landmarks=[])
@@ -110,7 +112,7 @@ def create_app(storage=None):
         names = json.loads((ROOT/'configs/landmarks.json').read_text())['landmark_order']
         return dict(status='ok', landmark_names=names,
                     comparison=load_config(ROOT/'configs/comparison.json'),
-                    checkpoint_available=CHECKPOINT.is_file(), max_photos=3,
+                    checkpoint_available=CHECKPOINT.is_file(), checkpoint_path=str(CHECKPOINT.resolve()), max_photos=3,
                     max_upload_bytes=MAX_UPLOAD, max_pixels=MAX_PIXELS)
 
     @app.post('/api/photos')
@@ -150,6 +152,20 @@ def create_app(storage=None):
             raise HTTPException(404, record['error'])
         return FileResponse(path/'image.png', media_type='image/png')
 
+    @app.get('/api/photos/{identifier}/regions')
+    def saved_regions(identifier: str):
+        record, path = photo(identifier)
+        preset_path = ROOT/'configs/components-ECCC5.json'
+        if not preset_path.is_file():
+            raise HTTPException(404, 'No saved regions for this reference')
+        preset = json.loads(preset_path.read_text())
+        source = ROOT/preset['reference_image']
+        if record['error'] or not source.is_file():
+            raise HTTPException(404, 'No saved regions for this reference')
+        if not np.array_equal(np.asarray(read_image(path/'image.png')), np.asarray(read_image(source))):
+            raise HTTPException(404, 'Saved regions require the exact known-good ECCC5 reference')
+        return preset
+
     @app.post('/api/landmarks/{identifier}')
     def landmarks(identifier: str):
         return detect(identifier)
@@ -176,7 +192,7 @@ def create_app(storage=None):
         results = []
         for index, item in enumerate(request.inspections):
             name = item.photo_id
-            result = dict(photo_id=item.photo_id, filename=name, outcome='retake', review_required=False,
+            result = dict(photo_id=item.photo_id, filename=name, outcome='review', review_required=True,
                           alignment=dict(status='failure', reason=None), components=[],
                           alignment_overlay_url=None, component_overlay_url=None)
             try:
@@ -187,9 +203,10 @@ def create_app(storage=None):
                     raise ValueError(reference['error'] or current['error'])
                 rp, ip = request.reference_points, item.points
                 if request.mode == 'automatic':
+                    detection = detect(item.photo_id)
+                    result['landmark_diagnostics'] = dict(reference=reference_detection, inspection=detection)
                     if reference_detection['status'] != 'ok':
                         raise ValueError('Reference: ' + reference_detection['reason'])
-                    detection = detect(item.photo_id)
                     if detection['status'] != 'ok':
                         raise ValueError(detection['reason'])
                     rp = [[p['x'], p['y']] for p in reference_detection['landmarks']]

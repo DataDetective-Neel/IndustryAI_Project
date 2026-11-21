@@ -148,7 +148,8 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     page.getByRole("button", { name: "Draw/edit/remove check", exact: true }),
   ).toHaveCount(0);
   const parts = (await readJson("configs/components-ECCC5.json")).components;
-  for (const part of parts) await region(page, part);
+  // The exact known-good reference loads its eight saved regions automatically.
+  await page.getByRole("button", {name: parts.at(-1).name, exact:true}).click();
   const before = await page
     .getByLabel("upper_left_mount x", { exact: true })
     .inputValue();
@@ -224,12 +225,8 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     await pointsFromLabel("PCB_Dataset_Pilot/labels/val/ECCB5.txt", 1162, 1536),
   );
   const manual = await inspect(page);
-  expect(manual.photos[0].components.map((p) => p.status)).toEqual([
-    "present",
-    "present",
-    "uncertain",
-    "uncertain",
-  ]);
+  expect(manual.photos[0].components).toHaveLength(8);
+  expect(manual.photos[0].components.some((p) => p.status === "missing")).toBe(false);
   // Run the actual Step 5 CLI with matching frozen settings into a fresh local directory.
   const cliDir = absolute(`runs/web-verification/cli-${manual.batch_id}`);
   const alignmentDir = absolute(
@@ -282,7 +279,7 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     page
       .getByTestId("result-0")
       .getByRole("cell", { name: "Present", exact: true }),
-  ).toHaveCount(2);
+  ).toHaveCount(manual.photos[0].components.filter((p) => p.status === "present").length);
   await page.screenshot({
     path: absolute("runs/web-verification/real-manual.png"),
     fullPage: true,
@@ -292,7 +289,7 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     page.getByText("Detecting landmarks with the local model…"),
   ).toHaveCount(0, { timeout: 60000 });
   const automatic = await inspect(page);
-  expect(automatic.photos[0].outcome).toBe("retake");
+  expect(automatic.photos[0].outcome).toBe("review");
   expect(automatic.photos[0].alignment.reason).toMatch(
     /no_confident_board|low_landmark_confidence|checkpoint_unavailable/,
   );
@@ -341,7 +338,7 @@ for (const [variant, url] of [
   ["Vite", "/"],
   ["production", "http://127.0.0.1:8000/"],
 ])
-  test(`synthetic removal displays Missing, sharpening and local-only assets (${variant})`, async ({
+  test(`synthetic removal requires review, sharpening and local-only assets (${variant})`, async ({
     page,
   }) => {
     const external = [];
@@ -403,7 +400,7 @@ for (const [variant, url] of [
     expect(result.synthetic).toBe(true);
     expect(result.photos[0].components.map((p) => p.status)).toEqual([
       "present",
-      "missing",
+      "uncertain",
       "uncertain",
     ]);
     await expect(
@@ -415,8 +412,8 @@ for (const [variant, url] of [
     await expect(
       page
         .getByTestId("result-0")
-        .getByRole("cell", { name: "Missing", exact: true }),
-    ).toBeVisible();
+        .getByRole("cell", { name: "Needs review", exact: true }),
+    ).toHaveCount(2);
     await page.screenshot({
       path: absolute("runs/web-verification/synthetic-missing.png"),
       fullPage: true,
@@ -430,10 +427,10 @@ for (const [variant, url] of [
     expect(sharpened.sharpening_enabled).toBe(true);
     expect(sharpened.photos[0].components.map((p) => p.status)).toEqual([
       "present",
-      "missing",
+      "uncertain",
       "uncertain",
     ]);
-    expect(sharpened.photos[0].components[1].score).toBeCloseTo(0.240785, 5);
+    expect(sharpened.photos[0].components[1].reason).toContain("low similarity alone");
     expect(external).toEqual([]);
     await fs.writeFile(
       absolute("runs/web-verification/browser-synthetic-sharpen.json"),

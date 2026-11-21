@@ -27,12 +27,12 @@ class ComparisonTests(unittest.TestCase):
         args.update(changes)
         return compare_regions(**args)
 
-    def test_present_missing_coverage_and_missing_precedence(self):
+    def test_present_ambiguous_appearance_and_coverage(self):
         result = self.compare()
-        self.assertEqual(result['outcome'], 'missing')
+        self.assertEqual(result['outcome'], 'review')
         self.assertTrue(result['review_required'])
         parts = result['components']
-        self.assertEqual([p['status'] for p in parts], ['present', 'missing', 'uncertain'])
+        self.assertEqual([p['status'] for p in parts], ['present', 'uncertain', 'uncertain'])
         self.assertGreater(parts[0]['score'], .9)
         self.assertLess(parts[1]['score'], .25)
         self.assertLess(parts[2]['overlap'], 1)
@@ -61,7 +61,7 @@ class ComparisonTests(unittest.TestCase):
 
     def test_threshold_boundaries_and_intermediate_review(self):
         score = self.compare()['components'][1]['score']
-        for missing, present, expected in [(score, .9, 'missing'), (-.5, score, 'present'),
+        for missing, present, expected in [(score, .9, 'uncertain'), (-.5, score, 'present'),
                                             (score-.1, score+.1, 'uncertain')]:
             config = dict(self.config, missing_max=missing, present_min=present)
             result = self.compare(config=config)
@@ -88,8 +88,8 @@ class ComparisonTests(unittest.TestCase):
     def test_failed_alignment_skips_classification(self):
         result = self.compare(aligned=None, mask=None,
                               alignment=dict(status='failure', reason='nearly collinear landmarks'))
-        self.assertEqual(result['outcome'], 'retake')
-        self.assertFalse(result['review_required'])
+        self.assertEqual(result['outcome'], 'review')
+        self.assertTrue(result['review_required'])
         self.assertIn('collinear', result['reason'])
         self.assertTrue(all(p['status'] == 'not_evaluated' and p['score'] is None
                             for p in result['components']))
@@ -143,7 +143,7 @@ class ComparisonTests(unittest.TestCase):
             run = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(run.returncode, 0, run.stdout+run.stderr)
             report = json.loads((root/'result/report.json').read_text())
-            self.assertEqual(report['outcome'], 'missing')
+            self.assertEqual(report['outcome'], 'review')
             with Image.open(root/'result/overlay.png') as overlay:
                 self.assertEqual(overlay.size, (320, 240))
             repeat = subprocess.run(command, capture_output=True, text=True)
@@ -166,7 +166,7 @@ class ComparisonTests(unittest.TestCase):
             run = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(run.returncode, 2, run.stdout+run.stderr)
             report = json.loads((root/'failure/report.json').read_text())
-            self.assertEqual(report['outcome'], 'retake')
+            self.assertEqual(report['outcome'], 'review')
             self.assertIn('bad geometry', report['reason'])
             self.assertIsNone(report['overlay'])
             self.assertFalse((root/'failure/overlay.png').exists())

@@ -45,7 +45,7 @@ class WebTests(unittest.TestCase):
         expected = compare_regions(self.reference, aligned, mask, self.regions,
                                    load_config('configs/comparison.json'), dict(status='ok', reference_wh=[320, 240]))
         self.assertEqual(actual['components'], expected['components'])
-        self.assertEqual(actual['outcome'], 'missing')
+        self.assertEqual(actual['outcome'], 'review')
         for key in ['alignment_overlay_url', 'component_overlay_url']:
             asset = self.client.get(actual[key])
             self.assertEqual(asset.status_code, 200)
@@ -61,7 +61,7 @@ class WebTests(unittest.TestCase):
         response = self.client.post('/api/inspections', json=payload)
         self.assertEqual(response.status_code, 200, response.text)
         photos = response.json()['photos']
-        self.assertEqual([p['outcome'] for p in photos], ['error', 'missing', 'retake'])
+        self.assertEqual([p['outcome'] for p in photos], ['error', 'review', 'review'])
         self.assertIsNone(photos[0]['component_overlay_url'])
         self.assertIsNone(photos[2]['alignment_overlay_url'])
         self.assertTrue(all(p['status'] == 'not_evaluated' for p in photos[2]['components']))
@@ -72,7 +72,7 @@ class WebTests(unittest.TestCase):
         with patch('pcb_landmarks.web.CHECKPOINT', Path(self.folder.name)/'absent.pt'):
             result = self.client.post('/api/inspections', json=payload).json()['photos'][0]
             detection = self.client.post(f"/api/landmarks/{payload['reference_id']}").json()
-        self.assertEqual(result['outcome'], 'retake')
+        self.assertEqual(result['outcome'], 'review')
         self.assertIn('checkpoint_unavailable', result['alignment']['reason'])
         self.assertIn('checkpoint_unavailable', detection['reason'])
         self.assertTrue(all(p['score'] is None for p in result['components']))

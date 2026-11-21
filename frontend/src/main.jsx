@@ -129,7 +129,12 @@ function App() {
       if (!uploaded.length) return;
       if (isReference) {
         setReference(uploaded[0]);
-        setComponents([]);
+        try {
+          const preset = await api(`/api/photos/${uploaded[0].id}/regions`);
+          setComponents(preset.components);
+        } catch {
+          setComponents([]);
+        }
         setRegionId(null);
       } else setInspections((items) => [...items, ...uploaded]);
       setSelected(uploaded[0].id);
@@ -142,6 +147,13 @@ function App() {
     }
   }
   function switchMode(next) {
+    if (next === "manual") {
+      for (const p of photos) {
+        const points = p.detection?.status === "ok" ? p.detection.landmarks : p.detection?.diagnostics?.candidates?.[0]?.landmarks;
+        if (!p.points?.length && points?.length === 4 && points.every((v) => Number.isFinite(v.x) && Number.isFinite(v.y)))
+          changePhoto(p.id, { points: points.map((v) => [v.x, v.y]) });
+      }
+    }
     setMode(next);
     setBatch(null);
     setError("");
@@ -253,7 +265,7 @@ function App() {
       ? photo?.points || []
       : photo?.detection?.status === "ok"
         ? photo.detection.landmarks.map((p) => [p.x, p.y])
-        : [];
+        : (photo?.detection?.diagnostics?.candidates?.[0]?.landmarks || []).map((p) => [p.x, p.y]);
   const radius = photo ? Math.max(photo.width, photo.height) / 85 : 10;
 
   return (
@@ -464,10 +476,16 @@ function App() {
                             {photo.detection.reason}{" "}
                             <span>
                               Scoring will be skipped. Switch to Manual to
-                              correct the points.
+                              correct the tentative points; verify all four mounting holes.
                             </span>
                           </div>
                         )}
+                      {mode === "automatic" && photo.detection?.diagnostics && (
+                        <details>
+                          <summary>Raw landmark diagnostics (rejected points are tentative)</summary>
+                          <pre style={{whiteSpace: "pre-wrap"}}>{JSON.stringify(photo.detection.diagnostics, null, 2)}</pre>
+                        </details>
+                      )}
                       <p className="canvas-instruction">
                         {tool === "boxes"
                           ? "Drag a rectangle around an expected part on the reference."
@@ -542,7 +560,7 @@ function App() {
                           )}
                           {displayedPoints.map(
                             (point, index) =>
-                              point && (
+                              point && point.every(Number.isFinite) && (
                                 <g key={index} pointerEvents="none">
                                   <circle
                                     cx={point[0]}
@@ -554,6 +572,7 @@ function App() {
                                         : "landmark"
                                     }
                                     strokeWidth={radius / 4}
+                                    style={mode === "automatic" && photo.detection?.status !== "ok" ? {stroke: "#ff5050", strokeDasharray: "6 4"} : undefined}
                                   />
                                   <text
                                     x={point[0] + radius * 1.4}
@@ -561,7 +580,7 @@ function App() {
                                     fontSize={radius * 1.7}
                                     className="canvas-label"
                                   >
-                                    L{index}
+                                    L{index}{mode === "automatic" && photo.detection?.status !== "ok" ? " tentative" : ""}
                                   </text>
                                 </g>
                               ),
@@ -768,10 +787,9 @@ function App() {
             <div>
               <h2 id="run-heading">3. Inspect and review</h2>
               <p className="threshold-note">
-                Provisional thresholds: Missing ≤{" "}
-                {health?.comparison.missing_max ?? "0.25"}; Present ≥{" "}
-                {health?.comparison.present_min ?? "0.50"}. Scores between them
-                need review.
+                Provisional Present threshold: {health?.comparison.present_min ?? "0.50"}.
+                Other scores need review. Missing-part detection requires verified absence evidence;
+                this one-board demo has no verified absence exemplar.
               </p>
               <label className="check">
                 <input
@@ -875,6 +893,7 @@ function App() {
                     ))}
                   </div>
                 )}
+                {result.alignment_validation && <p>Alignment overlay score: {result.alignment_validation.overlay_score?.toFixed(4) ?? "unavailable"}; {result.alignment_validation.reliable ? "validated" : "REVIEW — correct landmarks or retake photo"}</p>}
                 <div className="table-scroll">
                   <table>
                     <thead>
@@ -882,6 +901,8 @@ function App() {
                         <th>Component</th>
                         <th>Decision</th>
                         <th>Similarity</th>
+                        <th>Best offset (px)</th>
+                        <th>Expected box</th>
                         <th>Coverage</th>
                         <th>Reason</th>
                       </tr>

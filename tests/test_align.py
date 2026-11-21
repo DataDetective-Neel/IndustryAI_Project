@@ -14,6 +14,14 @@ from pcb_landmarks.align import align_images, blend_overlay, label_points
 
 
 class AlignmentTests(unittest.TestCase):
+    def test_identical_rasters_are_not_warped_by_manual_point_jitter(self):
+        reference, _, points, _, _, _ = perspective_pair()
+        aligned, homography, mask = align_images(reference, reference.copy(), points,
+                                                 points + [[4, 3], [-3, 2], [2, -4], [3, -2]])
+        np.testing.assert_array_equal(aligned, reference)
+        np.testing.assert_array_equal(homography, np.eye(3))
+        self.assertTrue((mask == 255).all())
+
     def test_perspective_at_independent_controls_and_pixels(self):
         reference, inspection, rp, ip, forward, controls = perspective_pair()
         aligned, homography, mask = align_images(reference, inspection, rp, ip)
@@ -36,8 +44,10 @@ class AlignmentTests(unittest.TestCase):
 
     def test_subpixel_border_is_not_valid_and_overlay_marks_it(self):
         image = np.full((100, 100, 3), 100, np.uint8)
+        inspection = image.copy()
+        inspection[20, 20] = 110
         points = np.array([[10, 10], [80, 10], [80, 80], [10, 80]], dtype=float)
-        aligned, _, mask = align_images(image, image, points + [.5, 0], points)
+        aligned, _, mask = align_images(image, inspection, points + [.5, 0], points)
         self.assertTrue((mask[:, 0] == 0).all())
         self.assertTrue((mask[:, 1:] == 255).all())
         aligned[50, 50] = [20, 40, 60]
@@ -45,7 +55,7 @@ class AlignmentTests(unittest.TestCase):
         np.testing.assert_array_equal(overlay[50, 50], [60, 70, 80])
         self.assertFalse(np.array_equal(overlay[50, 0], image[50, 0]))
         # OpenCV rounds interpolation coordinates; even a 0.01px exterior is invalid.
-        _, _, mask = align_images(image, image, points + [.01, 0], points)
+        _, _, mask = align_images(image, inspection, points + [.01, 0], points)
         self.assertTrue((mask[:, 0] == 0).all())
 
     def test_rotation_preserves_identities(self):

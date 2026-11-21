@@ -73,6 +73,9 @@ def align_images(reference, inspection, reference_points, inspection_points):
     recovered = cv2.perspectiveTransform(ip[None], homography)[0]
     if not np.isfinite(recovered).all() or np.linalg.norm(recovered - rp, axis=1).max() > .1:
         raise ValueError('Unusable homography: landmark reprojection exceeds 0.1 pixel')
+    # Exact duplicate rasters already share a grid; manual click jitter must not distort them.
+    if np.array_equal(reference, inspection):
+        return inspection.copy(), np.eye(3), np.full((rh, rw), 255, np.uint8)
     aligned = cv2.warpPerspective(inspection, homography, (rw, rh), flags=cv2.INTER_LINEAR,
                                   borderMode=cv2.BORDER_CONSTANT, borderValue=0)
     support = cv2.warpPerspective(np.ones((ih, iw), np.float32), homography, (rw, rh),

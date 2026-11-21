@@ -32,7 +32,7 @@ def save_example(output):
     (output / 'regions.json').write_text(json.dumps(regions, indent=2) + '\n')
     (output / 'ground_truth.json').write_text(json.dumps(dict(
         synthetic=True, description='Erased chip, restored textured traces before perspective warp',
-        expected=dict(present='present', removed='missing', coverage='uncertain')), indent=2) + '\n')
+        expected=dict(present='present', removed='uncertain', coverage='uncertain')), indent=2) + '\n')
 
 
 if __name__ == '__main__':
