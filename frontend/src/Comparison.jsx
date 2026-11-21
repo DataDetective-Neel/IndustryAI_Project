@@ -27,10 +27,14 @@ export default function Comparison({ result, reference, inspection, index, mode,
       <strong className={`status ${outcome}`}>{outcomes[outcome] || outcome || 'Outcome unavailable'}</strong>
     </div>
     {result.reason && <p className="result-reason">{result.reason}</p>}
+    {result.board_compatibility && <details>
+      <summary>Board compatibility evidence</summary>
+      <pre style={{whiteSpace:'pre-wrap', overflowWrap:'anywhere'}}>{JSON.stringify(result.board_compatibility, null, 2)}</pre>
+    </details>}
     {(failed || unreliable) && <div className="message notice" role="status">
       <strong>{failed ? 'Component scoring skipped.' : 'Alignment needs review.'}</strong>
       <span>{result.alignment?.reason || 'Correct the mounting holes or retake the photo before trusting component scores.'}</span>
-      {mode === 'automatic' && <button className="secondary" onClick={onManual}>Switch to Manual</button>}
+      {mode === 'automatic' && outcome !== 'DIFFERENT_BOARD' && <button className="secondary" onClick={onManual}>Switch to Manual</button>}
     </div>}
     {result.components_evaluated === false && !failed && <div className="message notice">Component scoring skipped. {result.board_compatibility?.message || 'Board compatibility needs review.'}</div>}
     {result.alignment_validation && <p className="alignment-summary">Alignment overlay score: {result.alignment_validation.overlay_score?.toFixed(4) ?? 'unavailable'}; {result.alignment_validation.reliable ? 'validated' : 'REVIEW — correct landmarks or retake photo'}</p>}

@@ -1,0 +1,203 @@
+{
+  "description": "Positive visual evidence only; main processors excluded from stable identity regions.",
+  "designs": [
+    {
+      "id": "micropcb_A",
+      "name": "Blue Mega2560 board",
+      "image": "PCB_Dataset_Pilot/images/train/ACCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/ACCC5.txt",
+      "board_polygon": [
+        [
+          145,
+          175
+        ],
+        [
+          825,
+          175
+        ],
+        [
+          825,
+          1440
+        ],
+        [
+          145,
+          1440
+        ]
+      ],
+      "regions": [
+        {
+          "name": "upper mounting holes and power/USB footprints",
+          "kind": "mounting_and_connectors",
+          "box": [
+            150,
+            100,
+            820,
+            425
+          ]
+        },
+        {
+          "name": "left header and Mega2560 silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            145,
+            430,
+            385,
+            1220
+          ]
+        },
+        {
+          "name": "right header and pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            615,
+            430,
+            825,
+            1220
+          ]
+        },
+        {
+          "name": "lower header and digital-pin silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            160,
+            1200,
+            810,
+            1440
+          ]
+        }
+      ]
+    },
+    {
+      "id": "micropcb_M",
+      "name": "Raspberry Pi board",
+      "image": "PCB_Dataset_Pilot/images/train/MCCB5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/train/MCCB5.txt",
+      "board_polygon": [
+        [
+          231,
+          227
+        ],
+        [
+          1196,
+          172
+        ],
+        [
+          1250,
+          1369
+        ],
+        [
+          281,
+          1394
+        ]
+      ],
+      "regions": [
+        {
+          "name": "upper mounting holes and USB/audio footprints",
+          "kind": "mounting_and_connectors",
+          "box": [
+            230,
+            150,
+            1250,
+            460
+          ]
+        },
+        {
+          "name": "GPIO header and adjacent silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            230,
+            450,
+            460,
+            1340
+          ]
+        },
+        {
+          "name": "HDMI and power connector footprints",
+          "kind": "connectors",
+          "box": [
+            900,
+            450,
+            1260,
+            1310
+          ]
+        },
+        {
+          "name": "lower display connector and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            450,
+            990,
+            1030,
+            1400
+          ]
+        }
+      ]
+    },
+    {
+      "id": "micropcb_E",
+      "name": "BeagleBone board",
+      "image": "PCB_Dataset_Pilot/images/val/ECCC5.jpg",
+      "label": "PCB_Dataset_Pilot/labels/val/ECCC5.txt",
+      "board_polygon": [
+        [
+          210,
+          160
+        ],
+        [
+          1005,
+          160
+        ],
+        [
+          1005,
+          1425
+        ],
+        [
+          210,
+          1425
+        ]
+      ],
+      "regions": [
+        {
+          "name": "upper mounting holes and Ethernet/power footprints",
+          "kind": "mounting_and_connectors",
+          "box": [
+            210,
+            115,
+            1000,
+            430
+          ]
+        },
+        {
+          "name": "left header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            210,
+            450,
+            385,
+            1290
+          ]
+        },
+        {
+          "name": "right header and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            920,
+            440,
+            1005,
+            1300
+          ]
+        },
+        {
+          "name": "lower USB/SD footprints and silkscreen",
+          "kind": "connector_and_silkscreen",
+          "box": [
+            330,
+            1190,
+            910,
+            1430
+          ]
+        }
+      ]
+    }
+  ]
+}

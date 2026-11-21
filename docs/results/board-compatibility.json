@@ -1,0 +1,2429 @@
+{
+  "reference": "ACCC5.jpg",
+  "wrong_board": "MBCC5.jpg",
+  "components": [
+    {
+      "id": "processor",
+      "name": "Main processor",
+      "bbox_xyxy_px": [
+        390,
+        705,
+        620,
+        935
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case": "wrong_board_manual",
+      "mode": "manual",
+      "synthetic": false,
+      "outcome": "DIFFERENT_BOARD",
+      "components_evaluated": false,
+      "board_compatibility": {
+        "status": "DIFFERENT_BOARD",
+        "message": "Inspection board does not match the reference design.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_M",
+          "matched_regions": [
+            {
+              "name": "GPIO header and adjacent silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 8
+            },
+            {
+              "name": "HDMI and power connector footprints",
+              "kind": "connectors",
+              "inliers": 5
+            },
+            {
+              "name": "lower display connector and silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 18
+            }
+          ],
+          "sharpness": 57.40513610839844,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Raspberry Pi board",
+          "inliers": 33,
+          "match_count": 59,
+          "spatial_coverage": 0.47223917811123356,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              1.0410161187595277,
+              0.14042906468844438,
+              -73.96797631405067
+            ],
+            [
+              -0.11271300318786089,
+              0.971197308789853,
+              102.89313969105517
+            ],
+            [
+              5.0896170393526696e-05,
+              -1.9137665420331607e-06,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              289.18239744,
+              291.82844124
+            ],
+            [
+              1143.21641472,
+              243.1903677
+            ],
+            [
+              1190.96305152,
+              1302.41950776
+            ],
+            [
+              333.3255168,
+              1324.9371315600001
+            ],
+            [
+              740.0,
+              305.0
+            ],
+            [
+              345.0,
+              895.0
+            ],
+            [
+              1080.0,
+              880.0
+            ],
+            [
+              740.0,
+              1195.0
+            ]
+          ]
+        },
+        "reason": "different_positively_recognized_layouts"
+      },
+      "components": [],
+      "reason": "Inspection board does not match the reference design.",
+      "alignment": {
+        "status": "not_attempted",
+        "reason": "Board compatibility must pass before component scoring."
+      }
+    },
+    {
+      "case": "wrong_board_automatic",
+      "mode": "automatic",
+      "synthetic": false,
+      "outcome": "DIFFERENT_BOARD",
+      "components_evaluated": false,
+      "board_compatibility": {
+        "status": "DIFFERENT_BOARD",
+        "message": "Inspection board does not match the reference design.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_M",
+          "matched_regions": [
+            {
+              "name": "GPIO header and adjacent silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 8
+            },
+            {
+              "name": "HDMI and power connector footprints",
+              "kind": "connectors",
+              "inliers": 5
+            },
+            {
+              "name": "lower display connector and silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 18
+            }
+          ],
+          "sharpness": 57.40513610839844,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Raspberry Pi board",
+          "inliers": 33,
+          "match_count": 59,
+          "spatial_coverage": 0.47223917811123356,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              1.0410161187595277,
+              0.14042906468844438,
+              -73.96797631405067
+            ],
+            [
+              -0.11271300318786089,
+              0.971197308789853,
+              102.89313969105517
+            ],
+            [
+              5.0896170393526696e-05,
+              -1.9137665420331607e-06,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              289.18239744,
+              291.82844124
+            ],
+            [
+              1143.21641472,
+              243.1903677
+            ],
+            [
+              1190.96305152,
+              1302.41950776
+            ],
+            [
+              333.3255168,
+              1324.9371315600001
+            ],
+            [
+              740.0,
+              305.0
+            ],
+            [
+              345.0,
+              895.0
+            ],
+            [
+              1080.0,
+              880.0
+            ],
+            [
+              740.0,
+              1195.0
+            ]
+          ]
+        },
+        "reason": "different_positively_recognized_layouts"
+      },
+      "components": [],
+      "reason": "Inspection board does not match the reference design.",
+      "alignment": {
+        "status": "not_attempted",
+        "reason": "Board compatibility must pass before component scoring."
+      }
+    },
+    {
+      "case": "ACCC5",
+      "mode": "manual",
+      "synthetic": false,
+      "outcome": "ok",
+      "components_evaluated": true,
+      "board_compatibility": {
+        "status": "SAME_DESIGN",
+        "message": "Reference design recognized.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "alignment_evidence": {
+          "median_error_px": 0.0,
+          "p90_error_px": 0.0,
+          "tolerance_px": 18.107945769744287,
+          "method": "independent distributed layout feature controls"
+        }
+      },
+      "components": [
+        {
+          "id": "processor",
+          "name": "Main processor",
+          "bbox_xyxy_px": [
+            390,
+            705,
+            620,
+            935
+          ],
+          "overlap": 1.0,
+          "score": 1.0,
+          "status": "present",
+          "reason": "convincing_bounded_local_match",
+          "best_match_offset_px": [
+            0,
+            0
+          ],
+          "search_radius_px": 6,
+          "display_status": "Present"
+        }
+      ],
+      "reason": null,
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 1.0
+      }
+    },
+    {
+      "case": "ABCC5",
+      "mode": "manual",
+      "synthetic": false,
+      "outcome": "ok",
+      "components_evaluated": true,
+      "board_compatibility": {
+        "status": "SAME_DESIGN",
+        "message": "Reference design recognized.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 166
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 290
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 195
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 254
+            }
+          ],
+          "sharpness": 894.2698974609375,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 907,
+          "match_count": 939,
+          "spatial_coverage": 0.8995149151575956,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.935373308910249,
+              0.1975106005885928,
+              -44.313213356599654
+            ],
+            [
+              -0.19701488158295458,
+              0.9343668833865768,
+              138.8001133365976
+            ],
+            [
+              1.3182240931866752e-06,
+              -3.90496016621194e-07,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "alignment_evidence": {
+          "median_error_px": 0.08299160027795016,
+          "p90_error_px": 0.12818587525271377,
+          "tolerance_px": 18.107945769744287,
+          "method": "independent distributed layout feature controls"
+        }
+      },
+      "components": [
+        {
+          "id": "processor",
+          "name": "Main processor",
+          "bbox_xyxy_px": [
+            390,
+            705,
+            620,
+            935
+          ],
+          "overlap": 1.0,
+          "score": 0.9827941656112671,
+          "status": "present",
+          "reason": "convincing_bounded_local_match",
+          "best_match_offset_px": [
+            0,
+            0
+          ],
+          "search_radius_px": 6,
+          "display_status": "Present"
+        }
+      ],
+      "reason": null,
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            1.0238196865214955,
+            -0.2164030084144371,
+            75.40479135583743
+          ],
+          [
+            0.2160916162008022,
+            1.0247381098786676,
+            -132.7075821831388
+          ],
+          [
+            -1.2227676411378193e-06,
+            7.104932603416549e-07,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 0.9873444017205423
+      }
+    },
+    {
+      "case": "ACCB5",
+      "mode": "manual",
+      "synthetic": false,
+      "outcome": "ok",
+      "components_evaluated": true,
+      "board_compatibility": {
+        "status": "SAME_DESIGN",
+        "message": "Reference design recognized.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 91
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 29
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 59
+            }
+          ],
+          "sharpness": 537.6192016601562,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 182,
+          "match_count": 225,
+          "spatial_coverage": 0.574353187636857,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.8851419346065406,
+              0.015513966031734302,
+              26.16849921203738
+            ],
+            [
+              -0.06318385575731576,
+              0.9548171980702741,
+              51.157694974596204
+            ],
+            [
+              -5.45897362791849e-05,
+              -1.4591129810725036e-06,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "alignment_evidence": {
+          "median_error_px": 0.5925623487540889,
+          "p90_error_px": 1.5125355217573295,
+          "tolerance_px": 18.107945769744287,
+          "method": "independent distributed layout feature controls"
+        }
+      },
+      "components": [
+        {
+          "id": "processor",
+          "name": "Main processor",
+          "bbox_xyxy_px": [
+            390,
+            705,
+            620,
+            935
+          ],
+          "overlap": 1.0,
+          "score": 0.777096688747406,
+          "status": "present",
+          "reason": "convincing_bounded_local_match",
+          "best_match_offset_px": [
+            -3,
+            0
+          ],
+          "search_radius_px": 6,
+          "display_status": "Present"
+        }
+      ],
+      "reason": null,
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            1.1316362566384255,
+            -0.02016145131005461,
+            -27.83012159264188
+          ],
+          [
+            0.07571261147223105,
+            1.0465947760214214,
+            -55.61245715811595
+          ],
+          [
+            6.576848440270909e-05,
+            -6.521892932812584e-07,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 0.9984053212982273
+      }
+    },
+    {
+      "case": "ACDC5",
+      "mode": "manual",
+      "synthetic": false,
+      "outcome": "ok",
+      "components_evaluated": true,
+      "board_compatibility": {
+        "status": "SAME_DESIGN",
+        "message": "Reference design recognized.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 29
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 173
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 98
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 85
+            }
+          ],
+          "sharpness": 831.3623657226562,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 386,
+          "match_count": 432,
+          "spatial_coverage": 0.7944219537947255,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.990692722864281,
+              0.0003357541623925671,
+              8.417299298976044
+            ],
+            [
+              0.03140626521905215,
+              1.004032446205597,
+              -8.334833089308733
+            ],
+            [
+              3.478615627993797e-05,
+              -2.3068272019544532e-06,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "alignment_evidence": {
+          "median_error_px": 0.06794444822191605,
+          "p90_error_px": 0.2552215062793163,
+          "tolerance_px": 18.107945769744287,
+          "method": "independent distributed layout feature controls"
+        }
+      },
+      "components": [
+        {
+          "id": "processor",
+          "name": "Main processor",
+          "bbox_xyxy_px": [
+            390,
+            705,
+            620,
+            935
+          ],
+          "overlap": 1.0,
+          "score": 0.8463310599327087,
+          "status": "present",
+          "reason": "convincing_bounded_local_match",
+          "best_match_offset_px": [
+            0,
+            0
+          ],
+          "search_radius_px": 6,
+          "display_status": "Present"
+        }
+      ],
+      "reason": null,
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            1.0093955607671259,
+            -0.000575697872269727,
+            -8.321374937221453
+          ],
+          [
+            -0.031296291466974824,
+            0.9950355312565112,
+            8.726594311283813
+          ],
+          [
+            -3.474748067429561e-05,
+            1.9038211836118824e-06,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 0.9988981849582899
+      }
+    },
+    {
+      "case": "ADCC5",
+      "mode": "manual",
+      "synthetic": false,
+      "outcome": "ok",
+      "components_evaluated": true,
+      "board_compatibility": {
+        "status": "SAME_DESIGN",
+        "message": "Reference design recognized.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 153
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 291
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 201
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 226
+            }
+          ],
+          "sharpness": 596.5750122070312,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 873,
+          "match_count": 899,
+          "spatial_coverage": 0.8938223079954418,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9503509714569216,
+              -0.24385796721128106,
+              346.30533264384655
+            ],
+            [
+              0.24216217670526038,
+              0.9506370978368102,
+              -95.25680669374978
+            ],
+            [
+              -1.9661653142010967e-06,
+              5.000753007881812e-08,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "alignment_evidence": {
+          "median_error_px": 0.08804189850741023,
+          "p90_error_px": 0.10781259917057934,
+          "tolerance_px": 18.107945769744287,
+          "method": "independent distributed layout feature controls"
+        }
+      },
+      "components": [
+        {
+          "id": "processor",
+          "name": "Main processor",
+          "bbox_xyxy_px": [
+            390,
+            705,
+            620,
+            935
+          ],
+          "overlap": 1.0,
+          "score": 0.9742112755775452,
+          "status": "present",
+          "reason": "convincing_bounded_local_match",
+          "best_match_offset_px": [
+            0,
+            0
+          ],
+          "search_radius_px": 6,
+          "display_status": "Present"
+        }
+      ],
+      "reason": null,
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            0.9878985336211821,
+            0.2534478990106116,
+            -318.0543937140429
+          ],
+          [
+            -0.25128719998494786,
+            0.9884788662998232,
+            180.99528731834786
+          ],
+          [
+            2.1317927002339825e-06,
+            5.662098952511035e-07,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 0.9763466175703858
+      }
+    },
+    {
+      "case": "SIMULATED_processor_absence",
+      "mode": "manual",
+      "synthetic": true,
+      "outcome": "review",
+      "components_evaluated": true,
+      "board_compatibility": {
+        "status": "SAME_DESIGN",
+        "message": "Reference design recognized.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 541
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 419
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 895.7025756835938,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1708,
+          "match_count": 1708,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999913105047933,
+              -2.0229018707798793e-06,
+              0.002807319729174119
+            ],
+            [
+              -6.18243202094343e-06,
+              0.9999917882985256,
+              0.0033339547305493078
+            ],
+            [
+              -7.052605395717582e-09,
+              -3.3202028590436494e-09,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "alignment_evidence": {
+          "median_error_px": 0.0011650980793421167,
+          "p90_error_px": 0.001706898191327006,
+          "tolerance_px": 18.107945769744287,
+          "method": "independent distributed layout feature controls"
+        }
+      },
+      "components": [
+        {
+          "id": "processor",
+          "name": "Main processor",
+          "bbox_xyxy_px": [
+            390,
+            705,
+            620,
+            935
+          ],
+          "overlap": 1.0,
+          "score": 0.14213566482067108,
+          "status": "uncertain",
+          "reason": "ambiguous_appearance: low similarity alone cannot establish absence",
+          "best_match_offset_px": [
+            0,
+            -6
+          ],
+          "search_radius_px": 6,
+          "display_status": "Needs review"
+        }
+      ],
+      "reason": null,
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            0.9999999999999988,
+            -3.6760891097657733e-16,
+            5.004640365319224e-13
+          ],
+          [
+            -1.2035957015657343e-16,
+            0.9999999999999976,
+            5.820374564258213e-13
+          ],
+          [
+            -5.623107629686478e-19,
+            -8.282832443095609e-19,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 1.0
+      }
+    },
+    {
+      "case": "blurred_wrong_board",
+      "mode": "manual",
+      "synthetic": true,
+      "outcome": "review",
+      "components_evaluated": false,
+      "board_compatibility": {
+        "status": "REVIEW",
+        "message": "Board layout needs review because of blur, clipping, or ambiguous evidence.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "REVIEW",
+          "layout_id": null,
+          "matched_regions": [],
+          "sharpness": 1.2078088521957397,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "reason": "blur_or_insufficient_layout_detail"
+        },
+        "reason": "blur_crop_or_ambiguous_layout"
+      },
+      "components": [],
+      "reason": "Board layout needs review because of blur, clipping, or ambiguous evidence.",
+      "alignment": {
+        "status": "not_attempted",
+        "reason": "Board compatibility must pass before component scoring."
+      }
+    },
+    {
+      "case": "cropped_wrong_board",
+      "mode": "manual",
+      "synthetic": true,
+      "outcome": "review",
+      "components_evaluated": false,
+      "board_compatibility": {
+        "status": "REVIEW",
+        "message": "Board compatibility needs review.",
+        "reason": "inspection: landmarks outside decoded image bounds",
+        "evidence": {
+          "status": "UNVERIFIED",
+          "message": "Board layout needs review.",
+          "reference": {
+            "status": "IDENTIFIED",
+            "layout_id": "micropcb_A",
+            "matched_regions": [
+              {
+                "name": "upper mounting holes and power/USB footprints",
+                "kind": "mounting_and_connectors",
+                "inliers": 290
+              },
+              {
+                "name": "left header and Mega2560 silkscreen",
+                "kind": "connector_and_silkscreen",
+                "inliers": 542
+              },
+              {
+                "name": "right header and pin silkscreen",
+                "kind": "connector_and_silkscreen",
+                "inliers": 420
+              },
+              {
+                "name": "lower header and digital-pin silkscreen",
+                "kind": "connector_and_silkscreen",
+                "inliers": 453
+              }
+            ],
+            "sharpness": 1056.8419189453125,
+            "method": "SIFT ratio matches and RANSAC across stable layout regions",
+            "name": "Blue Mega2560 board",
+            "inliers": 1710,
+            "match_count": 1710,
+            "spatial_coverage": 0.9208435156365715,
+            "visible_fraction": 1.0,
+            "template_to_image": [
+              [
+                0.9999999999999959,
+                -3.7444480281501405e-16,
+                1.3989547395329671e-12
+              ],
+              [
+                -1.9321885517051724e-15,
+                0.9999999999999973,
+                1.73685872824991e-12
+              ],
+              [
+                -2.0668978154559995e-18,
+                -6.84095161918506e-19,
+                1.0
+              ]
+            ],
+            "template_controls": [
+              [
+                187.39764337,
+                362.88148992000004
+              ],
+              [
+                782.3107903800001,
+                380.72812032
+              ],
+              [
+                775.766747,
+                1296.85515264
+              ],
+              [
+                178.47394698,
+                1377.16498944
+              ],
+              [
+                485.0,
+                262.5
+              ],
+              [
+                265.0,
+                825.0
+              ],
+              [
+                720.0,
+                825.0
+              ],
+              [
+                485.0,
+                1320.0
+              ]
+            ]
+          },
+          "inspection": {
+            "status": "UNKNOWN",
+            "layout_id": null,
+            "matched_regions": [],
+            "sharpness": 58.9371452331543,
+            "method": "SIFT ratio matches and RANSAC across stable layout regions",
+            "reason": "insufficient_positive_layout_evidence"
+          }
+        }
+      },
+      "components": [
+        {
+          "id": "processor",
+          "name": "Main processor",
+          "bbox_xyxy_px": [
+            390,
+            705,
+            620,
+            935
+          ],
+          "status": "not_evaluated",
+          "display_status": "Not evaluated",
+          "score": null,
+          "overlap": null,
+          "reason": "inspection: landmarks outside decoded image bounds"
+        }
+      ],
+      "reason": null,
+      "alignment": {
+        "status": "failure",
+        "reason": "inspection: landmarks outside decoded image bounds"
+      }
+    },
+    {
+      "case": "bad_alignment_same_design",
+      "mode": "manual",
+      "synthetic": true,
+      "outcome": "review",
+      "components_evaluated": false,
+      "board_compatibility": {
+        "status": "REVIEW",
+        "message": "Alignment is uncertain. Correct the landmarks or retake the image.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 29
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 173
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 98
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 85
+            }
+          ],
+          "sharpness": 831.3623657226562,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 386,
+          "match_count": 432,
+          "spatial_coverage": 0.7944219537947255,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.990692722864281,
+              0.0003357541623925671,
+              8.417299298976044
+            ],
+            [
+              0.03140626521905215,
+              1.004032446205597,
+              -8.334833089308733
+            ],
+            [
+              3.478615627993797e-05,
+              -2.3068272019544532e-06,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "reason": "uncertain_alignment",
+        "alignment_evidence": {
+          "median_error_px": 65.59225636851096,
+          "p90_error_px": 66.65160509074829,
+          "tolerance_px": 18.107945769744287,
+          "method": "independent distributed layout feature controls"
+        }
+      },
+      "components": [],
+      "reason": "Alignment is uncertain. Correct the landmarks or retake the image.",
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            1.0077215105076396,
+            -0.0005747429954032005,
+            -58.67065968522215
+          ],
+          [
+            -0.03124438782004045,
+            0.993385299609732,
+            -29.461071468986407
+          ],
+          [
+            -3.4689854113741396e-05,
+            1.9006646497347166e-06,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 0.9605451099235315
+      }
+    },
+    {
+      "case": "unknown_texture",
+      "mode": "manual",
+      "synthetic": true,
+      "outcome": "review",
+      "components_evaluated": false,
+      "board_compatibility": {
+        "status": "REVIEW",
+        "message": "Board layout or alignment needs review.",
+        "reference": {
+          "status": "IDENTIFIED",
+          "layout_id": "micropcb_A",
+          "matched_regions": [
+            {
+              "name": "upper mounting holes and power/USB footprints",
+              "kind": "mounting_and_connectors",
+              "inliers": 290
+            },
+            {
+              "name": "left header and Mega2560 silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 542
+            },
+            {
+              "name": "right header and pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 420
+            },
+            {
+              "name": "lower header and digital-pin silkscreen",
+              "kind": "connector_and_silkscreen",
+              "inliers": 453
+            }
+          ],
+          "sharpness": 1056.8419189453125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "name": "Blue Mega2560 board",
+          "inliers": 1710,
+          "match_count": 1710,
+          "spatial_coverage": 0.9208435156365715,
+          "visible_fraction": 1.0,
+          "template_to_image": [
+            [
+              0.9999999999999959,
+              -3.7444480281501405e-16,
+              1.3989547395329671e-12
+            ],
+            [
+              -1.9321885517051724e-15,
+              0.9999999999999973,
+              1.73685872824991e-12
+            ],
+            [
+              -2.0668978154559995e-18,
+              -6.84095161918506e-19,
+              1.0
+            ]
+          ],
+          "template_controls": [
+            [
+              187.39764337,
+              362.88148992000004
+            ],
+            [
+              782.3107903800001,
+              380.72812032
+            ],
+            [
+              775.766747,
+              1296.85515264
+            ],
+            [
+              178.47394698,
+              1377.16498944
+            ],
+            [
+              485.0,
+              262.5
+            ],
+            [
+              265.0,
+              825.0
+            ],
+            [
+              720.0,
+              825.0
+            ],
+            [
+              485.0,
+              1320.0
+            ]
+          ]
+        },
+        "inspection": {
+          "status": "UNKNOWN",
+          "layout_id": null,
+          "matched_regions": [],
+          "sharpness": 20655.578125,
+          "method": "SIFT ratio matches and RANSAC across stable layout regions",
+          "reason": "insufficient_positive_layout_evidence"
+        },
+        "reason": "insufficient_positive_layout_evidence",
+        "regions": [
+          {
+            "row": 0,
+            "column": 0,
+            "coverage": 1.0,
+            "score": -0.010162499733269215,
+            "matches": false
+          },
+          {
+            "row": 0,
+            "column": 1,
+            "coverage": 1.0,
+            "score": 0.0008986374596133828,
+            "matches": false
+          },
+          {
+            "row": 0,
+            "column": 2,
+            "coverage": 1.0,
+            "score": -0.009238628670573235,
+            "matches": false
+          },
+          {
+            "row": 1,
+            "column": 0,
+            "coverage": 1.0,
+            "score": -0.003519199788570404,
+            "matches": false
+          },
+          {
+            "row": 1,
+            "column": 1,
+            "coverage": 1.0,
+            "score": 0.008191296830773354,
+            "matches": false
+          },
+          {
+            "row": 1,
+            "column": 2,
+            "coverage": 1.0,
+            "score": 0.0017806943506002426,
+            "matches": false
+          },
+          {
+            "row": 2,
+            "column": 0,
+            "coverage": 1.0,
+            "score": -0.002961828140541911,
+            "matches": false
+          },
+          {
+            "row": 2,
+            "column": 1,
+            "coverage": 1.0,
+            "score": -0.00029415698372758925,
+            "matches": false
+          },
+          {
+            "row": 2,
+            "column": 2,
+            "coverage": 1.0,
+            "score": -0.00100999278947711,
+            "matches": false
+          }
+        ]
+      },
+      "components": [],
+      "reason": "Board layout or alignment needs review.",
+      "alignment": {
+        "status": "ok",
+        "reference_wh": [
+          959,
+          1536
+        ],
+        "homography_inspection_to_reference": [
+          [
+            0.9999999999999988,
+            -3.6760891097657733e-16,
+            5.004640365319224e-13
+          ],
+          [
+            -1.2035957015657343e-16,
+            0.9999999999999976,
+            5.820374564258213e-13
+          ],
+          [
+            -5.623107629686478e-19,
+            -8.282832443095609e-19,
+            1.0
+          ]
+        ],
+        "valid_overlap_fraction": 1.0
+      }
+    }
+  ],
+  "verification": {
+    "python_tests": 55,
+    "browser_tests": 11,
+    "frontend_unit_tests": 4,
+    "production_build": "passed",
+    "result": "all passed"
+  }
+}

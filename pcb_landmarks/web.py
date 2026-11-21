@@ -19,6 +19,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .align import align_images, blend_overlay
 from .compare import _validate_regions, annotated_overlay, compare_regions, load_config
+from .compatibility import check_compatibility, identify_board
 from .data import open_image, read_image
 from .infer import LandmarkDetector
 
@@ -193,12 +194,14 @@ def create_app(storage=None):
         batch_id = uuid.uuid4().hex
         batch_path = storage/'batches'/batch_id
         batch_path.mkdir()
-        reference_detection = detect(request.reference_id) if request.mode == 'automatic' else None
+        reference_detection = None
+        reference_layout = identify_board(ref_image) if ref_image is not None else None
         results = []
         for index, item in enumerate(request.inspections):
             name = item.photo_id
             result = dict(photo_id=item.photo_id, filename=name, outcome='review', review_required=True,
                           alignment=dict(status='failure', reason=None), components=[],
+                          components_evaluated=False, board_compatibility=None,
                           alignment_overlay_url=None, component_overlay_url=None)
             try:
                 current, current_path = photo(item.photo_id)
@@ -206,8 +209,21 @@ def create_app(storage=None):
                 if reference['error'] or current['error']:
                     result['outcome'] = 'error'
                     raise ValueError(reference['error'] or current['error'])
+                inspection_image = read_image(current_path/'image.png')
+                inspection_layout = identify_board(inspection_image)
+                compatibility = check_compatibility(reference_layout, inspection_layout)
+                result['board_compatibility'] = compatibility
+                if compatibility['status'] in ['DIFFERENT_BOARD', 'REVIEW']:
+                    result.update(outcome='DIFFERENT_BOARD' if compatibility['status'] == 'DIFFERENT_BOARD' else 'review',
+                                  reason=compatibility['message'],
+                                  alignment=dict(status='not_attempted',
+                                                 reason='Board compatibility must pass before component scoring.'))
+                    results.append(result)
+                    continue
                 rp, ip = request.reference_points, item.points
                 if request.mode == 'automatic':
+                    if reference_detection is None:
+                        reference_detection = detect(request.reference_id)
                     detection = detect(item.photo_id)
                     result['landmark_diagnostics'] = dict(reference=reference_detection, inspection=detection)
                     if reference_detection['status'] != 'ok':
@@ -216,14 +232,23 @@ def create_app(storage=None):
                         raise ValueError(detection['reason'])
                     rp = [[p['x'], p['y']] for p in reference_detection['landmarks']]
                     ip = [[p['x'], p['y']] for p in detection['landmarks']]
-                aligned, homography, mask = align_images(ref_image, read_image(current_path/'image.png'), rp, ip)
+                aligned, homography, mask = align_images(ref_image, inspection_image, rp, ip)
                 alignment = dict(status='ok', reference_wh=list(ref_image.size),
                                  homography_inspection_to_reference=homography.tolist(),
                                  valid_overlap_fraction=float((mask > 0).mean()))
-                comparison = compare_regions(ref_image, aligned, mask, regions, config, alignment, request.sharpen)
                 output = batch_path/str(index)
                 output.mkdir()
                 Image.fromarray(blend_overlay(np.asarray(ref_image), aligned, mask)).save(output/'alignment.png')
+                result.update(alignment=alignment, alignment_overlay_url=f'/api/batches/{batch_id}/{index}/alignment')
+                compatibility = check_compatibility(reference_layout, inspection_layout, ref_image,
+                                                     aligned, mask, homography, rp)
+                result['board_compatibility'] = compatibility
+                if compatibility['status'] != 'SAME_DESIGN':
+                    result['reason'] = compatibility['message']
+                    results.append(result)
+                    continue
+                result['components_evaluated'] = True
+                comparison = compare_regions(ref_image, aligned, mask, regions, config, alignment, request.sharpen)
                 annotated_overlay(ref_image, aligned, mask, comparison).save(output/'components.png')
                 result.update(comparison, photo_id=item.photo_id, filename=current['filename'], alignment=alignment,
                               alignment_overlay_url=f'/api/batches/{batch_id}/{index}/alignment',
@@ -233,6 +258,8 @@ def create_app(storage=None):
                     result['outcome'] = 'error'
                 reason = str(error) if isinstance(error, (ValueError, HTTPException)) else f'{type(error).__name__}: {error}'
                 result['alignment'] = dict(status='failure', reason=reason)
+                result['board_compatibility'] = dict(status='REVIEW', message='Board compatibility needs review.',
+                                                    reason=reason, evidence=result.get('board_compatibility'))
                 result['components'] = [dict(id=p.get('id'), name=p.get('name'), bbox_xyxy_px=p.get('bbox_xyxy_px'),
                                              status='not_evaluated', display_status='Not evaluated', score=None,
                                              overlap=None, reason=reason) for p in request.components]

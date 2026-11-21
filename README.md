@@ -7,6 +7,11 @@ Synthetic erasures are review fixtures, not verified real missing-component evid
 The current one-board demo reports PRESENT or REVIEW; MISSING is withheld until an
 absence exemplar is verified. See [November 21 evidence](docs/DEMO_RELIABILITY.md).
 
+Before component scoring, a [board compatibility check](docs/BOARD_COMPATIBILITY.md)
+uses distributed connector, mounting-region and silkscreen features. Positively
+recognized mismatched layouts return `DIFFERENT_BOARD` and skip component decisions.
+Blur, cropping, unknown layouts and uncertain alignment remain `REVIEW`.
+
 ## Windows prerequisites
 
 - 64-bit CPython **3.10**, installed with the Windows `py` launcher (`py -3.10`).
