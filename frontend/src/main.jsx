@@ -275,9 +275,9 @@ function App() {
           ▦
         </div>
         <div>
-          <h1>PCB inspection bench</h1>
+          <h1>IndustryAI PCB inspection</h1>
           <p>
-            Reference, alignment and component evidence in one local workspace.
+            Inspection workspace · Reference, alignment and component evidence.
           </p>
         </div>
         <span className="local-tag">Local files only</span>
