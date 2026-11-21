@@ -1,6 +1,6 @@
 # Offline PCB inspection demo
 
-Compare a known-good PCB photo with up to three same-layout inspection photos.
+Compare a known-good PCB photo with up to 15 same-layout inspection photos.
 The local React frontend and FastAPI backend share the alignment/comparison CLI
 functions. **Thresholds are provisional; real missing-part validation is pending.**
 Synthetic erasures are review fixtures, not verified real missing-component evidence.

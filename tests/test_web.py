@@ -66,6 +66,21 @@ class WebTests(unittest.TestCase):
         self.assertIsNone(photos[2]['alignment_overlay_url'])
         self.assertTrue(all(p['status'] == 'not_evaluated' for p in photos[2]['components']))
 
+    def test_fifteen_inspections_keep_all_results_and_overlays(self):
+        payload = self.payload()
+        payload['inspections'] *= 15
+        response = self.client.post('/api/inspections', json=payload)
+        self.assertEqual(response.status_code, 200, response.text)
+        batch = response.json()
+        self.assertEqual(len(batch['photos']), 15)
+        for result in batch['photos']:
+            for key in ['alignment_overlay_url', 'component_overlay_url']:
+                self.assertEqual(self.client.get(result[key]).status_code, 200)
+        self.assertEqual(self.client.get(batch['report_url']).json(), batch)
+        self.assertEqual(self.client.get('/api/health').json()['max_photos'], 15)
+        for index in [-1, 15]:
+            self.assertEqual(self.client.get(f"/api/batches/{batch['batch_id']}/{index}/alignment").status_code, 404)
+
     def test_automatic_missing_checkpoint_is_explicit_and_never_manual_fallback(self):
         payload = self.payload()
         payload['mode'] = 'automatic'
@@ -79,7 +94,7 @@ class WebTests(unittest.TestCase):
 
     def test_batch_limits_ids_booleans_and_origin(self):
         payload = self.payload()
-        for change in [dict(inspections=[]), dict(inspections=payload['inspections']*4),
+        for change in [dict(inspections=[]), dict(inspections=payload['inspections']*16),
                        dict(sharpen='false'), dict(mode='guess'), dict(components=[])]:
             self.assertEqual(self.client.post('/api/inspections', json=dict(payload, **change)).status_code, 422)
         payload['reference_id'] = '../configs/comparison.json'

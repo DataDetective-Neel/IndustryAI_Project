@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINT = Path(os.environ.get('PCB_CHECKPOINT', ROOT/'runs/landmarks/full/weights/best.pt'))
 MAX_UPLOAD = 12 * 1024 * 1024
 MAX_PIXELS = 20_000_000
+MAX_PHOTOS = 15
 MODEL_LOCK = threading.Lock()
 
 
@@ -38,7 +39,7 @@ class PhotoPoints(BaseModel):
 class InspectionRequest(BaseModel):
     reference_id: str
     reference_points: list[list[float]] = Field(default_factory=list, max_length=4)
-    inspections: list[PhotoPoints] = Field(min_length=1, max_length=3)
+    inspections: list[PhotoPoints] = Field(min_length=1, max_length=MAX_PHOTOS)
     components: list[dict] = Field(min_length=1, max_length=100)
     mode: Literal['manual', 'automatic']
     sharpen: StrictBool = False
@@ -112,7 +113,7 @@ def create_app(storage=None):
         names = json.loads((ROOT/'configs/landmarks.json').read_text())['landmark_order']
         return dict(status='ok', landmark_names=names,
                     comparison=load_config(ROOT/'configs/comparison.json'),
-                    checkpoint_available=CHECKPOINT.is_file(), checkpoint_path=str(CHECKPOINT.resolve()), max_photos=3,
+                    checkpoint_available=CHECKPOINT.is_file(), checkpoint_path=str(CHECKPOINT.resolve()), max_photos=MAX_PHOTOS,
                     max_upload_bytes=MAX_UPLOAD, max_pixels=MAX_PIXELS)
 
     @app.post('/api/photos')
@@ -246,7 +247,7 @@ def create_app(storage=None):
 
     @app.get('/api/batches/{identifier}/{index}/{kind}')
     def result_asset(identifier: str, index: int, kind: str):
-        if index not in range(3) or kind not in ['alignment', 'components']:
+        if index not in range(MAX_PHOTOS) or kind not in ['alignment', 'components']:
             raise HTTPException(404, 'Unknown result asset')
         path = directory('batches', identifier)/str(index)/f'{kind}.png'
         if not path.is_file():

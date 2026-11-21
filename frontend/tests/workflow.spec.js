@@ -15,6 +15,36 @@ const absolute = (name) => path.join(root, name);
 const readJson = async (name) =>
   JSON.parse(await fs.readFile(absolute(name), "utf8"));
 
+test('accepts 15 inspections across uploads, rejects a 16th, and serves all overlays', async ({ page }) => {
+  const example = absolute('runs/comparison/synthetic-input');
+  try { await fs.access(example); }
+  catch { execFileSync(python, ['tests/comparison_fixture.py', '--output', example], { cwd: root }); }
+  const buffer = await fs.readFile(path.join(example, 'input/reference.png'));
+  const points = await pointsFromLabel('runs/comparison/synthetic-input/input/reference.txt', 320, 240);
+  await page.goto('http://127.0.0.1:8000/');
+  await page.getByLabel('Reference photo', { exact: true }).setInputFiles(path.join(example, 'input/reference.png'));
+  await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
+  await mark(page, points);
+  await region(page, { name: 'Retained chip', bbox_xyxy_px: [60, 45, 100, 85] });
+  const files = Array.from({ length: 15 }, (_, i) => ({ name: `board-${i + 1}.png`, mimeType: 'image/png', buffer }));
+  await page.getByLabel('Inspection photos', { exact: true }).setInputFiles(files.slice(0, 4));
+  await expect(page.getByRole('button', { name: /Inspection 4 board-4.png/ })).toBeVisible();
+  await page.getByLabel('Inspection photos', { exact: true }).setInputFiles(files.slice(4));
+  await expect(page.getByText('15/15 selected. Add photos to this batch.')).toBeVisible();
+  await page.getByLabel('Inspection photos', { exact: true }).setInputFiles({ name: 'board-16.png', mimeType: 'image/png', buffer });
+  await expect(page.getByRole('alert')).toHaveText('Choose up to 15 inspection photos in total.');
+  for (let i = 1; i <= 15; i++) {
+    await page.getByRole('button', { name: new RegExp(`Inspection ${i} board-${i}\\.png`) }).click();
+    await mark(page, points);
+  }
+  const batch = await inspect(page);
+  expect(batch.photos).toHaveLength(15);
+  expect(batch.photos.every(p => p.outcome === 'ok')).toBe(true);
+  for (const photo of batch.photos)
+    for (const key of ['alignment_overlay_url', 'component_overlay_url'])
+      expect((await page.request.get(`http://127.0.0.1:8000${photo[key]}`)).status()).toBe(200);
+});
+
 test("a rejected upload does not discard the other selected photo", async ({
   page,
 }) => {

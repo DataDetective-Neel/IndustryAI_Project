@@ -103,8 +103,8 @@ function App() {
     const files = [...event.target.files];
     event.target.value = "";
     if (!files.length) return;
-    if (!isReference && inspections.length + files.length > 3) {
-      setError("Choose up to three inspection photos in total.");
+    if (!isReference && inspections.length + files.length > (health?.max_photos ?? 15)) {
+      setError(`Choose up to ${health?.max_photos ?? 15} inspection photos in total.`);
       return;
     }
     setBusy(true);
@@ -314,7 +314,7 @@ function App() {
               <label className="upload-control">
                 <strong>Inspection photos</strong>
                 <span>
-                  {inspections.length}/3 selected. Add photos to this batch.
+                  {inspections.length}/{health?.max_photos ?? 15} selected. Add photos to this batch.
                 </span>
                 <input
                   aria-label="Inspection photos"
