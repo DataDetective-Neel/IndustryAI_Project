@@ -50,6 +50,12 @@ test('comparison uses returned outcomes, aligned opacity and finding coordinates
   await result.getByRole('slider').fill('75');
   await expect(result.getByRole('img', { name: 'Aligned inspection', exact: true })).toHaveCSS('opacity', '0.75');
   await expect(result.getByRole('img', { name: 'Aligned inspection', exact: true })).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 12, 24)');
+  for (const width of [1440, 768, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect(result.getByRole('slider')).toBeVisible();
+    await expect(result.locator('.finding-highlight')).toBeVisible();
+  }
   await result.getByText('Measurement details').click();
   await expect(result.getByText('2, 3', { exact: true })).toBeVisible();
   for (const value of ['review', 'DIFFERENT_BOARD', 'future_outcome']) {
@@ -60,4 +66,17 @@ test('comparison uses returned outcomes, aligned opacity and finding coordinates
     await expect(result.getByRole('button', { name: 'Overlay', exact: true })).toBeDisabled();
     await expect(result.getByText('Different board', { exact: true })).toHaveCount(value === 'DIFFERENT_BOARD' ? 1 : 0);
   }
+});
+
+test('empty state and landmark controls fit a narrow viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 900 });
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Run Inspection' })).toBeDisabled();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByLabel('Reference photo', { exact: true }).setInputFiles(reference);
+  await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
+  await page.getByLabel('upper_left_mount x', { exact: true }).fill('200');
+  await page.getByLabel('upper_left_mount y', { exact: true }).fill('250');
+  await expect(page.getByLabel('upper_left_mount x', { exact: true })).toHaveValue('200');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
