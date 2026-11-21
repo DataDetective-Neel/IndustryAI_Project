@@ -123,7 +123,7 @@ async function inspect(page) {
     (r) =>
       r.url().endsWith("/api/inspections") && r.request().method() === "POST",
   );
-  await page.getByRole("button", { name: /^Inspect \d+ photo/ }).click();
+  await page.getByRole("button", { name: "Run Inspection" }).click();
   const result = await (await response).json();
   await expect(
     page.getByRole("heading", { name: "Inspection results", exact: true }),

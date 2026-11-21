@@ -99,11 +99,11 @@ function App() {
     };
   }, [mode, photoIds]);
 
-  async function upload(event, isReference) {
+  async function upload(event, isReference, replaceId = null) {
     const files = [...event.target.files];
     event.target.value = "";
     if (!files.length) return;
-    if (!isReference && inspections.length + files.length > (health?.max_photos ?? 15)) {
+    if (!isReference && !replaceId && inspections.length + files.length > (health?.max_photos ?? 15)) {
       setError(`Choose up to ${health?.max_photos ?? 15} inspection photos in total.`);
       return;
     }
@@ -114,6 +114,14 @@ function App() {
       const uploaded = [];
       const failures = [];
       for (const file of files) {
+        if (file.size > (health?.max_upload_bytes ?? 12 * 1024 * 1024)) {
+          failures.push(`${file.name}: Photo exceeds 12 MiB upload limit. Choose a smaller JPEG or PNG.`);
+          continue;
+        }
+        if (!/\.(jpe?g|png)$/i.test(file.name)) {
+          failures.push(`${file.name}: Choose a JPEG or PNG photo.`);
+          continue;
+        }
         const body = new FormData();
         body.append("image", file);
         try {
@@ -136,7 +144,9 @@ function App() {
           setComponents([]);
         }
         setRegionId(null);
-      } else setInspections((items) => [...items, ...uploaded]);
+      } else setInspections((items) => replaceId
+        ? items.map((p) => p.id === replaceId ? uploaded[0] : p)
+        : [...items, ...uploaded]);
       setSelected(uploaded[0].id);
       setPointIndex(0);
       setTool("landmarks");
@@ -267,6 +277,14 @@ function App() {
         ? photo.detection.landmarks.map((p) => [p.x, p.y])
         : (photo?.detection?.diagnostics?.candidates?.[0]?.landmarks || []).map((p) => [p.x, p.y]);
   const radius = photo ? Math.max(photo.width, photo.height) / 85 : 10;
+  const runHint = !health ? "Connect the local backend to begin."
+    : !reference ? "Upload a known-good reference first."
+    : !inspections.length ? "Add at least one inspection photo."
+    : !components.length ? "Draw or add an expected component box on the reference."
+    : detecting ? "Wait for landmark detection to finish."
+    : mode === "manual" && photos.some((p) => !p.error && Array.from({ length: 4 }, (_, i) => p.points?.[i]).some((point) => !point || !point.every(Number.isFinite)))
+      ? "Mark all four mounting holes on each photo before running."
+      : "Ready to inspect. Review the mounting holes and expected parts before running.";
 
   return (
     <div className="app-shell">
@@ -300,9 +318,11 @@ function App() {
             <div className="upload-row">
               <label className="upload-control">
                 <strong>Known-good reference</strong>
+                {reference?.image_url && <img className="upload-preview" src={reference.image_url} alt="Known-good reference preview" />}
                 <span>
                   {reference?.filename ||
                     "Choose one complete, sharp board photo"}
+                  {reference && " · Choose a file to replace the reference and reset its annotations."}
                 </span>
                 <input
                   aria-label="Reference photo"
@@ -398,7 +418,8 @@ function App() {
                       setTool("landmarks");
                     }}
                   >
-                    <span>{i === 0 ? "Reference" : `Inspection ${i}`}</span>
+                    <span>{p.id === reference?.id ? "Reference" : `Inspection ${inspections.findIndex((item) => item.id === p.id) + 1}`}</span>
+                    {p.image_url && <img className="photo-thumbnail" src={p.image_url} alt="" />}
                     <strong>{p.filename}</strong>
                     <small>
                       {p.error
@@ -410,21 +431,29 @@ function App() {
                             : "Needs review"}
                     </small>
                   </button>
-                  {i > 0 && (
+                  <div className="photo-actions">
+                    {p.id !== reference?.id && <label className="replace-photo">Replace
+                      <input aria-label={`Replace ${p.filename}`} type="file" accept="image/jpeg,image/png" onChange={(e) => upload(e, false, p.id)} />
+                    </label>}
                     <button
                       className="remove-photo"
                       aria-label={`Remove ${p.filename}`}
                       onClick={() => {
+                        if (p.id === reference?.id) {
+                          setReference(null);
+                          setComponents([]);
+                          setRegionId(null);
+                        }
                         setInspections((items) =>
                           items.filter((item) => item.id !== p.id),
                         );
-                        setSelected(reference.id);
+                        setSelected(p.id === reference?.id ? null : reference?.id);
                         setBatch(null);
                       }}
                     >
-                      ×
+                      Remove
                     </button>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -786,6 +815,7 @@ function App() {
           <section className="run-section" aria-labelledby="run-heading">
             <div>
               <h2 id="run-heading">3. Inspect and review</h2>
+              <p className="run-hint" id="run-hint" role="status">{runHint}</p>
               <p className="threshold-note">
                 Provisional Present threshold: {health?.comparison.present_min ?? "0.50"}.
                 Other scores need review. Missing-part detection requires verified absence evidence;
@@ -806,6 +836,7 @@ function App() {
             </div>
             <button
               className="primary run-button"
+              aria-describedby="run-hint"
               disabled={
                 !reference ||
                 inspections.length === 0 ||
@@ -815,9 +846,7 @@ function App() {
               }
               onClick={run}
             >
-              {busy
-                ? "Processing…"
-                : `Inspect ${inspections.length || ""} photo${inspections.length === 1 ? "" : "s"}`}
+              {busy ? "Processing…" : "Run Inspection"}
             </button>
           </section>
         </fieldset>

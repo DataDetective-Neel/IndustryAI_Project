@@ -784,3 +784,16 @@ h2 { font-size: 18px; letter-spacing: -0.3px; }
 .app-header h1 { font-size: 22px; }
 .local-tag { border: 1px solid var(--border); color: var(--muted); }
 ::selection { background: var(--accent); color: #fff; }
+
+/* Photo inputs keep the board identity visible during batch editing. */
+.upload-preview { width: 100%; height: 140px; object-fit: contain; background: var(--canvas); border-radius: 4px; }
+.upload-control:focus-within, .replace-photo:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+.photo-tab { flex: 0 0 220px; flex-direction: column; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.photo-tab > button:first-child { padding: 12px; border: 0; border-radius: 0; gap: 4px; flex: 1; }
+.photo-thumbnail { width: 100%; height: 72px; object-fit: contain; background: var(--canvas); }
+.photo-actions { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-top: 1px solid var(--border); }
+.remove-photo { position: static; font-size: 12px; margin-left: auto; }
+.replace-photo { position: relative; font-size: 12px; cursor: pointer; padding: 8px; overflow: hidden; }
+.replace-photo input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
+.run-hint { color: var(--ink); font-size: 14px; margin-top: 8px; }
+.upload-control, .photo-actions, .photo-tab { min-width: 0; }

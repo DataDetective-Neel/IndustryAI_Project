@@ -11,7 +11,7 @@ async function mark(page, points) {
 }
 async function inspect(page) {
   const pending=page.waitForResponse(r=>r.url().endsWith('/api/inspections') && r.request().method()==='POST');
-  await page.getByRole('button',{name:/^Inspect \d+ photo/}).click();
+  await page.getByRole('button',{name:"Run Inspection"}).click();
   return (await pending).json();
 }
 test('one-board real-photo fixtures through production upload and inspect UI', async ({page})=>{
