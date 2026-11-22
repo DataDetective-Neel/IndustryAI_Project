@@ -3,9 +3,10 @@
 Compare a known-good PCB photo with up to 15 same-layout inspection photos.
 The local React frontend and FastAPI backend share the alignment/comparison CLI
 functions. **Thresholds are provisional; real missing-part validation is pending.**
-Synthetic erasures are review fixtures, not verified real missing-component evidence.
-The current one-board demo reports PRESENT or REVIEW; MISSING is withheld until an
-absence exemplar is verified. See [November 21 evidence](docs/DEMO_RELIABILITY.md).
+Controlled synthetic erasures verify the multi-evidence `MISSING` workflow, but do
+not establish real-photo accuracy. Missing requires low structural correlation,
+lost edge energy, and changed appearance; every suspected defect requires review.
+See [November 21 evidence](docs/DEMO_RELIABILITY.md) for the earlier conservative baseline.
 
 Before component scoring, a [board compatibility check](docs/BOARD_COMPATIBILITY.md)
 uses distributed connector, mounting-region and silkscreen features. Positively
@@ -98,16 +99,16 @@ No `PCB_Dataset_Pilot` directory or checkpoint is needed for this Manual demo.
    | Coverage control | 0 | 50 | 24 | 90 |
 
 4. Leave sharpening off and choose **Inspect 1 photo**. Expect **Present** for
-   the retained chip, **Needs review** for the controlled removal and **Needs review**
+   the retained chip, **Missing** for the controlled removal and **Needs review**
    for the partially covered control. Inspect both overlays and the component
    table. The synthetic banner must be visible. Review flags can explicitly
    prevent scoring unreliable regions such as tall connectors with parallax.
 
 Present >= 0.50 after bounded local search and alignment validation; other scores,
 low texture, bad crops, incomplete coverage and flagged regions need review.
-The legacy missing_max configuration field remains readable for compatibility but
-does not classify absence. Low correlation can also
-come from glare or misalignment. These pilot decisions do not certify a board.
+`missing_max` is only one gate. Edge-energy loss and appearance change must also
+agree. Low correlation can come from glare or misalignment. These pilot decisions
+do not certify a board or establish real-photo defect accuracy.
 
 ## One-board submission demo
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { findingBox, homographyTransform } from './comparison.js';
 
 const outcomes = {
-  ok: 'Scored regions present', missing: 'Missing component', review: 'Needs review',
+  ok: 'Scored regions present', defect: 'Suspected defect', missing: 'Missing component', review: 'Needs review',
   retake: 'Alignment needs review', error: 'Photo could not be processed',
   DIFFERENT_BOARD: 'Different board', different_board: 'Different board',
 };
@@ -83,6 +83,8 @@ export default function Comparison({ result, reference, inspection, index, mode,
               <dt>Best offset (px)</dt><dd>{p.best_match_offset_px?.join(', ') || '—'}</dd>
               <dt>Expected box</dt><dd>{p.bbox_xyxy_px?.join(', ') || '—'}</dd>
               <dt>Coverage</dt><dd>{p.overlap == null ? '—' : `${(p.overlap * 100).toFixed(2)}%`}</dd>
+              <dt>Edge energy ratio</dt><dd>{p.evidence?.edge_energy_ratio == null ? '—' : p.evidence.edge_energy_ratio.toFixed(4)}</dd>
+              <dt>LAB difference</dt><dd>{p.evidence?.mean_lab_delta == null ? '—' : p.evidence.mean_lab_delta.toFixed(4)}</dd>
             </dl>
           </details>
           {selected === i && <small>{box ? 'Highlighted on the reference.' : 'No valid region coordinates returned.'}</small>}

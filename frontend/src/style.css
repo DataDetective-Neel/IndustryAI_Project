@@ -605,6 +605,11 @@ main {
   background: var(--red-bg);
   color: var(--red);
 }
+.status.defect,
+.status.misaligned {
+  background: #fff0e5;
+  color: #9b3f12;
+}
 .status.uncertain,
 .status.review,
 .status.retake {
@@ -760,6 +765,7 @@ h2 { font-size: 18px; letter-spacing: -0.3px; }
 .finding dd { margin: 0; }
 .finding-highlight { fill: #e8be6b22; stroke: var(--amber); stroke-width: 3px; pointer-events: none; }
 .finding-highlight.missing { fill: #ff929b22; stroke: var(--red); }
+.finding-highlight.misaligned { fill: #ff8c4222; stroke: #d96522; }
 .finding-highlight.present { fill: #8bcca122; stroke: var(--green); }
 .status.DIFFERENT_BOARD, .status.different_board { color: var(--amber); background: var(--amber-bg); }
 .result-reason, .alignment-summary { padding: 12px 16px; font-size: 13px; color: var(--muted); }

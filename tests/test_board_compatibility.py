@@ -82,7 +82,8 @@ class BoardCompatibilityTests(unittest.TestCase):
         result = self.inspect(reference, inspection, rp, rp, synthetic=True)
         self.assertEqual(result['board_compatibility']['status'], 'SAME_DESIGN')
         self.assertTrue(result['components_evaluated'])
-        self.assertEqual(result['components'][0]['status'], 'uncertain')
+        self.assertEqual(result['components'][0]['status'], 'missing')
+        self.assertEqual(result['outcome'], 'defect')
 
     def test_existing_beaglebone_angle_pair_keeps_component_review(self):
         reference = read_image('PCB_Dataset_Pilot/images/val/ECCC5.jpg')

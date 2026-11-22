@@ -911,8 +911,8 @@ function App() {
               <p className="run-hint" id="run-hint" role="status">{runHint}</p>
               <p className="threshold-note">
                 Provisional Present threshold: {health?.comparison.present_min ?? "0.50"}.
-                Other scores need review. Missing-part detection requires verified absence evidence;
-                this one-board demo has no verified absence exemplar.
+                Missing requires low correlation plus lost edge energy and appearance change.
+                Thresholds are provisional; suspected defects always require operator review.
               </p>
               <label className="check">
                 <input

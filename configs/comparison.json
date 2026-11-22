@@ -1,10 +1,13 @@
 {
   "missing_max": 0.25,
   "present_min": 0.5,
+  "missing_edge_ratio_max": 0.45,
+  "missing_color_delta_min": 0.03,
+  "misalignment_min_px": 2.5,
   "provisional": true,
   "development_examples": [
     "Validation micropcb_E: ECCC5/ECCB5, visually present U2 and AM335x",
     "Original synthetic perspective pair: present chip and textured chip removal",
-    "No verified real missing-part pair; no F/K threshold tuning"
+    "Controlled synthetic removal validates evidence wiring; no verified real missing-part pair or accuracy claim"
   ]
 }

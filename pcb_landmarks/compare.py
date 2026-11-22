@@ -11,7 +11,8 @@ from .align import blend_overlay
 from .data import read_image
 
 
-DISPLAY = dict(present='Present', missing='Missing', uncertain='Needs review', not_evaluated='Not evaluated')
+DISPLAY = dict(present='Present', missing='Missing', misaligned='Misaligned',
+               uncertain='Needs review', not_evaluated='Not evaluated')
 
 
 def _validate_config(config):
@@ -101,8 +102,17 @@ def _local_match(reference, aligned, mask, box, sharpen):
     if maximum < -1:
         return dict(score=None,reason='insufficient_search_coverage',best_match_offset_px=None,search_radius_px=radius)
     bx, by = left+dx, top+dy
-    score, reason = _score(template, aligned[by:by+y2-y1,bx:bx+x2-x1], sharpen)
-    return dict(score=score, reason=reason, best_match_offset_px=[bx-x1,by-y1],search_radius_px=radius)
+    matched = aligned[by:by+y2-y1,bx:bx+x2-x1]
+    score, reason = _score(template, matched, sharpen)
+    ref_gray = cv2.cvtColor(template, cv2.COLOR_RGB2GRAY).astype(np.float32)
+    current_gray = cv2.cvtColor(matched, cv2.COLOR_RGB2GRAY).astype(np.float32)
+    ref_energy, current_energy = float(_features(ref_gray).mean()), float(_features(current_gray).mean())
+    edge_ratio = current_energy/ref_energy if ref_energy > 1e-6 else None
+    color_delta = float(np.abs(cv2.cvtColor(template, cv2.COLOR_RGB2LAB).astype(np.float32) -
+                               cv2.cvtColor(matched, cv2.COLOR_RGB2LAB).astype(np.float32)).mean()/255)
+    return dict(score=score, reason=reason, best_match_offset_px=[bx-x1,by-y1], search_radius_px=radius,
+                evidence=dict(edge_energy_ratio=edge_ratio, mean_lab_delta=color_delta,
+                              reference_edge_energy=ref_energy, inspection_edge_energy=current_energy))
 
 
 def _overlay_score(reference, aligned, mask):
@@ -146,7 +156,7 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                   review_required=failed, reference_wh_px=[width, height],
                   coordinate_system='decoded_reference_pixels', thresholds_provisional=True,
                   config=dict(config), sharpening_enabled=sharpen,
-                  absence_policy='No verified absence exemplar: low scores remain REVIEW',
+                  absence_policy='Missing requires low correlation, lost edge energy, and appearance change; thresholds are provisional',
                   method=dict(feature='Sobel magnitude ksize=3, trim 1px border', correlation='TM_CCOEFF_NORMED',
                               search='bounded local gradient template match, <=6px', min_coverage=1.0, min_crop_side_px=5, min_raw_gray_std=2, min_gradient_std=1,
                               unsharp=dict(amount=.5, sigma=1, kernel=[7, 7])), components=[], overlay=None)
@@ -171,6 +181,11 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                 if row['score'] is not None:
                     if row['score'] >= config['present_min']:
                         row.update(status='present', reason='convincing_bounded_local_match')
+                    elif (row['score'] <= config['missing_max'] and
+                          row.get('evidence', {}).get('edge_energy_ratio') is not None and
+                          row['evidence']['edge_energy_ratio'] <= config.get('missing_edge_ratio_max', .45) and
+                          row['evidence']['mean_lab_delta'] >= config.get('missing_color_delta_min', .03)):
+                        row.update(status='missing', reason='corroborated_absence: low structural match, lost edge energy, and changed appearance')
                     else:
                         row['reason'] = 'ambiguous_appearance: low similarity alone cannot establish absence'
         row['display_status'] = DISPLAY[row['status']]
@@ -186,10 +201,20 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
         if not reliable:
             for row in result['components']:
                 row.update(status='uncertain',display_status=DISPLAY['uncertain'],reason='unreliable_alignment: overlay/coverage validation failed; ' + (row['reason'] or 'no_local_match'))
-        # No absence exemplar has been verified for this board. A mismatch stays REVIEW.
+        else:
+            matched = [row for row in result['components'] if row['status'] == 'present' and row.get('best_match_offset_px')]
+            if len(matched) >= 2:
+                global_offset = np.median(np.asarray([row['best_match_offset_px'] for row in matched]), axis=0)
+                for row in matched:
+                    deviation = float(np.linalg.norm(np.asarray(row['best_match_offset_px']) - global_offset))
+                    row.setdefault('evidence', {})['offset_deviation_px'] = deviation
+                    if deviation >= config.get('misalignment_min_px', 2.5):
+                        row.update(status='misaligned', display_status=DISPLAY['misaligned'],
+                                   reason='individual_offset_differs_from_consensus_after_board_registration')
         states = {p['status'] for p in result['components']}
-        result['review_required'] = 'uncertain' in states
-        result['outcome'] = 'review' if result['review_required'] else 'ok'
+        defects = states & {'missing', 'misaligned'}
+        result['review_required'] = bool('uncertain' in states or defects)
+        result['outcome'] = 'defect' if defects else 'review' if result['review_required'] else 'ok'
     return result
 
 
@@ -201,7 +226,7 @@ def annotated_overlay(reference, aligned, mask, report):
     occupied = [draw.textbbox((3, 3), title, font=font)]
     draw.rectangle(occupied[0], fill='black')
     draw.text((3, 3), title, fill='white', font=font)
-    colors = dict(present='#37cc77', missing='#ff5050', uncertain='#ffc247')
+    colors = dict(present='#37cc77', missing='#ff5050', misaligned='#ff8c42', uncertain='#ffc247')
     for part in report['components']:
         box = part['bbox_xyxy_px']
         text = f"{part['name']}: {part['display_status']}"

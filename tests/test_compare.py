@@ -27,14 +27,15 @@ class ComparisonTests(unittest.TestCase):
         args.update(changes)
         return compare_regions(**args)
 
-    def test_present_ambiguous_appearance_and_coverage(self):
+    def test_present_corroborated_synthetic_absence_and_coverage(self):
         result = self.compare()
-        self.assertEqual(result['outcome'], 'review')
+        self.assertEqual(result['outcome'], 'defect')
         self.assertTrue(result['review_required'])
         parts = result['components']
-        self.assertEqual([p['status'] for p in parts], ['present', 'uncertain', 'uncertain'])
+        self.assertEqual([p['status'] for p in parts], ['present', 'missing', 'uncertain'])
         self.assertGreater(parts[0]['score'], .9)
         self.assertLess(parts[1]['score'], .25)
+        self.assertLess(parts[1]['evidence']['edge_energy_ratio'], .45)
         self.assertLess(parts[2]['overlap'], 1)
         self.assertIsNone(parts[2]['score'])
         self.assertEqual(parts[2]['display_status'], 'Needs review')
@@ -61,7 +62,7 @@ class ComparisonTests(unittest.TestCase):
 
     def test_threshold_boundaries_and_intermediate_review(self):
         score = self.compare()['components'][1]['score']
-        for missing, present, expected in [(score, .9, 'uncertain'), (-.5, score, 'present'),
+        for missing, present, expected in [(score, .9, 'missing'), (-.5, score, 'present'),
                                             (score-.1, score+.1, 'uncertain')]:
             config = dict(self.config, missing_max=missing, present_min=present)
             result = self.compare(config=config)
@@ -143,7 +144,7 @@ class ComparisonTests(unittest.TestCase):
             run = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(run.returncode, 0, run.stdout+run.stderr)
             report = json.loads((root/'result/report.json').read_text())
-            self.assertEqual(report['outcome'], 'review')
+            self.assertEqual(report['outcome'], 'defect')
             with Image.open(root/'result/overlay.png') as overlay:
                 self.assertEqual(overlay.size, (320, 240))
             repeat = subprocess.run(command, capture_output=True, text=True)

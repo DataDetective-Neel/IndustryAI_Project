@@ -21,6 +21,17 @@ class DemoSafetyTests(unittest.TestCase):
         result=self.compare(image)
         self.assertTrue(all(p['status']=='present' for p in result['components']))
         self.assertEqual(result['components'][0]['best_match_offset_px'],[2,-2])
+    def test_individual_component_offset_is_misaligned_after_consensus(self):
+        image=self.ref.copy(); component=self.ref[20:70,20:70].copy()
+        image[20:70,20:74]=0; image[20:70,24:74]=component
+        regions=dict(self.regions,components=[dict(id='0',name='0',bbox_xyxy_px=[20,20,70,70]),*self.regions['components'][1:]])
+        result=compare_regions(self.ref,image,np.full((160,200),255,np.uint8),regions,
+                               dict(missing_max=.25,present_min=.5,misalignment_min_px=2.5),
+                               dict(status='ok',reference_wh=[200,160]))
+        self.assertTrue(result['alignment_validation']['reliable'])
+        self.assertEqual(result['components'][0]['status'],'misaligned')
+        self.assertEqual([p['status'] for p in result['components'][1:]],['present','present'])
+        self.assertEqual(result['outcome'],'defect')
     def test_shift_outside_search_cannot_match_a_neighbor(self):
         image=cv2.warpAffine(self.ref,np.float32([[1,0,12],[0,1,0]]),(200,160))
         result=self.compare(image)
