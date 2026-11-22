@@ -250,16 +250,27 @@ function App() {
     if (!drag.current) return;
     const position = pointerPosition(event);
     if (drag.current.kind === "point") setPoint(drag.current.index, position);
-    else setDraft(pixelBox(drag.current.start, position));
+    else if (drag.current.kind === "move-box") {
+      const [x1, y1, x2, y2] = drag.current.box;
+      const width = x2 - x1, height = y2 - y1;
+      const dx = position[0] - drag.current.start[0], dy = position[1] - drag.current.start[1];
+      const left = Math.max(0, Math.min(photo.width - width, Math.round(x1 + dx)));
+      const top = Math.max(0, Math.min(photo.height - height, Math.round(y1 + dy)));
+      setComponents((items) => items.map((part) => part.id === drag.current.id
+        ? { ...part, bbox_xyxy_px: [left, top, left + width, top + height], candidate_status: "VERIFIED" } : part));
+      setBatch(null);
+    } else setDraft(pixelBox(drag.current.start, position));
   }
   function endPointer(event) {
     if (!drag.current) return;
     const position = pointerPosition(event);
     if (drag.current.kind === "box")
       addRegion(pixelBox(drag.current.start, position));
-    else {
+    else if (drag.current.kind === "point") {
       setPoint(drag.current.index, position);
       setPointIndex(Math.min(3, drag.current.index + 1));
+    } else if (drag.current.kind === "move-box") {
+      movePointer(event);
     }
     drag.current = null;
     setDraft(null);
@@ -361,9 +372,9 @@ function App() {
           ▦
         </div>
         <div>
-          <h1>IndustryAI PCB inspection</h1>
+          <h1>Inspection Lab</h1>
           <p>
-            Inspection workspace · Reference, alignment and component evidence.
+            Golden configuration, registered comparison, and component evidence.
           </p>
         </div>
         <span className="local-tag">Local files only</span>
@@ -378,7 +389,7 @@ function App() {
         <fieldset className="workflow" disabled={busy}>
           <section className="upload-section" aria-labelledby="photos-heading">
             <div className="section-heading">
-              <h2 id="photos-heading">1. Choose the board photos</h2>
+              <h2 id="photos-heading">Board inputs</h2>
               <p>
                 One layout and board side per run. JPEG or PNG, up to 12 MiB
                 each.
@@ -433,7 +444,7 @@ function App() {
           >
             <div className="section-heading">
               <h2 id="annotations-heading">
-                2. Define landmarks and expected parts
+                Golden configuration and inspection workspace
               </h2>
               <p>
                 Confirm four stable reference points once. The PCB outline is separate from these landmarks.
@@ -628,9 +639,15 @@ function App() {
                                 <g
                                   key={p.id}
                                   onPointerDown={(e) => {
-                                    if (tool === "boxes") return;
                                     e.stopPropagation();
                                     setRegionId(p.id);
+                                    if (tool === "boxes") {
+                                      const canvas = e.currentTarget.closest("svg");
+                                      drag.current = { kind: "move-box", id: p.id,
+                                        start: imagePoint(e.clientX, e.clientY, canvas.getBoundingClientRect(), [photo.width, photo.height]),
+                                        box: [...p.bbox_xyxy_px] };
+                                      canvas?.setPointerCapture(e.pointerId);
+                                    }
                                   }}
                                 >
                                   <rect
@@ -822,6 +839,7 @@ function App() {
                         }}
                       >
                         {p.name}
+                        {p.candidate_status && <small>{p.candidate_status}</small>}
                         {p.review_reason && <small>Review flagged</small>}
                       </button>
                     ))}
@@ -835,7 +853,7 @@ function App() {
                           value={activeRegion.name}
                           maxLength="120"
                           onChange={(e) =>
-                            updateRegion({ name: e.target.value })
+                            updateRegion({ name: e.target.value, candidate_status: "VERIFIED" })
                           }
                         />
                       </label>
@@ -853,7 +871,7 @@ function App() {
                               onChange={(e) => {
                                 const box = [...activeRegion.bbox_xyxy_px];
                                 box[i] = Number(e.target.value);
-                                updateRegion({ bbox_xyxy_px: box });
+                                updateRegion({ bbox_xyxy_px: box, candidate_status: "VERIFIED" });
                               }}
                             />
                           </label>
@@ -907,7 +925,7 @@ function App() {
           </section>
           <section className="run-section" aria-labelledby="run-heading">
             <div>
-              <h2 id="run-heading">3. Inspect and review</h2>
+              <h2 id="run-heading">Run registered inspection</h2>
               <p className="run-hint" id="run-hint" role="status">{runHint}</p>
               <p className="threshold-note">
                 Provisional Present threshold: {health?.comparison.present_min ?? "0.50"}.

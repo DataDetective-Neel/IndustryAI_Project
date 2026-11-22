@@ -189,9 +189,14 @@ main {
   gap: 7px;
   padding: 15px;
   background: var(--raised);
-  border: 1px dashed var(--border);
-  border-radius: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-height: 168px;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(20, 55, 57, .04);
 }
+.upload-control:first-child { border-top: 3px solid var(--accent); }
+.upload-control:nth-child(2) { border-top: 3px solid #508f9d; }
 .upload-control span {
   font-size: 13px;
   color: var(--muted);
@@ -319,6 +324,11 @@ main {
   grid-template-columns: minmax(0, 1fr) 330px;
   border-top: 1px solid var(--border);
 }
+.annotation-section { box-shadow: 0 8px 28px rgba(31, 65, 68, .06); }
+.image-workspace { min-height: 620px; }
+.part-list { max-height: 260px; overflow: auto; padding-right: 3px; }
+.part-list small { margin-left: auto; padding: 2px 5px; border-radius: 8px; background: var(--amber-bg); }
+.region-box.active { stroke-width: 5px; filter: drop-shadow(0 0 3px rgba(8,126,120,.55)); }
 .image-workspace {
   min-width: 0;
   padding: 18px;

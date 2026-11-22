@@ -45,6 +45,8 @@ class PlatformStoreTests(unittest.TestCase):
         saved = self.store.golden()
         self.assertEqual(saved["reference_id"], "photo")
         self.assertEqual(saved["components"][0]["id"], "U1")
+        self.store.clear_golden()
+        self.assertIsNone(self.store.golden())
 
 
 if __name__ == "__main__":

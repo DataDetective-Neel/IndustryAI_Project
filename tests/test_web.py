@@ -47,7 +47,7 @@ class WebTests(unittest.TestCase):
                                    load_config('configs/comparison.json'), dict(status='ok', reference_wh=[320, 240]))
         self.assertEqual(actual['components'], expected['components'])
         self.assertEqual(actual['outcome'], 'defect')
-        for key in ['alignment_overlay_url', 'component_overlay_url']:
+        for key in ['alignment_overlay_url', 'component_overlay_url', 'difference_overlay_url']:
             asset = self.client.get(actual[key])
             self.assertEqual(asset.status_code, 200)
             with Image.open(io.BytesIO(asset.content)) as image:

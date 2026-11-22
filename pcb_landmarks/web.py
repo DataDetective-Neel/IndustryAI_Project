@@ -264,6 +264,12 @@ def create_app(storage=None):
         store.save_golden(request.reference_id, config, user['username'])
         return golden_config(authorization)
 
+    @app.delete('/api/golden-config')
+    def clear_golden_config(authorization: str | None = Header(default=None)):
+        authorize(authorization, {'administrator', 'supervisor'})
+        store.clear_golden()
+        return {'cleared': True}
+
     def detect(identifier):
         record, path = photo(identifier)
         if record['error']:
@@ -474,6 +480,10 @@ def create_app(storage=None):
                 output = batch_path/str(index)
                 output.mkdir()
                 Image.fromarray(blend_overlay(np.asarray(ref_image), aligned, mask)).save(output/'alignment.png')
+                difference = cv2.absdiff(np.asarray(ref_image), aligned)
+                difference[mask == 0] = 0
+                heatmap = cv2.applyColorMap(np.mean(difference, axis=2).astype(np.uint8), cv2.COLORMAP_TURBO)
+                Image.fromarray(cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)).save(output/'difference.png')
                 result.update(alignment=alignment, alignment_overlay_url=f'/api/batches/{batch_id}/{index}/alignment')
                 compatibility = (dict(status='SAME_DESIGN', message='Verified against the active reference PCB.',
                                       alignment_evidence=registration['verification']) if registration else
@@ -489,6 +499,7 @@ def create_app(storage=None):
                 annotated_overlay(ref_image, aligned, mask, comparison).save(output/'components.png')
                 result.update(comparison, photo_id=item.photo_id, filename=current['filename'], alignment=alignment,
                               alignment_overlay_url=f'/api/batches/{batch_id}/{index}/alignment',
+                              difference_overlay_url=f'/api/batches/{batch_id}/{index}/difference',
                               component_overlay_url=f'/api/batches/{batch_id}/{index}/components')
             except Exception as error:
                 if not isinstance(error, (ValueError, cv2.error)):
@@ -558,7 +569,7 @@ def create_app(storage=None):
 
     @app.get('/api/batches/{identifier}/{index}/{kind}')
     def result_asset(identifier: str, index: int, kind: str):
-        if index not in range(MAX_PHOTOS) or kind not in ['alignment', 'components']:
+        if index not in range(MAX_PHOTOS) or kind not in ['alignment', 'components', 'difference']:
             raise HTTPException(404, 'Unknown result asset')
         path = directory('batches', identifier)/str(index)/f'{kind}.png'
         if not path.is_file():

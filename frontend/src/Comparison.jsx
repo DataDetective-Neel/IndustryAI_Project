@@ -14,6 +14,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
   const transform = result.alignment?.status === 'ok'
     ? homographyTransform(result.alignment.homography_inspection_to_reference) : null;
   const canOverlay = !!(transform && reference?.image_url && inspection?.image_url);
+  const canDifference = !!result.difference_overlay_url;
   const overlay = view === 'overlay' && canOverlay;
   const parts = result.components || [];
   const part = parts[selected];
@@ -42,8 +43,11 @@ export default function Comparison({ result, reference, inspection, index, mode,
     {result.alignment_validation && <p className="alignment-summary">Alignment overlay score: {result.alignment_validation.overlay_score?.toFixed(4) ?? 'unavailable'}; {result.alignment_validation.reliable ? 'validated' : 'REVIEW — correct landmarks or retake photo'}</p>}
     <div className="comparison-toolbar">
       <div className="tool-switch" aria-label={`Comparison view for ${result.filename}`}>
-        <button aria-pressed={!overlay} onClick={() => setView('side')}>Side by side</button>
+        <button aria-pressed={view === 'side'} onClick={() => setView('side')}>Side by side</button>
+        <button aria-pressed={view === 'reference'} onClick={() => setView('reference')}>Reference</button>
+        <button aria-pressed={view === 'inspection'} disabled={!inspection?.image_url} onClick={() => setView('inspection')}>Inspection</button>
         <button aria-pressed={overlay} disabled={!canOverlay} onClick={() => setView('overlay')}>Overlay</button>
+        <button aria-pressed={view === 'difference'} disabled={!canDifference} onClick={() => setView('difference')}>Difference</button>
       </div>
       {overlay ? <label className="opacity-control">Inspection opacity
         <input aria-label={`Inspection opacity for ${result.filename}`} type="range" min="0" max="100" value={Math.round(opacity * 100)} onChange={(e) => setOpacity(Number(e.target.value) / 100)} />
@@ -52,7 +56,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
     </div>
     <div className="comparison-layout">
       <div className={`comparison-images ${overlay ? 'overlay-view' : ''}`}>
-        <figure>
+        {view !== 'inspection' && view !== 'difference' && <figure>
           <figcaption>{overlay ? 'Aligned comparison' : 'Known-good reference'}</figcaption>
           {reference?.image_url && <svg className="comparison-canvas" role="img" aria-label={`${overlay ? 'Aligned comparison' : 'Reference comparison'} for ${result.filename}`} viewBox={`0 0 ${reference.width} ${reference.height}`}>
             <image href={reference.image_url} width={reference.width} height={reference.height} />
@@ -63,10 +67,13 @@ export default function Comparison({ result, reference, inspection, index, mode,
             </foreignObject>}
             {box && <rect className={`finding-highlight ${part.status}`} x={box[0]} y={box[1]} width={box[2] - box[0]} height={box[3] - box[1]} vectorEffect="non-scaling-stroke" />}
           </svg>}
-        </figure>
-        {!overlay && <figure>
+        </figure>}
+        {(view === 'side' || view === 'inspection') && <figure>
           <figcaption>Inspection · {result.filename}</figcaption>
           {inspection?.image_url ? <img className="inspection-original" src={inspection.image_url} alt={`Inspection original for ${result.filename}`} /> : <p className="message notice">Inspection photo unavailable. Replace the photo and retry.</p>}
+        </figure>}
+        {view === 'difference' && <figure><figcaption>Structural difference heatmap</figcaption>
+          <img className="inspection-original" src={result.difference_overlay_url} alt={`Difference heatmap for ${result.filename}`} />
         </figure>}
       </div>
       <aside className="findings-panel" aria-label={`Findings for ${result.filename}`}>

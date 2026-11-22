@@ -177,6 +177,10 @@ class AOIStore:
             return ({"reference_id": row["reference_id"], **json.loads(row["config_json"]),
                      "updated_by": row["updated_by"], "updated_at": row["updated_at"]} if row else None)
 
+    def clear_golden(self):
+        with self.connect() as db:
+            db.execute("DELETE FROM golden_configs")
+
     def record_batch(self, batch):
         now = utc_now()
         with self.connect() as db:
