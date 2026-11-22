@@ -241,13 +241,19 @@ def create_app(storage=None):
         config = store.golden()
         if not config:
             raise HTTPException(404, 'No golden configuration saved')
+        record, path = photo(config['reference_id'])
+        setup = (json.loads((path/'reference.json').read_text())
+                 if (path/'reference.json').is_file() else {})
+        config['reference'] = {**record, **setup}
         return config
 
     @app.post('/api/golden-config')
     def save_golden_config(request: GoldenConfigRequest,
                            authorization: str | None = Header(default=None)):
         user = authorize(authorization, {'administrator', 'supervisor'})
-        photo(request.reference_id)
+        _, reference_path = photo(request.reference_id)
+        if not (reference_path/'reference.json').is_file():
+            raise HTTPException(422, 'Confirm reference landmarks and board outline before saving')
         config = request.model_dump(exclude={'reference_id'})
         try:
             record, _ = photo(request.reference_id)
@@ -256,7 +262,7 @@ def create_app(storage=None):
         except ValueError as error:
             raise HTTPException(422, str(error)) from error
         store.save_golden(request.reference_id, config, user['username'])
-        return store.golden()
+        return golden_config(authorization)
 
     def detect(identifier):
         record, path = photo(identifier)

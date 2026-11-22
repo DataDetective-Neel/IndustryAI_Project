@@ -169,6 +169,32 @@ class WebTests(unittest.TestCase):
         denied = client.get('/api/users', headers={'Authorization': 'Bearer ' + operator['token']})
         self.assertEqual(denied.status_code, 403)
 
+    def test_approved_golden_configuration_persists_annotations(self):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        with patch.dict(os.environ, {'PCB_ADMIN_USERNAME': 'admin', 'PCB_ADMIN_PASSWORD': 'temporary-password'}, clear=False):
+            client = TestClient(create_app(Path(folder.name)))
+        token = client.post('/api/auth/login', json={
+            'username': 'admin', 'password': 'temporary-password'}).json()['token']
+        headers = {'Authorization': 'Bearer ' + token}
+        stream = io.BytesIO()
+        Image.fromarray(self.reference).save(stream, format='PNG')
+        reference = client.post('/api/photos', files={
+            'image': ('golden.png', stream.getvalue(), 'image/png')}).json()
+        premature = client.post('/api/golden-config', headers=headers, json={
+            'reference_id': reference['id'], 'components': self.regions['components'], 'mode': 'automatic'})
+        self.assertEqual(premature.status_code, 422)
+        setup = client.post(f"/api/references/{reference['id']}", json={
+            'points': self.rp.tolist(), 'board_polygon': [[0, 0], [319, 0], [319, 239], [0, 239]]})
+        self.assertEqual(setup.status_code, 200, setup.text)
+        saved = client.post('/api/golden-config', headers=headers, json={
+            'reference_id': reference['id'], 'components': self.regions['components'], 'mode': 'automatic'})
+        self.assertEqual(saved.status_code, 200, saved.text)
+        restored = client.get('/api/golden-config', headers=headers).json()
+        self.assertEqual(restored['components'], self.regions['components'])
+        self.assertTrue(restored['reference']['confirmed'])
+        self.assertEqual(restored['reference']['image_url'], reference['image_url'])
+
 
 if __name__ == '__main__':
     unittest.main()

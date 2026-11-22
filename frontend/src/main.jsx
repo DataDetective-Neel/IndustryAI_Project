@@ -65,6 +65,17 @@ function App() {
       .then(setHealth)
       .catch((e) => setError(`Local backend unavailable: ${e.message}`));
   }, []);
+  useEffect(() => {
+    platformApi("/api/golden-config").then((saved) => {
+      setReference(saved.reference);
+      setComponents(saved.components);
+      setSelected(saved.reference.id);
+      setRegionId(saved.components[0]?.id || null);
+      setMode(saved.mode || "automatic");
+      setSharpen(!!saved.sharpen);
+      setNotice("Saved golden configuration restored.");
+    }).catch(() => {});
+  }, []);
   function changePhoto(id, update) {
     const referencePointsChanged = id === reference?.id && update.points &&
       JSON.stringify(update.points) !== JSON.stringify(reference.points);
