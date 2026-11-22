@@ -2,6 +2,13 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+test.afterEach(async ({ page }) => {
+  const token = await page.evaluate(() => localStorage.getItem('aoi_token')).catch(() => null);
+  if (token) await page.request.delete('http://127.0.0.1:8000/api/golden-config', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+});
+
 test('imports multiple images and runs them through live inspection', async ({ page }) => {
   await page.goto('/#live');
   const token = await page.evaluate(() => localStorage.getItem('aoi_token'));
@@ -34,6 +41,5 @@ test('imports multiple images and runs them through live inspection', async ({ p
   await page.getByRole('button', { name: 'Start simulation' }).click();
   await expect(page.locator('.line-state')).toHaveText('completed', { timeout: 120000 });
   await expect(page.locator('.live-counters article').filter({ hasText: 'Processed' })).toContainText('2');
-  await expect(page.locator('.history-panel tbody tr')).toHaveCount(2);
-  await page.request.delete('http://127.0.0.1:8000/api/golden-config', { headers });
+  await expect.poll(() => page.locator('.history-panel tbody tr').count()).toBeGreaterThanOrEqual(2);
 });

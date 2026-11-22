@@ -25,6 +25,7 @@ test('accepts 15 inspections across uploads, rejects a 16th, and serves all over
   await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(path.join(example, 'input/reference.png'));
   await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
+  await page.getByRole('button', { name: 'Clear all components', exact: true }).click();
   await mark(page, points);
   await region(page, { name: 'Retained chip', bbox_xyxy_px: [60, 45, 100, 85] });
   const files = Array.from({ length: 15 }, (_, i) => ({ name: `board-${i + 1}.png`, mimeType: 'image/png', buffer }));
@@ -56,6 +57,7 @@ test("a rejected upload does not discard the other selected photo", async ({
   await expect(
     page.getByRole("button", { name: "Add box", exact: true }),
   ).toBeEnabled();
+  await page.getByRole("button", { name: "Clear all components", exact: true }).click();
   await page.route("**/api/photos", (route) => {
     if (route.request().postData()?.includes("too-large.png"))
       return route.fulfill({
@@ -149,6 +151,7 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
   await expect(
     page.getByRole("button", { name: "Add box", exact: true }),
   ).toBeEnabled();
+  await page.getByRole("button", { name: "Clear all components", exact: true }).click();
   await mark(
     page,
     await pointsFromLabel("PCB_Dataset_Pilot/labels/val/ECCC5.txt", 1174, 1536),
@@ -170,16 +173,16 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     .getByLabel("Component name", { exact: true })
     .fill("Draw/edit/remove check");
   await expect(
-    page.getByRole("button", { name: "Draw/edit/remove check", exact: true }),
+    page.getByRole("button", { name: /Draw\/edit\/remove check/ }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Remove component", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Draw/edit/remove check", exact: true }),
+    page.getByRole("button", { name: /Draw\/edit\/remove check/ }),
   ).toHaveCount(0);
   const parts = (await readJson("configs/components-ECCC5.json")).components;
-  // The exact known-good reference loads its eight saved regions automatically.
+  await page.getByRole("button", { name: "Load verified sample regions", exact: true }).click();
   await page.getByRole("button", {name: parts.at(-1).name, exact:true}).click();
   const before = await page
     .getByLabel("upper_left_mount x", { exact: true })
@@ -363,8 +366,8 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
 });
 
 for (const [variant, url] of [
-  ["Vite", "/"],
-  ["production", "http://127.0.0.1:8000/"],
+  ["Vite", "/#lab"],
+  ["production", "http://127.0.0.1:8000/#lab"],
 ])
   test(`synthetic removal requires review, sharpening and local-only assets (${variant})`, async ({
     page,
@@ -395,6 +398,7 @@ for (const [variant, url] of [
     await expect(
       page.getByRole("button", { name: "Add box", exact: true }),
     ).toBeEnabled();
+    await page.getByRole("button", { name: "Clear all components", exact: true }).click();
     await mark(
       page,
       await pointsFromLabel(
@@ -428,7 +432,7 @@ for (const [variant, url] of [
     expect(result.synthetic).toBe(true);
     expect(result.photos[0].components.map((p) => p.status)).toEqual([
       "present",
-      "uncertain",
+      "missing",
       "uncertain",
     ]);
     await expect(
@@ -441,7 +445,7 @@ for (const [variant, url] of [
       page
         .getByTestId("result-0")
         .locator(".findings-panel .status").filter({ hasText: /^Needs review$/ }),
-    ).toHaveCount(2);
+    ).toHaveCount(1);
     await page.screenshot({
       path: absolute("runs/web-verification/synthetic-missing.png"),
       fullPage: true,
@@ -455,10 +459,10 @@ for (const [variant, url] of [
     expect(sharpened.sharpening_enabled).toBe(true);
     expect(sharpened.photos[0].components.map((p) => p.status)).toEqual([
       "present",
-      "uncertain",
+      "missing",
       "uncertain",
     ]);
-    expect(sharpened.photos[0].components[1].reason).toContain("low similarity alone");
+    expect(sharpened.photos[0].components[1].reason).toContain("corroborated_absence");
     expect(external).toEqual([]);
     await fs.writeFile(
       absolute("runs/web-verification/browser-synthetic-sharpen.json"),

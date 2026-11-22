@@ -217,6 +217,60 @@ class WebTests(unittest.TestCase):
                               files=[('images', ('bad.png', b'broken', 'image/png'))])
         self.assertEqual(invalid.status_code, 422)
 
+    def test_real_inspection_alarms_persist_both_operator_decisions(self):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        with patch.dict(os.environ, {'PCB_ADMIN_USERNAME': 'admin',
+                                     'PCB_ADMIN_PASSWORD': 'temporary-password'}, clear=False):
+            app = create_app(Path(folder.name))
+
+        def upload(image, name):
+            stream = io.BytesIO()
+            Image.fromarray(image).save(stream, format='PNG')
+            response = client.post('/api/photos', files={
+                'image': (name, stream.getvalue(), 'image/png')})
+            self.assertEqual(response.status_code, 200, response.text)
+            return response.json()
+
+        with TestClient(app) as client:
+            token = client.post('/api/auth/login', json={
+                'username': 'admin', 'password': 'temporary-password'}).json()['token']
+            headers = {'Authorization': 'Bearer ' + token}
+            reference = upload(self.reference, 'reference.png')
+            first = upload(self.inspection, 'alarm-one.png')
+            second = upload(self.inspection, 'alarm-two.png')
+            response = client.post('/api/inspections', json={
+                'reference_id': reference['id'],
+                'reference_points': self.rp.tolist(),
+                'inspections': [
+                    {'photo_id': first['id'], 'points': self.ip.tolist()},
+                    {'photo_id': second['id'], 'points': self.ip.tolist()},
+                ],
+                'components': self.regions['components'],
+                'mode': 'manual', 'sharpen': False, 'synthetic': True,
+            })
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual([photo['outcome'] for photo in response.json()['photos']],
+                             ['defect', 'defect'])
+
+            pending = client.get('/api/reviews', headers=headers).json()['reviews']
+            self.assertEqual(len(pending), 2)
+            dismissed = client.post(
+                f"/api/reviews/{pending[0]['id']}/decision", headers=headers,
+                json={'decision': 'false_alarm', 'note': 'Acceptance G'})
+            confirmed = client.post(
+                f"/api/reviews/{pending[1]['id']}/decision", headers=headers,
+                json={'decision': 'confirmed_reject', 'note': 'Acceptance H'})
+            self.assertEqual(dismissed.status_code, 200, dismissed.text)
+            self.assertEqual(confirmed.status_code, 200, confirmed.text)
+            metrics = client.get('/api/dashboard', headers=headers).json()['metrics']
+            self.assertEqual((metrics['pending'], metrics['false_alarms'], metrics['rejected']),
+                             (0, 1, 1))
+            duplicate = client.post(
+                f"/api/reviews/{pending[0]['id']}/decision", headers=headers,
+                json={'decision': 'confirmed_reject'})
+            self.assertEqual(duplicate.status_code, 409)
+
 
 if __name__ == '__main__':
     unittest.main()

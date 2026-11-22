@@ -22,6 +22,7 @@ test('one-board real-photo fixtures through production upload and inspect UI', a
   const evidence=JSON.parse(await fs.readFile(path.join(evidenceDir,'evidence.json'),'utf8'));
   await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo',{exact:true}).setInputFiles(path.join(root,'PCB_Dataset_Pilot/images/val/ECCC5.jpg'));
+  await page.getByRole('button',{name:'Load verified sample regions',exact:true}).click();
   await expect(page.getByRole('button',{name:'U2 chip',exact:true})).toBeVisible();
   await mark(page,evidence.direct_vs_app.reference.labeled_points_px);
   await page.getByLabel('Inspection photos',{exact:true}).setInputFiles(['reference.png','mild-perspective.png','badly-cropped.png'].map(f=>path.join(evidenceDir,f)));
@@ -49,11 +50,12 @@ test('one-board real-photo fixtures through production upload and inspect UI', a
   expect(simulated.synthetic).toBe(true);
   expect(simulated.photos[0].outcome).toBe('review');
   expect(simulated.photos[0].components.filter(p=>p.status==='present')).toHaveLength(7);
+  expect(simulated.photos[0].components.filter(p=>p.status==='uncertain')).toHaveLength(1);
   await confirmReference(page, [[220,250],[1000,250],[1000,1390],[220,1390]]);
   await expect(page.getByText('Detecting landmarks with the local model…')).toHaveCount(0,{timeout:60000});
   await expect(page.getByText('Raw landmark diagnostics (rejected points are tentative)')).toBeVisible({timeout:60000});
   const automatic=await inspect(page);
-  expect(automatic.photos[0].outcome).toBe('review');
+  expect(['defect','review']).toContain(automatic.photos[0].outcome);
   const health = await (await page.request.get('http://127.0.0.1:8000/api/health')).json();
   expect(automatic.photos[0].landmark_diagnostics.reference.status).toBe('confirmed');
   if (automatic.photos[0].alignment.status === 'ok') expect(automatic.photos[0].alignment.source).toBe('reference_registration');

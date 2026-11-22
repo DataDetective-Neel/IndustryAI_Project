@@ -3,6 +3,13 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { confirmReference } from './reference-setup.js';
 
+test.afterEach(async ({ page }) => {
+  const token = await page.evaluate(() => localStorage.getItem('aoi_token')).catch(() => null);
+  if (token) await page.request.delete('http://127.0.0.1:8000/api/golden-config', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+});
+
 test('golden upload proposes UNKNOWN component boxes without manual drawing', async ({ page }) => {
   await page.goto('/#lab');
   const pending = page.waitForResponse(response =>
@@ -37,8 +44,4 @@ test('golden upload proposes UNKNOWN component boxes without manual drawing', as
   await expect(page.getByText('Saved golden configuration restored.')).toBeVisible();
   await expect(page.getByLabel('Component name', { exact: true })).toHaveValue('Verified component');
   await expect(page.getByLabel('Region x1', { exact: true })).toHaveValue(String(x1 + 1));
-  const token = await page.evaluate(() => localStorage.getItem('aoi_token'));
-  await page.request.delete('http://127.0.0.1:8000/api/golden-config', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 });

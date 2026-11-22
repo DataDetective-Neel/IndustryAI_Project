@@ -49,6 +49,23 @@ Keep the terminal open so server errors remain visible. **Stop with Ctrl+C**;
 if cmd asks `Terminate batch job (Y/N)?`, answer Y. No detached server is started.
 If another server owns port 8000, stop that server before launching this one.
 
+## First sign-in
+
+No password is embedded in the repository. Before the first launch, choose the
+administrator credentials in the same PowerShell window:
+
+```powershell
+$env:PCB_ADMIN_USERNAME = 'admin'
+$env:PCB_ADMIN_PASSWORD = 'choose-at-least-10-characters'
+& 'A:\IndustryAI_Project\launch.bat'
+```
+
+Sign in with the values you set. The first administrator is created only when
+`PCB_ADMIN_PASSWORD` is present. Existing users remain in `runs/web/aoi.db`, so
+changing the environment later does not reset their password. Administrators can
+create operator and supervisor accounts from **User management**. Do not put a
+real password in `.env`, source control, screenshots, or support logs.
+
 After setup, disconnect Wi-Fi/Ethernet while retaining normal local loopback
 networking, then run `launch.bat`. No CDN, cloud service, Vite server or Node.js
 process is required for inspection. Photos, annotations and reports stay under

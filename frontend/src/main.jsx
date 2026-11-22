@@ -46,6 +46,7 @@ function App() {
   const [busy, setBusy] = useState(false);
   const [detecting, setDetecting] = useState(false);
   const [proposing, setProposing] = useState(false);
+  const [verifiedRegionsAvailable, setVerifiedRegionsAvailable] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const drag = useRef(null);
@@ -153,6 +154,7 @@ function App() {
       if (failures.length) setError(failures.join(" "));
       if (!uploaded.length) return;
       if (isReference) {
+        setVerifiedRegionsAvailable(false);
         setReference({ ...uploaded[0], board_polygon: [], confirmed: false });
         setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null })));
         const setup = await api(`/api/references/${uploaded[0].id}`);
@@ -164,6 +166,7 @@ function App() {
           setRegionId(proposal.components[0]?.id || null);
           setReference((p) => p?.id === uploaded[0].id ? { ...p, board_polygon: proposal.board_polygon } : p);
           setNotice(`${proposal.candidate_count} component candidates proposed. Review UNKNOWN regions before saving.`);
+          try { await api(`/api/photos/${uploaded[0].id}/regions`); setVerifiedRegionsAvailable(true); } catch {}
         } catch (proposalError) {
           setComponents([]);
           setError(`Reference uploaded, but automatic component proposals failed: ${proposalError.message}`);
@@ -309,6 +312,14 @@ function App() {
       setNotice(`${proposal.candidate_count} UNKNOWN candidates proposed. Confirm, rename, resize, add, or remove regions.`);
     } catch (e) { setError(e.message); }
     finally { setProposing(false); }
+  }
+  async function loadVerifiedRegions() {
+    try {
+      const saved = await api(`/api/photos/${reference.id}/regions`);
+      setComponents(saved.components);
+      setRegionId(saved.components[0]?.id || null);
+      setNotice("Verified sample annotations loaded. Review before saving this golden configuration.");
+    } catch (e) { setError(e.message); }
   }
   async function run() {
     setBusy(true);
@@ -802,6 +813,10 @@ function App() {
                   </ol>
                   <div className="parts-heading">
                     <h3>Expected components</h3>
+                    {verifiedRegionsAvailable && <button className="secondary" onClick={loadVerifiedRegions}>Load verified sample regions</button>}
+                    <button className="secondary" disabled={!components.length} onClick={() => {
+                      setComponents([]); setRegionId(null); setBatch(null); setNotice("Component regions cleared.");
+                    }}>Clear all components</button>
                     <button
                       className="secondary"
                       disabled={!referenceSelected || !!photo.error}

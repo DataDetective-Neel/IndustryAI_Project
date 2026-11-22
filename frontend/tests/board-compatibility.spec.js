@@ -19,6 +19,8 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   }
   await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo',{exact:true}).setInputFiles(path.join(root,'PCB_Dataset_Pilot/images/train/ACCC5.jpg'));
+  await expect(page.getByRole('button',{name:'Clear all components',exact:true})).toBeEnabled();
+  await page.getByRole('button',{name:'Clear all components',exact:true}).click();
   await expect(page.getByRole('button',{name:'Add box',exact:true})).toBeEnabled();
   await mark('ACCC5');
   await page.getByRole('button',{name:'Add box',exact:true}).click();
@@ -55,7 +57,7 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   }
   expect(batch.photos[5].board_compatibility.status).toBe('SAME_DESIGN');
   expect(batch.photos[5].components_evaluated).toBe(true);
-  expect(batch.photos[5].components[0].status).toBe('uncertain');
+  expect(batch.photos[5].components[0].status).toBe('missing');
   expect(batch.photos[6].outcome).toBe('review');
   expect(batch.photos[6].components_evaluated).toBe(false);
   await fs.writeFile(path.join(output,'browser-report.json'),JSON.stringify(batch,null,2));
