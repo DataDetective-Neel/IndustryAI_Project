@@ -22,7 +22,7 @@ test('accepts 15 inspections across uploads, rejects a 16th, and serves all over
   catch { execFileSync(python, ['tests/comparison_fixture.py', '--output', example], { cwd: root }); }
   const buffer = await fs.readFile(path.join(example, 'input/reference.png'));
   const points = await pointsFromLabel('runs/comparison/synthetic-input/input/reference.txt', 320, 240);
-  await page.goto('http://127.0.0.1:8000/');
+  await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(path.join(example, 'input/reference.png'));
   await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
   await mark(page, points);
@@ -49,7 +49,7 @@ test('accepts 15 inspections across uploads, rejects a 16th, and serves all over
 test("a rejected upload does not discard the other selected photo", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/#lab");
   await page
     .getByLabel("Reference photo", { exact: true })
     .setInputFiles(absolute("PCB_Dataset_Pilot/images/val/ECCC5.jpg"));
@@ -142,7 +142,7 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
       external.push(request.url());
   });
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await page.goto("/#lab");
   await page
     .getByLabel("Reference photo", { exact: true })
     .setInputFiles(absolute("PCB_Dataset_Pilot/images/val/ECCC5.jpg"));

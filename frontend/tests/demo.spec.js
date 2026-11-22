@@ -20,7 +20,7 @@ test('one-board real-photo fixtures through production upload and inspect UI', a
   try { await fs.access(path.join(evidenceDir,'evidence.json')); }
   catch { execFileSync(path.join(root,'.venv/Scripts/python.exe'),['-m','pcb_landmarks.demo_check'],{cwd:root}); }
   const evidence=JSON.parse(await fs.readFile(path.join(evidenceDir,'evidence.json'),'utf8'));
-  await page.goto('http://127.0.0.1:8000/');
+  await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo',{exact:true}).setInputFiles(path.join(root,'PCB_Dataset_Pilot/images/val/ECCC5.jpg'));
   await expect(page.getByRole('button',{name:'U2 chip',exact:true})).toBeVisible();
   await mark(page,evidence.direct_vs_app.reference.labeled_points_px);

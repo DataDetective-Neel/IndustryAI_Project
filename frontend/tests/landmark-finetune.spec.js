@@ -6,7 +6,7 @@ test('automatic landmarks sit on the Raspberry Pi mounting holes in the producti
   const root = path.resolve('..');
   const labels = (await fs.readFile(path.join(root, 'PCB_Dataset_Pilot/labels/train/MCCB5.txt'), 'utf8')).trim().split(/\s+/).map(Number);
   const pending = page.waitForResponse(r => r.url().includes('/api/landmarks/') && r.request().method() === 'POST');
-  await page.goto('http://127.0.0.1:8000/');
+  await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(path.join(root, 'PCB_Dataset_Pilot/images/train/MCCB5.jpg'));
   await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
   await page.getByRole('radio', { name: 'Automatic', exact: true }).check();

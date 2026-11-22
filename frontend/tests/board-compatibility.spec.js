@@ -17,7 +17,7 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
     for(let i=0;i<4;i++) for(const [axis,side] of [['x',width],['y',height]])
       await page.getByLabel(`${names[i]} ${axis}`,{exact:true}).fill(String(values[5+i*3+(axis==='y'?1:0)]*side));
   }
-  await page.goto('http://127.0.0.1:8000/');
+  await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo',{exact:true}).setInputFiles(path.join(root,'PCB_Dataset_Pilot/images/train/ACCC5.jpg'));
   await expect(page.getByRole('button',{name:'Add box',exact:true})).toBeEnabled();
   await mark('ACCC5');

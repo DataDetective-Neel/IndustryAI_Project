@@ -7,7 +7,7 @@ import json
 import os
 import secrets
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -229,7 +229,16 @@ class AOIStore:
                 d.actor,d.note,COALESCE(d.created_at,i.created_at) created_at FROM inspections i
                 LEFT JOIN decisions d ON d.inspection_id=i.id WHERE i.review_required=1
                 ORDER BY created_at DESC LIMIT 12""")]
+            daily = {row["day"]: int(row["count"]) for row in db.execute(
+                "SELECT substr(created_at,1,10) day, COUNT(*) count FROM inspections GROUP BY day")}
+            today = datetime.now(timezone.utc).date()
+            trend = [{"date": str(day), "count": daily.get(str(day), 0)}
+                     for day in (today - timedelta(days=offset) for offset in range(6, -1, -1))]
+            distribution = [dict(row) for row in db.execute("""SELECT COALESCE(defect_type, algorithm_outcome) name,
+                COUNT(*) count FROM inspections GROUP BY COALESCE(defect_type, algorithm_outcome)
+                ORDER BY count DESC""")]
             return {"metrics": values, "recent_inspections": recent, "recent_alarms": alarms,
+                    "production_trend": trend, "defect_distribution": distribution,
                     "sample_data": values["total"] == 0}
 
     def pending(self):

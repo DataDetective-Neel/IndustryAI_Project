@@ -24,7 +24,7 @@ for name,image in [('reference',a),('same',a),('tilted',cv2.warpPerspective(a,H,
 });
 
 test('mark reference once after YOLO failure, reuse across views, and reset on replacement', async ({page}) => {
-  await page.goto('/');
+  await page.goto('/#lab');
   const refDetection=page.waitForResponse(r=>r.url().includes('/api/landmarks/') && r.request().method()==='POST');
   await page.getByLabel('Reference photo', {exact:true}).setInputFiles(path.join(output,'reference.png'));
   const detected=await (await refDetection).json();

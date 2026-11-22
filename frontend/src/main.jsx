@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import { imagePoint, pixelBox } from "./coordinates.js";
 import "./style.css";
 import Comparison from "./Comparison.jsx";
+import PlatformApp from "./PlatformApp.jsx";
+import { jsonBody, platformApi } from "./platformApi.js";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 async function api(path, options) {
   const response = await fetch(path, options);
@@ -43,6 +46,7 @@ function App() {
   const [busy, setBusy] = useState(false);
   const [detecting, setDetecting] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const drag = useRef(null);
   const photos = [reference, ...inspections].filter(Boolean);
   const photo = photos.find((p) => p.id === selected) || reference;
@@ -257,6 +261,16 @@ function App() {
     } catch (e) { setError(e.message); }
     finally { setBusy(false); }
   }
+  async function saveGolden() {
+    setBusy(true); setError(""); setNotice("");
+    try {
+      await platformApi("/api/golden-config", jsonBody({
+        reference_id: reference.id, components, mode: "automatic", sharpen,
+      }));
+      setNotice("Golden configuration saved for Live Inspection.");
+    } catch (e) { setError(e.message); }
+    finally { setBusy(false); }
+  }
   async function run() {
     setBusy(true);
     setError("");
@@ -332,6 +346,7 @@ function App() {
             {error}
           </div>
         )}
+        {notice && <div role="status" className="message notice">{notice}</div>}
         <fieldset className="workflow" disabled={busy}>
           <section className="upload-section" aria-labelledby="photos-heading">
             <div className="section-heading">
@@ -682,6 +697,8 @@ function App() {
                     }}>Mark PCB outline</button>
                     <button className="secondary" disabled={reference.points?.filter(Boolean).length !== 4 || (reference.board_polygon?.filter(Boolean).length || 0) < 3}
                       onClick={confirmReference}>Confirm reference setup</button>
+                    <button className="secondary" disabled={!reference.confirmed || !components.length}
+                      onClick={saveGolden}>Save for live line</button>
                     <p className="muted">Outline only the PCB surface, excluding background and off-board watermarks. Landmarks can be interior board details.</p>
                   </div>}
                   <p className="muted">
@@ -947,4 +964,4 @@ function App() {
   );
 }
 
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(<ErrorBoundary><PlatformApp inspectionLab={<App />} /></ErrorBoundary>);

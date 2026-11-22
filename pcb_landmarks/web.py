@@ -555,4 +555,4 @@ def create_app(storage=None):
     return app
 
 
-app = create_app()
+app = create_app(os.environ.get('PCB_WEB_STORAGE'))

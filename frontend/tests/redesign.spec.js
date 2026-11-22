@@ -4,7 +4,7 @@ const reference = path.resolve('../PCB_Dataset_Pilot/images/val/ECCC5.jpg');
 const inspection = path.resolve('../PCB_Dataset_Pilot/images/val/ECCB5.jpg');
 
 test('photo replacement and removal preserve the batch and reset reference annotations', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#lab');
   await expect(page.getByText('Upload a known-good reference first.')).toBeVisible();
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(reference);
   await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
@@ -24,7 +24,7 @@ test('photo replacement and removal preserve the batch and reset reference annot
 });
 
 test('comparison uses returned outcomes, aligned opacity and finding coordinates', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#lab');
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(reference);
   await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
   await page.getByLabel('Inspection photos', { exact: true }).setInputFiles(inspection);
@@ -70,7 +70,7 @@ test('comparison uses returned outcomes, aligned opacity and finding coordinates
 
 test('empty state and landmark controls fit a narrow viewport', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 900 });
-  await page.goto('/');
+  await page.goto('/#lab');
   await expect(page.getByRole('button', { name: 'Run Inspection' })).toBeDisabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(reference);
