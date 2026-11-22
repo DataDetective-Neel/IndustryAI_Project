@@ -195,6 +195,28 @@ class WebTests(unittest.TestCase):
         self.assertTrue(restored['reference']['confirmed'])
         self.assertEqual(restored['reference']['image_url'], reference['image_url'])
 
+    def test_live_import_accepts_multiple_images_and_rejects_invalid_input(self):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        with patch.dict(os.environ, {'PCB_ADMIN_USERNAME': 'admin', 'PCB_ADMIN_PASSWORD': 'temporary-password'}, clear=False):
+            client = TestClient(create_app(Path(folder.name)))
+        token = client.post('/api/auth/login', json={
+            'username': 'admin', 'password': 'temporary-password'}).json()['token']
+        headers = {'Authorization': 'Bearer ' + token}
+        stream = io.BytesIO()
+        Image.fromarray(self.reference).save(stream, format='PNG')
+        files = [('images', ('first.png', stream.getvalue(), 'image/png')),
+                 ('images', ('second.png', stream.getvalue(), 'image/png'))]
+        response = client.post('/api/simulation/import', headers=headers, files=files)
+        self.assertEqual(response.status_code, 200, response.text)
+        imported = response.json()
+        self.assertEqual(imported['count'], 2)
+        self.assertTrue(Path(imported['dataset_directory']).is_dir())
+        self.assertEqual(len(list(Path(imported['dataset_directory']).glob('*.png'))), 2)
+        invalid = client.post('/api/simulation/import', headers=headers,
+                              files=[('images', ('bad.png', b'broken', 'image/png'))])
+        self.assertEqual(invalid.status_code, 422)
+
 
 if __name__ == '__main__':
     unittest.main()

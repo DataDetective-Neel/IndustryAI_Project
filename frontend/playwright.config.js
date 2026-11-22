@@ -22,7 +22,7 @@ export default defineConfig({
       env: {
         PCB_ADMIN_USERNAME: "admin",
         PCB_ADMIN_PASSWORD: "playwright-test-password",
-        PCB_WEB_STORAGE: "runs/playwright-auth-v2",
+        PCB_WEB_STORAGE: "runs/playwright-auth-v3",
       },
     },
     {

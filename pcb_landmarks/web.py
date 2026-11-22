@@ -34,6 +34,7 @@ CHECKPOINT = Path(os.environ.get('PCB_CHECKPOINT', ROOT/json.loads(
 MAX_UPLOAD = 12 * 1024 * 1024
 MAX_PIXELS = 20_000_000
 MAX_PHOTOS = 15
+MAX_IMPORT = MAX_PHOTOS * MAX_UPLOAD + 2 * 1024 * 1024
 MODEL_LOCK = threading.Lock()
 
 
@@ -130,7 +131,8 @@ def create_app(storage=None):
             length = request.headers.get('content-length')
             if length is None or not length.isdecimal():
                 return JSONResponse({'detail': 'Content-Length is required'}, status_code=411)
-            if int(length) > MAX_UPLOAD + 1024*1024:
+            limit = MAX_IMPORT if request.url.path == '/api/simulation/import' else MAX_UPLOAD + 1024*1024
+            if int(length) > limit:
                 return JSONResponse({'detail': 'Request exceeds local upload limit'}, status_code=413)
         response = await call_next(request)
         if request.url.path.startswith('/api/'):
@@ -533,7 +535,9 @@ def create_app(storage=None):
                                           inspections=[PhotoPoints(photo_id=uploaded['id'])],
                                           components=golden['components'], mode='automatic',
                                           sharpen=golden.get('sharpen', False), synthetic=False))
-        return batch['photos'][0]
+        result = batch['photos'][0]
+        result['current_image_url'] = uploaded['image_url']
+        return result
 
     simulator = LineSimulator(simulate_image)
 
@@ -541,6 +545,25 @@ def create_app(storage=None):
     def simulation_status(authorization: str | None = Header(default=None)):
         authorize(authorization, ROLES)
         return simulator.state()
+
+    @app.post('/api/simulation/import')
+    def simulation_import(images: list[UploadFile], authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        if not 1 <= len(images) <= MAX_PHOTOS:
+            raise HTTPException(422, f'Choose between 1 and {MAX_PHOTOS} images')
+        import_path = storage/'imports'/uuid.uuid4().hex
+        import_path.mkdir(parents=True)
+        imported = []
+        for index, image in enumerate(images):
+            record = upload(image)
+            if record['error']:
+                raise HTTPException(422, f"{record['filename']}: {record['error']}")
+            _, source = photo(record['id'])
+            clean = re.sub(r'[^A-Za-z0-9_.-]+', '-', Path(record['filename']).stem)[:80] or 'image'
+            target = import_path/f'{index:03d}-{clean}.png'
+            read_image(source/'image.png').save(target)
+            imported.append({'filename': record['filename'], 'stored_name': target.name})
+        return {'dataset_directory': str(import_path.resolve()), 'count': len(imported), 'files': imported}
 
     @app.post('/api/simulation/start')
     def simulation_start(request: SimulationStart, authorization: str | None = Header(default=None)):

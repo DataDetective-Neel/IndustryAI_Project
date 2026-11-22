@@ -26,7 +26,7 @@ export default function PlatformApp({ inspectionLab }) {
   function signOut() { session.token = null; setUser(null); }
   if (checking) return <main className="boot-screen">Starting AOI console…</main>;
   if (!user) return <Login onLogin={setUser}/>;
-  const pages = { dashboard:<Dashboard onOpenLive={() => setPage("live")}/>, lab:inspectionLab, live:<LiveInspection/>,
+  const pages = { dashboard:<Dashboard onOpenLive={() => setPage("live")}/>, lab:inspectionLab, live:<LiveInspection user={user}/>,
     access:user.role === "administrator" ? <AccessManagement/> : <Dashboard onOpenLive={() => setPage("live")}/>, account:<AccountSettings user={user} onSignOut={signOut}/> };
   return <div className="platform-shell"><Sidebar page={page} onPage={setPage} user={user} onSignOut={signOut}/><main className="platform-content">{pages[page]}</main></div>;
 }
