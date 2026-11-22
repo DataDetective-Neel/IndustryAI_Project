@@ -2,6 +2,7 @@ import io
 import json
 import tempfile
 import unittest
+import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -139,6 +140,25 @@ class WebTests(unittest.TestCase):
             response = self.client.get('/api/health')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['landmark_names']), 4)
+
+    def test_authenticated_platform_routes_enforce_roles(self):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        with patch.dict(os.environ, {'PCB_ADMIN_USERNAME': 'admin', 'PCB_ADMIN_PASSWORD': 'temporary-password'}, clear=False):
+            client = TestClient(create_app(Path(folder.name)))
+        login = client.post('/api/auth/login', json={'username': 'admin', 'password': 'temporary-password'})
+        self.assertEqual(login.status_code, 200, login.text)
+        headers = {'Authorization': 'Bearer ' + login.json()['token']}
+        self.assertEqual(client.get('/api/dashboard').status_code, 401)
+        self.assertEqual(client.get('/api/dashboard', headers=headers).json()['metrics']['total'], 0)
+        created = client.post('/api/users', headers=headers, json={
+            'username': 'operator', 'display_name': 'Line Operator', 'role': 'operator',
+            'password': 'operator-password'})
+        self.assertEqual(created.status_code, 200, created.text)
+        operator = client.post('/api/auth/login', json={
+            'username': 'operator', 'password': 'operator-password'}).json()
+        denied = client.get('/api/users', headers={'Authorization': 'Bearer ' + operator['token']})
+        self.assertEqual(denied.status_code, 403)
 
 
 if __name__ == '__main__':

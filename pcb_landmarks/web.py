@@ -10,7 +10,7 @@ from typing import Literal
 
 import numpy as np
 import cv2
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
@@ -23,6 +23,8 @@ from .compare import _validate_regions, annotated_overlay, compare_regions, load
 from .compatibility import check_compatibility, identify_board
 from .data import open_image, read_image
 from .infer import LandmarkDetector
+from .platform_store import AOIStore, ROLES
+from .simulator import LineSimulator
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +56,46 @@ class InspectionRequest(BaseModel):
     synthetic: StrictBool = False
 
 
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=80)
+    password: str = Field(min_length=1, max_length=200)
+
+
+class UserCreate(BaseModel):
+    username: str = Field(min_length=1, max_length=80)
+    display_name: str = Field(min_length=1, max_length=120)
+    role: Literal['administrator', 'supervisor', 'operator']
+    password: str = Field(min_length=10, max_length=200)
+
+
+class DecisionRequest(BaseModel):
+    decision: Literal['confirmed_reject', 'false_alarm']
+    note: str = Field(default='', max_length=500)
+
+
+class GoldenConfigRequest(BaseModel):
+    reference_id: str = Field(min_length=32, max_length=32)
+    components: list[dict] = Field(min_length=1, max_length=100)
+    mode: Literal['manual', 'automatic'] = 'automatic'
+    sharpen: StrictBool = False
+
+
+class PreferencesRequest(BaseModel):
+    alarm_sound: bool | None = None
+    inspection_interval: float | None = Field(default=None, ge=0.5, le=120)
+    simulation_directory: str | None = Field(default=None, max_length=500)
+
+
+class PasswordChange(BaseModel):
+    current_password: str = Field(min_length=1, max_length=200)
+    new_password: str = Field(min_length=10, max_length=200)
+
+
+class SimulationStart(BaseModel):
+    dataset_directory: str = Field(min_length=1, max_length=500)
+    interval: float = Field(default=3.0, ge=0.5, le=120)
+
+
 @lru_cache(maxsize=1)
 def _detector(checkpoint):
     config = json.loads((ROOT/'configs/landmarks.json').read_text())
@@ -72,6 +114,8 @@ def create_app(storage=None):
     storage = Path(storage) if storage is not None else ROOT/'runs/web'
     (storage/'photos').mkdir(parents=True, exist_ok=True)
     (storage/'batches').mkdir(exist_ok=True)
+    store = AOIStore(storage/'aoi.db')
+    store.bootstrap_admin()
     app = FastAPI(title='Local PCB inspection', docs_url=None, redoc_url=None)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=['127.0.0.1', 'localhost', 'testserver'])
 
@@ -103,6 +147,115 @@ def create_app(storage=None):
     def photo(identifier):
         path = directory('photos', identifier)
         return json.loads((path/'photo.json').read_text()), path
+
+    def current_user(authorization):
+        if not authorization or not authorization.startswith('Bearer '):
+            raise HTTPException(401, 'Sign in is required')
+        user = store.user_for_token(authorization[7:])
+        if not user:
+            raise HTTPException(401, 'Session is invalid')
+        return user
+
+    def authorize(authorization, roles):
+        user = current_user(authorization)
+        if user['role'] not in roles:
+            raise HTTPException(403, 'Role does not permit this action')
+        return user
+
+    @app.post('/api/auth/login')
+    def login(request: LoginRequest):
+        authenticated = store.authenticate(request.username, request.password)
+        if not authenticated:
+            raise HTTPException(401, 'Invalid username or password')
+        token, user = authenticated
+        return {'token': token, 'user': user}
+
+    @app.get('/api/auth/me')
+    def me(authorization: str | None = Header(default=None)):
+        return current_user(authorization)
+
+    @app.get('/api/users')
+    def users(authorization: str | None = Header(default=None)):
+        authorize(authorization, {'administrator'})
+        return {'users': store.list_users(), 'roles': sorted(ROLES)}
+
+    @app.post('/api/users')
+    def add_user(request: UserCreate, authorization: str | None = Header(default=None)):
+        authorize(authorization, {'administrator'})
+        try:
+            store.create_user(request.username, request.display_name, request.role, request.password)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+        except Exception as error:
+            if 'UNIQUE constraint' in str(error):
+                raise HTTPException(409, 'Username already exists') from error
+            raise
+        return {'created': request.username.lower()}
+
+    @app.patch('/api/account/preferences')
+    def preferences(request: PreferencesRequest, authorization: str | None = Header(default=None)):
+        user = current_user(authorization)
+        values = request.model_dump(exclude_none=True)
+        return store.update_preferences(user['username'], values)
+
+    @app.post('/api/account/password')
+    def password(request: PasswordChange, authorization: str | None = Header(default=None)):
+        user = current_user(authorization)
+        try:
+            store.change_password(user['username'], request.current_password, request.new_password)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+        return {'changed': True, 'sign_in_required': True}
+
+    @app.get('/api/dashboard')
+    def dashboard(authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        return store.dashboard()
+
+    @app.get('/api/reviews')
+    def reviews(authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        items = store.pending()
+        for item in items:
+            item['evidence'] = json.loads(item.pop('evidence_json'))
+        return {'reviews': items}
+
+    @app.post('/api/reviews/{inspection_id:path}/decision')
+    def review_decision(inspection_id: str, request: DecisionRequest,
+                        authorization: str | None = Header(default=None)):
+        user = authorize(authorization, ROLES)
+        try:
+            store.decide(inspection_id, request.decision, user['username'], request.note)
+        except KeyError as error:
+            raise HTTPException(404, str(error)) from error
+        except RuntimeError as error:
+            raise HTTPException(409, str(error)) from error
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+        return {'inspection_id': inspection_id, 'decision': request.decision}
+
+    @app.get('/api/golden-config')
+    def golden_config(authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        config = store.golden()
+        if not config:
+            raise HTTPException(404, 'No golden configuration saved')
+        return config
+
+    @app.post('/api/golden-config')
+    def save_golden_config(request: GoldenConfigRequest,
+                           authorization: str | None = Header(default=None)):
+        user = authorize(authorization, {'administrator', 'supervisor'})
+        photo(request.reference_id)
+        config = request.model_dump(exclude={'reference_id'})
+        try:
+            record, _ = photo(request.reference_id)
+            size = (record['width'], record['height'])
+            _validate_regions({'reference_wh_px': list(size), 'components': config['components']}, size)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+        store.save_golden(request.reference_id, config, user['username'])
+        return store.golden()
 
     def detect(identifier):
         record, path = photo(identifier)
@@ -332,7 +485,50 @@ def create_app(storage=None):
                      thresholds_provisional=True, comparison_config=config, photos=results,
                      report_url=f'/api/batches/{batch_id}/report')
         (batch_path/'report.json').write_text(json.dumps(batch, indent=2, allow_nan=False), encoding='utf-8')
+        store.record_batch(batch)
         return batch
+
+    def simulate_image(path):
+        golden = store.golden()
+        if not golden:
+            raise ValueError('Save a golden configuration before starting simulation')
+        _, reference_path = photo(golden['reference_id'])
+        if not (reference_path/'reference.json').is_file():
+            raise ValueError('Confirm reference landmarks and outline before starting simulation')
+        uploaded = upload(UploadFile(file=path.open('rb'), filename=path.name))
+        batch = inspect(InspectionRequest(reference_id=golden['reference_id'], reference_points=[],
+                                          inspections=[PhotoPoints(photo_id=uploaded['id'])],
+                                          components=golden['components'], mode='automatic',
+                                          sharpen=golden.get('sharpen', False), synthetic=False))
+        return batch['photos'][0]
+
+    simulator = LineSimulator(simulate_image)
+
+    @app.get('/api/simulation')
+    def simulation_status(authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        return simulator.state()
+
+    @app.post('/api/simulation/start')
+    def simulation_start(request: SimulationStart, authorization: str | None = Header(default=None)):
+        authorize(authorization, {'administrator', 'supervisor', 'operator'})
+        if not store.golden():
+            raise HTTPException(422, 'Save a golden configuration before starting simulation')
+        try:
+            return simulator.start(request.dataset_directory, request.interval)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+        except RuntimeError as error:
+            raise HTTPException(409, str(error)) from error
+
+    @app.post('/api/simulation/{action}')
+    def simulation_control(action: Literal['pause', 'resume', 'stop'],
+                           authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        try:
+            return getattr(simulator, action)()
+        except RuntimeError as error:
+            raise HTTPException(409, str(error)) from error
 
     @app.get('/api/batches/{identifier}/report')
     def report(identifier: str):
