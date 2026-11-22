@@ -25,6 +25,7 @@ from .data import open_image, read_image
 from .infer import LandmarkDetector
 from .platform_store import AOIStore, ROLES
 from .simulator import LineSimulator
+from .component_detection import propose_components
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -371,6 +372,21 @@ def create_app(storage=None):
         if not np.array_equal(np.asarray(read_image(path/'image.png')), np.asarray(read_image(source))):
             raise HTTPException(404, 'Saved regions require the exact known-good ECCC5 reference')
         return preset
+
+    @app.post('/api/photos/{identifier}/component-proposals')
+    def component_proposals(identifier: str):
+        record, path = photo(identifier)
+        if record['error']:
+            raise HTTPException(422, record['error'])
+        try:
+            saved = (json.loads((path/'reference.json').read_text())
+                     if (path/'reference.json').is_file() else None)
+            result = propose_components(read_image(path/'image.png'),
+                                        saved.get('board_polygon') if saved else None)
+            (path/'component-proposals.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+            return result
+        except (ValueError, cv2.error) as error:
+            raise HTTPException(422, f'Component proposal failed: {error}') from error
 
     @app.post('/api/landmarks/{identifier}')
     def landmarks(identifier: str):

@@ -141,6 +141,15 @@ class WebTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['landmark_names']), 4)
 
+    def test_component_proposals_are_generated_for_uploaded_reference(self):
+        uploaded = self.upload(self.reference)
+        response = self.client.post(f"/api/photos/{uploaded['id']}/component-proposals")
+        self.assertEqual(response.status_code, 200, response.text)
+        result = response.json()
+        self.assertGreater(len(result['components']), 0)
+        self.assertFalse(result['verified'])
+        self.assertTrue(all(part['candidate_status'] == 'UNKNOWN' for part in result['components']))
+
     def test_authenticated_platform_routes_enforce_roles(self):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)

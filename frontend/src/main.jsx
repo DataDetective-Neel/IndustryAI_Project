@@ -45,6 +45,7 @@ function App() {
   const [batch, setBatch] = useState(null);
   const [busy, setBusy] = useState(false);
   const [detecting, setDetecting] = useState(false);
+  const [proposing, setProposing] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const drag = useRef(null);
@@ -145,13 +146,17 @@ function App() {
         setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null })));
         const setup = await api(`/api/references/${uploaded[0].id}`);
         setReference((p) => p?.id === uploaded[0].id ? { ...p, board_polygon: setup.board_polygon } : p);
+        setProposing(true);
         try {
-          const preset = await api(`/api/photos/${uploaded[0].id}/regions`);
-          setComponents(preset.components);
-        } catch {
+          const proposal = await api(`/api/photos/${uploaded[0].id}/component-proposals`, { method: "POST" });
+          setComponents(proposal.components);
+          setRegionId(proposal.components[0]?.id || null);
+          setReference((p) => p?.id === uploaded[0].id ? { ...p, board_polygon: proposal.board_polygon } : p);
+          setNotice(`${proposal.candidate_count} component candidates proposed. Review UNKNOWN regions before saving.`);
+        } catch (proposalError) {
           setComponents([]);
-        }
-        setRegionId(null);
+          setError(`Reference uploaded, but automatic component proposals failed: ${proposalError.message}`);
+        } finally { setProposing(false); }
       } else setInspections((items) => replaceId
         ? items.map((p) => p.id === replaceId ? uploaded[0] : p)
         : [...items, ...uploaded]);
@@ -270,6 +275,18 @@ function App() {
       setNotice("Golden configuration saved for Live Inspection.");
     } catch (e) { setError(e.message); }
     finally { setBusy(false); }
+  }
+  async function detectComponents() {
+    if (!reference) return;
+    setProposing(true); setError(""); setNotice("");
+    try {
+      const proposal = await api(`/api/photos/${reference.id}/component-proposals`, { method: "POST" });
+      setComponents(proposal.components);
+      setRegionId(proposal.components[0]?.id || null);
+      changePhoto(reference.id, { board_polygon: proposal.board_polygon });
+      setNotice(`${proposal.candidate_count} UNKNOWN candidates proposed. Confirm, rename, resize, add, or remove regions.`);
+    } catch (e) { setError(e.message); }
+    finally { setProposing(false); }
   }
   async function run() {
     setBusy(true);
@@ -699,6 +716,9 @@ function App() {
                       onClick={confirmReference}>Confirm reference setup</button>
                     <button className="secondary" disabled={!reference.confirmed || !components.length}
                       onClick={saveGolden}>Save for live line</button>
+                    <button className="secondary" disabled={proposing} onClick={detectComponents}>
+                      {proposing ? "Detecting components…" : "Detect components"}
+                    </button>
                     <p className="muted">Outline only the PCB surface, excluding background and off-board watermarks. Landmarks can be interior board details.</p>
                   </div>}
                   <p className="muted">
