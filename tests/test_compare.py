@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import cv2
 import numpy as np
 from PIL import Image
 
@@ -16,8 +17,8 @@ from pcb_landmarks.compare import compare_regions, load_config
 
 class ComparisonTests(unittest.TestCase):
     def setUp(self):
-        self.reference, inspection, rp, ip, self.regions = comparison_pair()
-        self.aligned, _, self.mask = align_images(self.reference, inspection, rp, ip)
+        self.reference, inspection, self.rp, ip, self.regions = comparison_pair()
+        self.aligned, _, self.mask = align_images(self.reference, inspection, self.rp, ip)
         self.config = load_config('configs/comparison.json')
         self.alignment = dict(status='ok', reference_wh=[320, 240])
 
@@ -119,6 +120,33 @@ class ComparisonTests(unittest.TestCase):
             self.assertFalse(result['review_required'])
             for part in result['components']:
                 self.assertAlmostEqual(part['score'], 1, places=6)
+
+    def test_local_rotation_after_board_registration_is_misaligned_with_evidence(self):
+        reference = self.reference.copy()
+        inspection = reference.copy()
+        x1, y1, x2, y2 = self.regions['components'][0]['bbox_xyxy_px']
+        crop = reference[y1:y2, x1:x2]
+        matrix = cv2.getRotationMatrix2D(((x2-x1-1)/2, (y2-y1-1)/2), 15, 1)
+        inspection[y1:y2, x1:x2] = cv2.warpAffine(
+            crop, matrix, (x2-x1, y2-y1), flags=cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_REFLECT,
+        )
+        regions = dict(self.regions, components=self.regions['components'][:2])
+        result = self.compare(reference=reference, aligned=inspection, regions=regions)
+        rotated = result['components'][0]
+        self.assertEqual(rotated['status'], 'misaligned')
+        self.assertGreaterEqual(abs(rotated['evidence']['rotation_deg']), 10)
+        self.assertIn('displacement_px', rotated['evidence'])
+        self.assertTrue(result['review_required'])
+
+    def test_whole_board_rotation_is_removed_before_component_scoring(self):
+        inspection = np.rot90(self.reference, 2).copy()
+        rotated_points = np.array([self.reference.shape[1]-1, self.reference.shape[0]-1]) - self.rp
+        aligned, _, mask = align_images(self.reference, inspection, self.rp, rotated_points)
+        regions = dict(self.regions, components=self.regions['components'][:2])
+        result = self.compare(reference=self.reference, aligned=aligned, mask=mask, regions=regions)
+        self.assertEqual([part['status'] for part in result['components']], ['present', 'present'])
+        self.assertEqual(result['outcome'], 'ok')
 
     def test_constant_gradient_is_degenerate_despite_grayscale_texture(self):
         ramp = np.broadcast_to((np.arange(320) % 256)[None, :, None], self.reference.shape).astype(np.uint8)

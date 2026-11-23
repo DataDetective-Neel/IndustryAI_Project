@@ -4,6 +4,7 @@
   "missing_edge_ratio_max": 0.45,
   "missing_color_delta_min": 0.03,
   "misalignment_min_px": 2.5,
+  "misalignment_rotation_min_deg": 8,
   "provisional": true,
   "development_examples": [
     "Validation micropcb_E: ECCC5/ECCB5, visually present U2 and AM335x",

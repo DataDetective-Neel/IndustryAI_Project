@@ -296,6 +296,10 @@ function App() {
     finally { setBusy(false); }
   }
   async function saveGolden() {
+    if (components.some((component) => component.candidate_status === "UNKNOWN")) {
+      setError("Accept, edit, or remove every UNKNOWN component proposal before saving.");
+      return;
+    }
     setBusy(true); setError(""); setNotice("");
     try {
       await platformApi("/api/golden-config", jsonBody({
@@ -309,7 +313,9 @@ function App() {
     if (!reference) return;
     setProposing(true); setError(""); setNotice("");
     try {
-      const proposal = await api(`/api/photos/${reference.id}/component-proposals`, { method: "POST" });
+      const proposal = await api(`/api/photos/${reference.id}/component-proposals`, jsonPost({
+        board_polygon: reference.board_polygon || [],
+      }));
       setComponents(proposal.components);
       setRegionId(proposal.components[0]?.id || null);
       changePhoto(reference.id, { board_polygon: proposal.board_polygon });
@@ -324,6 +330,22 @@ function App() {
       setRegionId(saved.components[0]?.id || null);
       setNotice("Verified sample annotations loaded. Review before saving this golden configuration.");
     } catch (e) { setError(e.message); }
+  }
+  async function importComponentMap(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !reference) return;
+    setProposing(true); setError(""); setNotice("");
+    try {
+      const body = new FormData();
+      body.append("component_map", file);
+      const proposal = await api(`/api/photos/${reference.id}/component-map`, { method: "POST", body });
+      setComponents(proposal.components);
+      setRegionId(proposal.components[0]?.id || null);
+      changePhoto(reference.id, { board_polygon: proposal.board_polygon });
+      setNotice(`${proposal.imported_component_count} reference components imported; review and accept each proposal before saving.`);
+    } catch (e) { setError(e.message); }
+    finally { setProposing(false); }
   }
   async function run() {
     setBusy(true);
@@ -748,7 +770,7 @@ function App() {
                   )}
                 </div>
                 <aside className="annotation-panel">
-                  <h3>{editingOutline ? "PCB surface outline" : "Four landmark identities"}</h3>
+                  <h3>{editingOutline ? "PCB surface outline" : "Alignment"}</h3>
                   {referenceSelected && <div className="message notice">
                     <p>{reference.confirmed ? "Reference saved. Its points and surface features will be reused." : "Review or correct the four landmarks and the PCB outline, then confirm once."}</p>
                     <button className="secondary" onClick={() => {
@@ -757,15 +779,19 @@ function App() {
                     }}>Mark PCB outline</button>
                     <button className="secondary" disabled={reference.points?.filter(Boolean).length !== 4 || (reference.board_polygon?.filter(Boolean).length || 0) < 3}
                       onClick={confirmReference}>Confirm reference setup</button>
-                    <button className="secondary" disabled={!reference.confirmed || !components.length}
+                    <button className="secondary" disabled={!reference.confirmed || !components.length || components.some((component) => component.candidate_status === "UNKNOWN")}
                       onClick={saveGolden}>Save for live line</button>
                     <button className="secondary" disabled={proposing} onClick={detectComponents}>
                       {proposing ? "Detecting components…" : "Detect components"}
                     </button>
+                    <label className="secondary import-map">Import Antigravity map
+                      <input aria-label="Import Antigravity component map" type="file" accept="application/json,.json"
+                        disabled={proposing} onChange={importComponentMap} />
+                    </label>
                     <p className="muted">Outline only the PCB surface, excluding background and off-board watermarks. Landmarks can be interior board details.</p>
                   </div>}
                   <p className="muted">
-                    Board-relative order, clockwise. Select a point, then click
+                    Four manual landmarks remain available when automatic registration needs help. Board-relative order, clockwise. Select a point, then click
                     its center.
                   </p>
                   <ol className="point-list">
@@ -818,6 +844,11 @@ function App() {
                   <div className="parts-heading">
                     <h3>Expected components</h3>
                     {verifiedRegionsAvailable && <button className="secondary" onClick={loadVerifiedRegions}>Load verified sample regions</button>}
+                    <button className="secondary" disabled={!components.some((component) => component.candidate_status === "UNKNOWN")} onClick={() => {
+                      setComponents((items) => items.map((component) => component.candidate_status === "UNKNOWN"
+                        ? { ...component, candidate_status: "VERIFIED" } : component));
+                      setNotice("All current proposals explicitly accepted. You can still edit or remove them before saving.");
+                    }}>Accept all proposals</button>
                     <button className="secondary" disabled={!components.length} onClick={() => {
                       setComponents([]); setRegionId(null); setBatch(null); setNotice("Component regions cleared.");
                     }}>Clear all components</button>
@@ -865,6 +896,8 @@ function App() {
                   </div>
                   {activeRegion && referenceSelected && (
                     <div className="region-editor">
+                      {activeRegion.candidate_status === "UNKNOWN" && <button className="secondary" onClick={() =>
+                        updateRegion({ candidate_status: "VERIFIED" })}>Accept component</button>}
                       <label>
                         Component name
                         <input

@@ -88,6 +88,8 @@ export default function Comparison({ result, reference, inspection, index, mode,
             <dl>
               <dt>Similarity</dt><dd>{p.score == null ? '—' : p.score.toFixed(6)}</dd>
               <dt>Best offset (px)</dt><dd>{p.best_match_offset_px?.join(', ') || '—'}</dd>
+              <dt>Rotation after registration</dt><dd>{p.evidence?.rotation_deg == null ? '—' : `${p.evidence.rotation_deg.toFixed(1)}°`}</dd>
+              <dt>Displacement magnitude</dt><dd>{p.evidence?.displacement_magnitude_px == null ? '—' : `${p.evidence.displacement_magnitude_px.toFixed(2)} px`}</dd>
               <dt>Expected box</dt><dd>{p.bbox_xyxy_px?.join(', ') || '—'}</dd>
               <dt>Coverage</dt><dd>{p.overlap == null ? '—' : `${(p.overlap * 100).toFixed(2)}%`}</dd>
               <dt>Edge energy ratio</dt><dd>{p.evidence?.edge_energy_ratio == null ? '—' : p.evidence.edge_energy_ratio.toFixed(4)}</dd>

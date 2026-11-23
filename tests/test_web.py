@@ -143,12 +143,43 @@ class WebTests(unittest.TestCase):
 
     def test_component_proposals_are_generated_for_uploaded_reference(self):
         uploaded = self.upload(self.reference)
-        response = self.client.post(f"/api/photos/{uploaded['id']}/component-proposals")
+        outline = [[0, 0], [319, 0], [319, 239], [0, 239]]
+        response = self.client.post(f"/api/photos/{uploaded['id']}/component-proposals",
+                                    json={'board_polygon': outline})
         self.assertEqual(response.status_code, 200, response.text)
         result = response.json()
         self.assertGreater(len(result['components']), 0)
         self.assertFalse(result['verified'])
+        self.assertEqual(result['board_polygon'], [[float(x), float(y)] for x, y in outline])
         self.assertTrue(all(part['candidate_status'] == 'UNKNOWN' for part in result['components']))
+
+    def test_matching_reference_map_seeds_proposals_and_antigravity_import_is_validated(self):
+        source = Path('PCB_Dataset_Pilot/images/val/ECCC5.jpg')
+        response = self.client.post('/api/photos', files={
+            'image': (source.name, source.read_bytes(), 'image/jpeg')})
+        uploaded = response.json()
+        proposals = self.client.post(f"/api/photos/{uploaded['id']}/component-proposals").json()['components']
+        expected = json.loads(Path('configs/components-ECCC5.json').read_text(encoding='utf-8'))['components']
+        from pcb_landmarks.component_detection import _box_iou
+        self.assertEqual(sum(max(_box_iou(item['bbox_xyxy_px'], proposal['bbox_xyxy_px'])
+                                 for proposal in proposals) >= .5 for item in expected), len(expected))
+
+        golden = self.upload(self.reference, 'golden_reference.png')
+        mapping = {'metadata': {'reference_image_id': 'golden_reference.png',
+                                'image_dimensions': {'width': 320, 'height': 240, 'channels': 3}},
+                   'components': [{'id': 'U1', 'description': 'Controller', 'bbox': [60, 45, 40, 40]}]}
+        imported = self.client.post(
+            f"/api/photos/{golden['id']}/component-map",
+            files={'component_map': ('golden_components.json', json.dumps(mapping), 'application/json')})
+        self.assertEqual(imported.status_code, 200, imported.text)
+        imported_u1 = next(component for component in imported.json()['components'] if component['id'] == 'U1')
+        self.assertEqual(imported_u1['bbox_xyxy_px'], [60, 45, 100, 85])
+        mapping['metadata']['image_dimensions']['width'] = 321
+        rejected = self.client.post(
+            f"/api/photos/{golden['id']}/component-map",
+            files={'component_map': ('golden_components.json', json.dumps(mapping), 'application/json')})
+        self.assertEqual(rejected.status_code, 422)
+        self.assertIn('dimensions', rejected.json()['detail'])
 
     def test_authenticated_platform_routes_enforce_roles(self):
         folder = tempfile.TemporaryDirectory()
@@ -187,6 +218,11 @@ class WebTests(unittest.TestCase):
         setup = client.post(f"/api/references/{reference['id']}", json={
             'points': self.rp.tolist(), 'board_polygon': [[0, 0], [319, 0], [319, 239], [0, 239]]})
         self.assertEqual(setup.status_code, 200, setup.text)
+        unknown = [dict(self.regions['components'][0], candidate_status='UNKNOWN')]
+        unaccepted = client.post('/api/golden-config', headers=headers, json={
+            'reference_id': reference['id'], 'components': unknown, 'mode': 'automatic'})
+        self.assertEqual(unaccepted.status_code, 422)
+        self.assertIn('accept', unaccepted.json()['detail'].lower())
         saved = client.post('/api/golden-config', headers=headers, json={
             'reference_id': reference['id'], 'components': self.regions['components'], 'mode': 'automatic'})
         self.assertEqual(saved.status_code, 200, saved.text)

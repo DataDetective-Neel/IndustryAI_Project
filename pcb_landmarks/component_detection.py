@@ -1,6 +1,8 @@
 """Conservative classical-CV component proposals for golden PCB annotation."""
 from __future__ import annotations
 
+from pathlib import Path
+
 import cv2
 import numpy as np
 
@@ -20,7 +22,43 @@ def _coverage(mask, box):
     return float((mask[y1:y2, x1:x2] > 0).mean())
 
 
-def propose_components(image, polygon=None, max_candidates=36):
+def import_component_map(mapping, image_size, reference_filename):
+    """Validate Antigravity's reference-only xywh map and convert to half-open xyxy."""
+    if not isinstance(mapping, dict) or not isinstance(mapping.get("metadata"), dict):
+        raise ValueError("Component map metadata is required")
+    metadata = mapping["metadata"]
+    dimensions = metadata.get("image_dimensions")
+    expected_dimensions = {"width": image_size[0], "height": image_size[1]}
+    if (not isinstance(dimensions, dict) or
+            any(dimensions.get(key) != value for key, value in expected_dimensions.items())):
+        raise ValueError("Component map dimensions must match the decoded golden image")
+    mapped_name = metadata.get("reference_image_id")
+    if not isinstance(mapped_name, str) or Path(mapped_name).name.lower() != Path(reference_filename).name.lower():
+        raise ValueError("Component map reference image must match the uploaded golden image filename")
+    source = mapping.get("components")
+    if not isinstance(source, list) or not source or len(source) > 100:
+        raise ValueError("Component map must contain 1 to 100 reference components")
+    width, height = image_size
+    converted, identifiers = [], set()
+    for item in source:
+        identifier, box = item.get("id") if isinstance(item, dict) else None, item.get("bbox") if isinstance(item, dict) else None
+        if not isinstance(identifier, str) or not identifier.strip() or identifier in identifiers:
+            raise ValueError("Component map ids must be unique nonempty strings")
+        if (not isinstance(box, list) or len(box) != 4 or
+                any(type(value) is not int for value in box)):
+            raise ValueError("Antigravity component bbox coordinates must be integer xywh values")
+        x, y, box_width, box_height = box
+        if box_width < 5 or box_height < 5 or x < 0 or y < 0 or x + box_width > width or y + box_height > height:
+            raise ValueError("Component map xywh box is outside the decoded golden image")
+        description = item.get("description", "")
+        name = identifier.strip() if not isinstance(description, str) or not description.strip() else f"{identifier.strip()} — {description.strip()}"
+        converted.append({"id": identifier.strip(), "name": name[:120],
+                          "bbox_xyxy_px": [x, y, x + box_width, y + box_height]})
+        identifiers.add(identifier)
+    return converted
+
+
+def propose_components(image, polygon=None, max_candidates=36, reference_components=None):
     """Return operator-review candidates; never claims verified component identity."""
     rgb = np.asarray(image.convert("RGB")) if hasattr(image, "convert") else np.asarray(image)
     if rgb.ndim != 3 or min(rgb.shape[:2]) < 80:
@@ -117,14 +155,25 @@ def propose_components(image, polygon=None, max_candidates=36):
             occupied.add(cell)
     primary.sort(key=lambda item: (grid_cell(item)[1], grid_cell(item)[0]))
     ordered = primary + [candidate for candidate in candidates if candidate not in primary]
-    selected = []
+    seeded = []
+    for component in reference_components or []:
+        box = component.get("bbox_xyxy_px") if isinstance(component, dict) else None
+        if (not isinstance(box, list) or len(box) != 4 or any(type(value) is not int for value in box)
+                or not (0 <= box[0] < box[2] <= width and 0 <= box[1] < box[3] <= height)):
+            raise ValueError("Reference component maps require in-bounds integer half-open xyxy boxes")
+        seeded.append(dict(box=list(box), score=1.0, edge_density=0.0, contour_fill=1.0,
+                           contrast=0.0, seed_component=component))
+    selected = seeded[:max_candidates]
     grid_counts = {}
+    for candidate in selected:
+        cell = grid_cell(candidate)
+        grid_counts[cell] = grid_counts.get(cell, 0) + 1
     for candidate in ordered:
         box = candidate["box"]
         cell = grid_cell(candidate)
         if grid_counts.get(cell, 0) >= 2:
             continue
-        if any(_box_iou(box, other["box"]) > .32 or
+        if any(_box_iou(box, other["box"]) > (.08 if other.get("seed_component") else .32) or
                (box[0] >= other["box"][0] and box[1] >= other["box"][1] and
                 box[2] <= other["box"][2] and box[3] <= other["box"][3])
                for other in selected):
@@ -138,11 +187,14 @@ def propose_components(image, polygon=None, max_candidates=36):
                                     item["box"][0], item["box"][1]))
     components = []
     for index, item in enumerate(selected, 1):
+        seed = item.get("seed_component")
         components.append({
-            "id": f"AUTO-{index:03d}", "name": f"UNKNOWN {index:03d}",
+            "id": seed["id"] if seed else f"AUTO-{index:03d}",
+            "name": seed["name"] if seed else f"UNKNOWN {index:03d}",
             "bbox_xyxy_px": item["box"], "candidate_status": "UNKNOWN",
             "proposal_confidence": round(item["score"], 3),
             "proposal_evidence": {
+                "source": "reference_component_map" if seed else "classical_cv",
                 "edge_density": round(item["edge_density"], 4),
                 "contour_fill": round(item["contour_fill"], 4),
                 "local_contrast": round(item["contrast"], 4),
@@ -150,5 +202,5 @@ def propose_components(image, polygon=None, max_candidates=36):
         })
     return {"board_polygon": [[float(x), float(y)] for x, y in polygon],
             "components": components, "candidate_count": len(components),
-            "method": "CLAHE, adaptive threshold, Canny edges, morphology, contour filtering and overlap suppression",
+            "method": "validated reference-map seeds plus CLAHE, adaptive threshold, Canny edges, morphology, contour filtering and overlap suppression",
             "verified": False}

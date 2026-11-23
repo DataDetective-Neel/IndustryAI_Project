@@ -23,7 +23,7 @@ test('golden upload proposes UNKNOWN component boxes without manual drawing', as
   expect(proposal.components.length).toBeGreaterThanOrEqual(6);
   await expect(page.locator('rect.region-box')).toHaveCount(proposal.components.length);
   await expect(page.getByText(/component candidates proposed/i)).toBeVisible();
-  await expect(page.getByLabel('Component name', { exact: true })).toHaveValue(/UNKNOWN/);
+  await expect(page.locator('.part-list small').first()).toHaveText('UNKNOWN');
 
   const x1 = Number(await page.getByLabel('Region x1', { exact: true }).inputValue());
   await page.getByLabel('Component name', { exact: true }).fill('Verified component');
@@ -37,6 +37,8 @@ test('golden upload proposes UNKNOWN component boxes without manual drawing', as
     await page.getByLabel(`${names[i]} y`, { exact: true }).fill(String(values[6+i*3] * height));
   }
   await confirmReference(page, [[221,115], [1002,115], [1002,1412], [221,1412]]);
+  await expect(page.getByRole('button', { name: 'Save for live line', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Accept all proposals', exact: true }).click();
   const saved = page.waitForResponse(response => response.url().endsWith('/api/golden-config') && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Save for live line', exact: true }).click();
   expect((await saved).ok()).toBeTruthy();

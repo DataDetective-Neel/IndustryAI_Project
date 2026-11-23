@@ -482,6 +482,8 @@ main {
   padding: 6px 9px;
   font-weight: 500;
 }
+.import-map { position: relative; display: inline-flex; align-items: center; cursor: pointer; border: 1px solid var(--border); border-radius: 8px; }
+.import-map input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
 .part-list {
   display: flex;
   flex-direction: column;

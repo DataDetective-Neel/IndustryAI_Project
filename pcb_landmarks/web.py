@@ -25,7 +25,7 @@ from .data import open_image, read_image
 from .infer import LandmarkDetector
 from .platform_store import AOIStore, ROLES
 from .simulator import LineSimulator
-from .component_detection import propose_components
+from .component_detection import import_component_map, propose_components
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,6 +80,10 @@ class GoldenConfigRequest(BaseModel):
     components: list[dict] = Field(min_length=1, max_length=100)
     mode: Literal['manual', 'automatic'] = 'automatic'
     sharpen: StrictBool = False
+
+
+class ComponentProposalRequest(BaseModel):
+    board_polygon: list[list[float]] = Field(default_factory=list, max_length=12)
 
 
 class PreferencesRequest(BaseModel):
@@ -261,6 +265,8 @@ def create_app(storage=None):
             record, _ = photo(request.reference_id)
             size = (record['width'], record['height'])
             _validate_regions({'reference_wh_px': list(size), 'components': config['components']}, size)
+            if any(component.get('candidate_status') == 'UNKNOWN' for component in config['components']):
+                raise ValueError('Accept, edit, or remove every UNKNOWN component proposal before saving')
         except ValueError as error:
             raise HTTPException(422, str(error)) from error
         store.save_golden(request.reference_id, config, user['username'])
@@ -388,19 +394,50 @@ def create_app(storage=None):
         return preset
 
     @app.post('/api/photos/{identifier}/component-proposals')
-    def component_proposals(identifier: str):
+    def component_proposals(identifier: str, request: ComponentProposalRequest | None = None):
         record, path = photo(identifier)
         if record['error']:
             raise HTTPException(422, record['error'])
         try:
             saved = (json.loads((path/'reference.json').read_text())
                      if (path/'reference.json').is_file() else None)
+            try:
+                reference_components = saved_regions(identifier)['components']
+            except HTTPException:
+                reference_components = None
+            polygon = request.board_polygon if request and len(request.board_polygon) >= 3 else (saved.get('board_polygon') if saved else None)
             result = propose_components(read_image(path/'image.png'),
-                                        saved.get('board_polygon') if saved else None)
+                                        polygon,
+                                        reference_components=reference_components)
             (path/'component-proposals.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
             return result
         except (ValueError, cv2.error) as error:
             raise HTTPException(422, f'Component proposal failed: {error}') from error
+
+    @app.post('/api/photos/{identifier}/component-map')
+    def component_map(identifier: str, component_map: UploadFile):
+        record, path = photo(identifier)
+        if record['error']:
+            raise HTTPException(422, record['error'])
+        try:
+            content = component_map.file.read(2 * 1024 * 1024 + 1)
+            if len(content) > 2 * 1024 * 1024:
+                raise ValueError('Component map exceeds the 2 MiB limit')
+            mapping = json.loads(content.decode('utf-8'))
+            components = import_component_map(mapping, (record['width'], record['height']), record['filename'])
+            saved = (json.loads((path/'reference.json').read_text())
+                     if (path/'reference.json').is_file() else None)
+            result = propose_components(read_image(path/'image.png'),
+                                        saved.get('board_polygon') if saved else None,
+                                        reference_components=components)
+            result['imported_component_count'] = len(components)
+            result['import_source'] = 'Antigravity golden_components.json (reference setup only)'
+            (path/'component-proposals.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+            return result
+        except (UnicodeDecodeError, json.JSONDecodeError, ValueError, cv2.error) as error:
+            raise HTTPException(422, f'Component map import failed: {error}') from error
+        finally:
+            component_map.file.close()
 
     @app.post('/api/landmarks/{identifier}')
     def landmarks(identifier: str):

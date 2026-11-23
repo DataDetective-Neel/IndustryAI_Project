@@ -94,25 +94,50 @@ def _local_match(reference, aligned, mask, box, sharpen):
     if sharpen:
         a = np.clip(a + .5*(a-cv2.GaussianBlur(a,(7,7),1)),0,255)
         b = np.clip(b + .5*(b-cv2.GaussianBlur(b,(7,7),1)),0,255)
-    scores = cv2.matchTemplate(_features(b), _features(a), cv2.TM_CCOEFF_NORMED)
     coverage = cv2.matchTemplate((mask[top:bottom,left:right] == 255).astype(np.float32),
                                  np.ones((y2-y1,x2-x1),np.float32), cv2.TM_CCORR)
-    scores[coverage < (y2-y1)*(x2-x1)-.5] = -2
-    _, maximum, _, (dx,dy) = cv2.minMaxLoc(scores)
+    def locate(candidate):
+        scores = cv2.matchTemplate(_features(b), _features(candidate), cv2.TM_CCOEFF_NORMED)
+        scores[coverage < (y2-y1)*(x2-x1)-.5] = -2
+        _, maximum, _, location = cv2.minMaxLoc(scores)
+        return float(maximum), location
+
+    zero_score, zero_location = locate(a)
+    best_angle, maximum, (dx, dy) = 0.0, zero_score, zero_location
+    center = ((a.shape[1]-1)/2, (a.shape[0]-1)/2)
+    for angle in (-20, -15, -10, -5, 5, 10, 15, 20):
+        rotated = cv2.warpAffine(a, cv2.getRotationMatrix2D(center, angle, 1),
+                                 (a.shape[1], a.shape[0]), flags=cv2.INTER_LINEAR,
+                                 borderMode=cv2.BORDER_REFLECT)
+        candidate_score, location = locate(rotated)
+        if candidate_score > maximum:
+            maximum, (dx, dy), best_angle = candidate_score, location, float(angle)
+    rotation_gain = maximum - zero_score
+    if best_angle and rotation_gain < .08:
+        best_angle, maximum, (dx, dy) = 0.0, zero_score, zero_location
     if maximum < -1:
         return dict(score=None,reason='insufficient_search_coverage',best_match_offset_px=None,search_radius_px=radius)
     bx, by = left+dx, top+dy
     matched = aligned[by:by+y2-y1,bx:bx+x2-x1]
-    score, reason = _score(template, matched, sharpen)
+    comparison_template = template
+    if best_angle:
+        comparison_template = cv2.warpAffine(template, cv2.getRotationMatrix2D(center, best_angle, 1),
+                                             (template.shape[1], template.shape[0]), flags=cv2.INTER_LINEAR,
+                                             borderMode=cv2.BORDER_REFLECT)
+    score, reason = _score(comparison_template, matched, sharpen)
     ref_gray = cv2.cvtColor(template, cv2.COLOR_RGB2GRAY).astype(np.float32)
     current_gray = cv2.cvtColor(matched, cv2.COLOR_RGB2GRAY).astype(np.float32)
     ref_energy, current_energy = float(_features(ref_gray).mean()), float(_features(current_gray).mean())
     edge_ratio = current_energy/ref_energy if ref_energy > 1e-6 else None
     color_delta = float(np.abs(cv2.cvtColor(template, cv2.COLOR_RGB2LAB).astype(np.float32) -
                                cv2.cvtColor(matched, cv2.COLOR_RGB2LAB).astype(np.float32)).mean()/255)
-    return dict(score=score, reason=reason, best_match_offset_px=[bx-x1,by-y1], search_radius_px=radius,
+    offset = [bx-x1, by-y1]
+    return dict(score=score, reason=reason, best_match_offset_px=offset, search_radius_px=radius,
                 evidence=dict(edge_energy_ratio=edge_ratio, mean_lab_delta=color_delta,
-                              reference_edge_energy=ref_energy, inspection_edge_energy=current_energy))
+                              reference_edge_energy=ref_energy, inspection_edge_energy=current_energy,
+                              rotation_deg=best_angle, rotation_score_gain=float(rotation_gain),
+                              displacement_px=offset,
+                              displacement_magnitude_px=float(np.linalg.norm(offset))))
 
 
 def _overlay_score(reference, aligned, mask):
@@ -158,7 +183,7 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                   config=dict(config), sharpening_enabled=sharpen,
                   absence_policy='Missing requires low correlation, lost edge energy, and appearance change; thresholds are provisional',
                   method=dict(feature='Sobel magnitude ksize=3, trim 1px border', correlation='TM_CCOEFF_NORMED',
-                              search='bounded local gradient template match, <=6px', min_coverage=1.0, min_crop_side_px=5, min_raw_gray_std=2, min_gradient_std=1,
+                              search='bounded local gradient template match, <=6px translation and -20..20 degree rotation hypotheses', min_coverage=1.0, min_crop_side_px=5, min_raw_gray_std=2, min_gradient_std=1,
                               unsharp=dict(amount=.5, sigma=1, kernel=[7, 7])), components=[], overlay=None)
     for part in parts:
         box = part.get('bbox_xyxy_px')
@@ -179,7 +204,10 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
             else:
                 row.update(_local_match(reference, aligned, mask, box, sharpen))
                 if row['score'] is not None:
-                    if row['score'] >= config['present_min']:
+                    rotation = abs(row.get('evidence', {}).get('rotation_deg', 0))
+                    if rotation >= config.get('misalignment_rotation_min_deg', 8) and row['score'] >= config['present_min']:
+                        row.update(status='misaligned', reason='component_rotation_after_board_registration')
+                    elif row['score'] >= config['present_min']:
                         row.update(status='present', reason='convincing_bounded_local_match')
                     elif (row['score'] <= config['missing_max'] and
                           row.get('evidence', {}).get('edge_energy_ratio') is not None and
