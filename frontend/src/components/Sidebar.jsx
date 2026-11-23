@@ -1,20 +1,20 @@
 import React from "react";
 
 const items = [
-  ["dashboard", "Dashboard", "⌁"],
-  ["lab", "Inspection Lab", "▦"],
-  ["live", "Live Inspection", "◉"],
-  ["access", "Access Management", "♙"],
-  ["account", "Account Settings", "◌"],
+  ["dashboard", "Dashboard"],
+  ["lab", "Inspection Lab"],
+  ["live", "Live Inspection"],
+  ["goldens", "Golden PCBs"],
+  ["account", "Account Settings"],
 ];
 
 export default function Sidebar({ page, onPage, user, onSignOut }) {
   return <aside className="platform-sidebar">
-    <div className="platform-brand"><span className="brand-mark">IA</span><div><strong>IndustryAI</strong><small>AOI control</small></div></div>
+    <div className="platform-brand"><span className="brand-mark">FP</span><div><strong>ForgeSight</strong><small>PCB inspection</small></div></div>
     <nav aria-label="Primary navigation">
-      {items.map(([id, label, icon]) => <button key={id} className={page === id ? "active" : ""}
-        onClick={() => onPage(id)} disabled={id === "access" && user.role !== "administrator"}>
-        <span aria-hidden="true">{icon}</span>{label}
+      {items.map(([id, label]) => <button key={id} className={page === id ? "active" : ""}
+        onClick={() => onPage(id)}>
+        {label}
       </button>)}
     </nav>
     <div className="sidebar-circuit" aria-hidden="true"><i/><i/><i/></div>

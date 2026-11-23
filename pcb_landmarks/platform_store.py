@@ -86,6 +86,13 @@ class AOIStore:
                     updated_by TEXT NOT NULL,
                     updated_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS golden_library (
+                    reference_id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    config_json TEXT NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
                 CREATE TABLE IF NOT EXISTS settings (
                     key TEXT PRIMARY KEY,
                     value_json TEXT NOT NULL,
@@ -188,6 +195,23 @@ class AOIStore:
         with self.connect() as db:
             db.execute("DELETE FROM golden_configs")
 
+    def save_library_golden(self, reference_id, name, config, actor):
+        with self.connect() as db:
+            db.execute("""INSERT INTO golden_library VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(reference_id) DO UPDATE SET name=excluded.name,
+                config_json=excluded.config_json, updated_by=excluded.updated_by,
+                updated_at=excluded.updated_at""",
+                (reference_id, name, json.dumps(config), actor, utc_now()))
+
+    def golden_library(self):
+        with self.connect() as db:
+            return [dict(row, **json.loads(row["config_json"])) for row in db.execute(
+                "SELECT reference_id,name,config_json,updated_by,updated_at FROM golden_library ORDER BY name COLLATE NOCASE")]
+
+    def delete_library_golden(self, reference_id):
+        with self.connect() as db:
+            return db.execute("DELETE FROM golden_library WHERE reference_id=?", (reference_id,)).rowcount > 0
+
     def record_batch(self, batch):
         now = utc_now()
         with self.connect() as db:
@@ -246,11 +270,11 @@ class AOIStore:
             values["throughput_per_hour"] = db.execute(
                 "SELECT COUNT(*) FROM inspections WHERE created_at >= ?", (cutoff,)).fetchone()[0]
             recent = [dict(row) for row in db.execute("""SELECT id,filename,algorithm_outcome,defect_type,
-                review_required,final_decision,evidence_json,created_at FROM inspections ORDER BY created_at DESC LIMIT 12""")]
+                review_required,final_decision,evidence_json,created_at FROM inspections ORDER BY created_at DESC""")]
             alarms = [dict(row) for row in db.execute("""SELECT i.id,i.filename,i.defect_type,i.final_decision,
                 i.evidence_json,d.actor,d.note,COALESCE(d.created_at,i.created_at) created_at FROM inspections i
                 LEFT JOIN decisions d ON d.inspection_id=i.id WHERE i.review_required=1
-                ORDER BY created_at DESC LIMIT 12""")]
+                ORDER BY created_at DESC""")]
             for row in [*recent, *alarms]:
                 evidence = json.loads(row.pop('evidence_json'))
                 row['simulated'] = bool(evidence.get('simulated'))

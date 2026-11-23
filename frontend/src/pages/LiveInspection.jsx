@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import PageHeader from "../components/PageHeader.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import { jsonBody, platformApi } from "../platformApi.js";
+import Pagination, { usePage } from "../components/Pagination.jsx";
 
 export default function LiveInspection({ user }) {
   const [line, setLine] = useState({ status: "stopped", processed: 0, passed: 0, alarms: 0, errors: 0 });
@@ -10,6 +11,8 @@ export default function LiveInspection({ user }) {
   const [interval, setIntervalValue] = useState(user.preferences.inspection_interval ?? 3), [error, setError] = useState("");
   const [deciding, setDeciding] = useState(null);
   const [golden, setGolden] = useState(null), [uploadingGolden, setUploadingGolden] = useState(false);
+  const [goldens, setGoldens] = useState([]);
+  const reviewsPage = usePage(reviews), historyPage = usePage(history);
   const [camera, setCamera] = useState(false), [startingCamera, setStartingCamera] = useState(false);
   const [cameraResult, setCameraResult] = useState(null);
   const video = useRef(null), stream = useRef(null), cameraGeneration = useRef(0);
@@ -19,8 +22,8 @@ export default function LiveInspection({ user }) {
   const alarmCount = useRef(0), alarmReady = useRef(false);
   const refresh = () => {
     const revision = goldenRevision.current;
-    return Promise.all([platformApi("/api/simulation"), platformApi("/api/reviews"), platformApi("/api/dashboard"), platformApi('/api/simulation/reference').catch(() => null)])
-      .then(([state, pending, dashboard, selectedGolden]) => { setLine(state); setReviews(pending.reviews); setHistory(dashboard.recent_inspections);
+    return Promise.all([platformApi("/api/simulation"), platformApi("/api/reviews"), platformApi("/api/dashboard"), platformApi('/api/simulation/reference').catch(() => null), platformApi('/api/golden-library').catch(() => ({references:[]}))])
+      .then(([state, pending, dashboard, selectedGolden, library]) => { setLine(state); setReviews(pending.reviews); setHistory(dashboard.recent_inspections); setGoldens(library.references);
         if (revision === goldenRevision.current && !goldenUploadPending.current) setGolden(selectedGolden);
       }).catch(error => setError(error.message));
   };
@@ -33,12 +36,24 @@ export default function LiveInspection({ user }) {
     setUploadingGolden(true); setError('');
     try {
       const body = new FormData(); body.append('image', file);
-      setGolden(await platformApi('/api/simulation/reference', {method:'POST', body}));
+      const selected = await platformApi('/api/simulation/reference', {method:'POST', body});
+      setGolden(selected);
+      const name = window.prompt('Name this golden PCB to save it in the library:', file.name.replace(/\.[^.]+$/, ''));
+      if (name?.trim()) {
+        try { await platformApi('/api/golden-library', jsonBody({reference_id:selected.reference_id,name:name.trim()})); }
+        catch (e) { setError(`Golden reference is active but was not saved to the library: ${e.message}`); }
+      }
+      await refresh();
     } catch(e) { setError(`Golden reference processing failed: ${e.message}`); }
     finally { goldenRevision.current += 1; goldenUploadPending.current = false; setUploadingGolden(false); }
   }
+  async function selectGolden(event) {
+    const id = event.target.value; if (!id) return;
+    try { setGolden(await platformApi(`/api/simulation/reference/${id}`, {method:'PUT'})); setError(''); }
+    catch (e) { setError(e.message); }
+  }
   useEffect(() => {
-    if (alarmReady.current && line.alarms > alarmCount.current && user.preferences.alarm_sound !== false) {
+    if (alarmReady.current && line.alarms > alarmCount.current && user.preferences.alarm_sound !== false && localStorage.getItem("aoi_alarm_sound") !== "false") {
       try { const audio = new AudioContext(); const oscillator = audio.createOscillator(); oscillator.frequency.value = 880; oscillator.connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + .18); } catch {}
     }
     alarmReady.current = true; alarmCount.current = line.alarms;
@@ -120,11 +135,12 @@ export default function LiveInspection({ user }) {
   return <section className="platform-page"><PageHeader title="Live inspection" description="Camera and image queues through the production inspection engine." live={camera || line.status === "running"} status={camera ? 'camera running' : line.status}/>
     {error && <div className="platform-alert">{error}</div>}
     <article className="platform-panel live-golden">
-      <div><h2>Golden reference</h2><p>{golden ? `${golden.reference.filename} · ${golden.components.length} detected components` : 'Upload a golden reference before starting inspection.'}</p>
-        <label className="import-button">{uploadingGolden ? 'Processing golden reference…' : 'Upload Golden Reference'}
+      <div><h2>Golden reference</h2><p>{golden ? `${golden.reference.filename} · ${golden.components.length} detected components` : 'Select or upload a golden reference before starting inspection.'}</p>
+        <label className="golden-select-label">Select saved golden PCB<select aria-label="Select golden PCB" value={golden?.reference_id || ""} onChange={selectGolden}><option value="">Choose a golden PCB</option>{goldens.map(item => <option key={item.reference_id} value={item.reference_id}>{item.name}</option>)}</select></label>
+        <label className="import-button">{uploadingGolden ? 'Processing golden reference…' : 'Add new golden PCB'}
           <input aria-label="Upload Golden Reference" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" onChange={uploadGolden} disabled={uploadingGolden}/>
         </label>
-        <p>Replacement applies to subsequent frames. Manual corrections remain available in Inspection Lab.</p>
+        <p>Selected board is used for camera and line inspections.</p>
       </div>
       {golden && <img src={golden.reference.image_url} alt="Active golden reference"/>}
     </article>
@@ -159,13 +175,13 @@ export default function LiveInspection({ user }) {
     </div>
     <section className="live-counters">{[["Processed",line.processed],["Passed",line.passed],["Alarms",line.alarms],["Errors",line.errors]].map(([label,value]) => <article key={label}><span>{label}</span><strong>{value}</strong></article>)}</section>
     <article className="platform-panel review-panel"><div className="panel-heading"><div><h2>Operator review queue</h2><p>Algorithm alarms require one auditable decision.</p></div><span>{reviews.length} pending</span></div>
-      {!reviews.length ? <EmptyState title="Review queue clear">New suspected defects appear while the line runs.</EmptyState> : <div className="review-grid">{reviews.map(item => <article key={item.id}>
+      {!reviews.length ? <EmptyState title="Review queue clear">New suspected defects appear while the line runs.</EmptyState> : <><div className="review-grid">{reviewsPage.rows.map(item => <article key={item.id}>
         <div><span className="status review">Review</span><small>{new Date(item.created_at).toLocaleTimeString()}</small></div><h3>{item.filename}</h3><p>{item.evidence.reason || item.evidence.board_compatibility?.message || "Component evidence needs operator review."}</p>
         {item.evidence.component_overlay_url && <img src={item.evidence.component_overlay_url} alt={`Defect overlay for ${item.filename}`}/>}<div className="control-row"><button className="danger" disabled={!!deciding} onClick={() => decide(item.id, "confirmed_reject")}>Confirm defect</button><button disabled={!!deciding} onClick={() => decide(item.id, "false_alarm")}>Dismiss alarm</button></div>
-      </article>)}</div>}
+      </article>)}</div><Pagination {...reviewsPage}/></>}
     </article>
     <article className="platform-panel history-panel"><div className="panel-heading"><div><h2>Recent inspection history</h2><p>Persisted algorithm results and final decisions.</p></div></div>
-      {!history.length ? <EmptyState title="No line history">Completed boards appear here.</EmptyState> : <div className="data-table"><table><thead><tr><th>Image</th><th>Algorithm</th><th>Decision</th><th>Time</th></tr></thead><tbody>{history.slice(0,8).map(item => <tr key={item.id}><td>{item.filename}</td><td><span className={`status ${item.algorithm_outcome}`}>{item.algorithm_outcome}</span></td><td>{item.final_decision || (item.review_required ? "Pending" : "Passed")}</td><td>{new Date(item.created_at).toLocaleTimeString()}</td></tr>)}</tbody></table></div>}
+      {!history.length ? <EmptyState title="No line history">Completed boards appear here.</EmptyState> : <><div className="data-table"><table><thead><tr><th>Image</th><th>Algorithm</th><th>Decision</th><th>Time</th></tr></thead><tbody>{historyPage.rows.map(item => <tr key={item.id}><td>{item.filename}</td><td><span className={`status ${item.algorithm_outcome}`}>{item.algorithm_outcome}</span></td><td>{item.final_decision || (item.review_required ? "Pending" : "Passed")}</td><td>{new Date(item.created_at).toLocaleTimeString()}</td></tr>)}</tbody></table></div><Pagination {...historyPage}/></>}
     </article>
   </section>;
 }

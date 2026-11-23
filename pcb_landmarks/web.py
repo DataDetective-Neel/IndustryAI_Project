@@ -86,6 +86,11 @@ class GoldenConfigRequest(BaseModel):
     sharpen: StrictBool = False
 
 
+class GoldenLibraryRequest(BaseModel):
+    reference_id: str = Field(min_length=32, max_length=32)
+    name: str = Field(min_length=1, max_length=100)
+
+
 class ComponentProposalRequest(BaseModel):
     board_polygon: list[list[float]] = Field(default_factory=list, max_length=12)
 
@@ -743,6 +748,44 @@ def create_app(storage=None):
         setup = json.loads((path/'reference.json').read_text())
         return dict(config, reference={**record, **setup})
 
+    def library_reference_view(config):
+        record, path = photo(config['reference_id'])
+        setup = json.loads((path/'reference.json').read_text())
+        return dict(config, reference={**record, **setup})
+
+    @app.get('/api/golden-library')
+    def list_golden_library(authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        return {'references': [library_reference_view(item) for item in store.golden_library()]}
+
+    @app.post('/api/golden-library')
+    def save_golden_library(request: GoldenLibraryRequest,
+                            authorization: str | None = Header(default=None)):
+        user = authorize(authorization, ROLES)
+        record, path = photo(request.reference_id)
+        reference_path = path/'reference.json'
+        if record['error'] or not reference_path.is_file():
+            raise HTTPException(422, 'Confirm the golden reference setup in Inspection Lab before saving it here')
+        try:
+            setup = json.loads(reference_path.read_text())
+            proposal = reference_component_detections(request.reference_id, json.dumps(setup.get('board_polygon', [])))
+            components = [dict(item, candidate_status='DETECTED') for item in proposal]
+            size = (record['width'], record['height'])
+            _validate_regions({'reference_wh_px': list(size), 'components': components}, size)
+        except (ValueError, OSError) as error:
+            raise HTTPException(422, f'Golden PCB configuration could not be validated: {error}') from error
+        store.save_library_golden(request.reference_id, request.name.strip(),
+                                  {'components':components,'mode':'automatic','sharpen':False}, user['username'])
+        return library_reference_view(next(item for item in store.golden_library()
+                                           if item['reference_id'] == request.reference_id))
+
+    @app.delete('/api/golden-library/{reference_id}')
+    def delete_golden_library(reference_id: str, authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        if not store.delete_library_golden(reference_id):
+            raise HTTPException(404, 'Golden PCB was not found in the library')
+        return {'deleted': True}
+
     @app.get('/api/simulation/reference')
     def simulation_reference(authorization: str | None = Header(default=None)):
         authorize(authorization, ROLES)
@@ -750,6 +793,20 @@ def create_app(storage=None):
         if not config:
             raise HTTPException(404, 'Upload a golden reference before starting live inspection')
         return live_reference_view(config)
+
+    @app.put('/api/simulation/reference/{reference_id}')
+    def select_simulation_reference(reference_id: str,
+                                    authorization: str | None = Header(default=None)):
+        nonlocal live_reference
+        authorize(authorization, ROLES)
+        config = next((item for item in store.golden_library()
+                       if item['reference_id'] == reference_id), None)
+        if not config:
+            raise HTTPException(404, 'Golden PCB was not found in the library')
+        selected = {key: config[key] for key in ('reference_id','components','mode','sharpen','updated_at')}
+        with live_reference_lock:
+            live_reference = selected
+        return live_reference_view(selected)
 
     @app.post('/api/simulation/reference')
     def upload_simulation_reference(image: UploadFile, authorization: str | None = Header(default=None)):
