@@ -1,4 +1,4 @@
-"""Conservative classical-CV component proposals for golden PCB annotation."""
+"""Pretrained component proposals and manual reference inventory imports."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -15,11 +15,6 @@ def _box_iou(a, b):
     if not intersection:
         return 0.0
     return intersection / ((a[2]-a[0])*(a[3]-a[1]) + (b[2]-b[0])*(b[3]-b[1]) - intersection)
-
-
-def _coverage(mask, box):
-    x1, y1, x2, y2 = box
-    return float((mask[y1:y2, x1:x2] > 0).mean())
 
 
 def import_component_map(mapping, image_size, reference_filename):

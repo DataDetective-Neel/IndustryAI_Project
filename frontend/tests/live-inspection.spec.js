@@ -44,7 +44,7 @@ test('imports multiple images and runs them through live inspection', async ({ p
   await expect(page.locator('.line-state')).toHaveText('paused');
   await page.getByRole('button', { name: 'Resume' }).click();
   await expect(page.locator('.line-state')).toHaveText('running');
-  await page.getByRole('button', { name: 'Stop' }).click();
+  await page.getByRole('button', { name: 'Stop', exact: true }).click();
   await expect(page.locator('.line-state')).toHaveText('stopped', { timeout: 120000 });
   await page.getByRole('button', { name: 'Start simulation' }).click();
   await expect(page.locator('.line-state')).toHaveText('completed', { timeout: 120000 });

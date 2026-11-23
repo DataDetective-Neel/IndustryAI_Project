@@ -1,4 +1,5 @@
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -8,6 +9,18 @@ from pcb_landmarks.data import read_image
 
 
 class ComponentDetectionTests(unittest.TestCase):
+    def test_api_automatic_inventory_does_not_substitute_a_sample_coordinate_map(self):
+        from fastapi.testclient import TestClient
+        from pcb_landmarks.web import create_app
+        with tempfile.TemporaryDirectory() as directory:
+            client = TestClient(create_app(Path(directory)))
+            uploaded = client.post('/api/photos', files={'image': ('ECCC5.jpg',
+                Path('PCB_Dataset_Pilot/images/val/ECCC5.jpg').read_bytes(), 'image/jpeg')}).json()
+            response = client.post(f"/api/photos/{uploaded['id']}/component-proposals")
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertTrue(all(p['proposal_evidence']['source'] == 'parsa_yolo26'
+                                for p in response.json()['components']))
+
     def test_real_golden_board_produces_bounded_unknown_candidates(self):
         image = read_image('PCB_Dataset_Pilot/images/val/ECCC5.jpg')
         result = propose_components(image)

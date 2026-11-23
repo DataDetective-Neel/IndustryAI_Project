@@ -20,7 +20,7 @@ test('golden proposals through live decisions update dashboard counts', async ({
 
   const golden = path.join(root, 'PCB_Dataset_Pilot/images/val/ECCC5.jpg');
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(golden);
-  await expect(page.locator('rect.region-box').first()).toBeVisible();
+  await expect(page.locator('rect.region-box').first()).toBeVisible({ timeout: 30000 });
   await page.getByRole('button', { name: 'Accept all proposals', exact: true }).click();
 
   const labels = (await fs.readFile(path.join(root, 'PCB_Dataset_Pilot/labels/val/ECCC5.txt'), 'utf8'))

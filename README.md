@@ -75,7 +75,8 @@ and annotation snapshots remain on disk. There is no automatic retention cleanup
 ## Reuse a confirmed reference automatically
 
 YOLO proposes the reference landmarks as usual. Correct or mark its four ordered
-points, review the separate cyan PCB outline, and click **Confirm reference setup**.
+points and click **Confirm reference setup**. Board geometry remains internal;
+the outer PCB boundary is not drawn over previews or exported findings.
 Inspection photos then use verified YOLO candidates or offline reference feature
 registration before requesting manual clicks. Projected landmarks are labeled;
 component boxes remain in original reference pixels. Replacing the reference
@@ -83,6 +84,43 @@ clears its setup and stale inspection points.
 
 See [reference registration and verification](docs/reference-registration.md) for
 workflow details, tested designs, rejection cases and remaining limitations.
+
+## Component model and live camera
+
+The production locator is ParsaVictor YOLO26 `any_best.pt`, using local 1024 px
+tiles, overlap, global NMS, and cached weights. Install the existing local weights:
+
+```powershell
+New-Item -ItemType Directory -Force 'A:\IndustryAI_Project\models' | Out-Null
+Copy-Item 'A:\parsa\pcb-component-detection-yolo26\weights\any_best.pt' 'A:\IndustryAI_Project\models\pcb-components-yolo26s.pt'
+Get-FileHash 'A:\IndustryAI_Project\models\pcb-components-yolo26s.pt' -Algorithm SHA256
+```
+
+Expected SHA256: `1065cdb4a32d65799b6308dc267ec9c66a1a0d261293738417bff316697725ec`.
+Alternatively set `PCB_COMPONENT_CHECKPOINT` to that local file. Weights stay out
+of Git. The locator's generic component class does not establish resistor,
+capacitor, or IC type. No unsupported type is inferred. Keep the existing custom
+landmark checkpoint at the path in `configs/landmarks.json`. Parsa attribution is
+in `pcb_landmarks/PARSA_LICENSE.txt`; dependency licenses still apply.
+
+In **Live Inspection**, upload a PNG/JPEG golden reference, then choose **Start
+camera** and grant local browser permission. Frames retain native video dimensions
+and pass through `/api/live/frame` into the normal inspection pipeline. Only one
+frame request runs at a time; the selected interval starts after processing ends.
+Stop the camera before starting an image queue. Replacing the reference clears
+camera findings; later frames use the new inventory. Saving manual corrections
+from Inspection Lab also updates the active live reference. Results and review
+decisions stay in the existing local store. Camera permission requires localhost
+or another browser secure context. Physical camera quality still needs validation.
+
+Inspection reports retain legacy UI status fields and add `decision` values
+`PRESENT`, `MISSING`, `SHIFTED`, `ROTATED`, and `NEEDS_REVIEW`. One-to-one assignment
+uses proximity, class, size, IoU, and local appearance. Shift tolerance is the
+maximum of 2.5 px, 5% of the smaller component dimension, and measured registration
+error; these configurable thresholds remain provisional. Rotation uses bounded
+image-template evidence, not axis-aligned box angles. Unmatched detection alone
+never establishes absence. See [stabilization results](docs/FINAL_STABILIZATION.md)
+for validation scope and remaining limitations.
 
 ## Reproducible synthetic demo without dataset or weights
 

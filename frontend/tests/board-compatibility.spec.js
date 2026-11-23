@@ -32,6 +32,7 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   files.push(path.join(output,'SIMULATED-processor-absence.png'),path.join(output,'blurred.png'));
   await page.getByLabel('Inspection photos',{exact:true}).setInputFiles(files);
   await expect(page.getByRole('button',{name:/Inspection 7 blurred.png/})).toBeVisible();
+  await page.getByRole('radio', {name:'Manual', exact:true}).check();
   for(let i=0;i<files.length;i++) {
     await page.getByRole('button',{name:new RegExp(`Inspection ${i+1} ${path.basename(files[i]).replaceAll('.','\\.')}`)}).click();
     await mark(i<5?sourceNames[i]:i===5?'ACCC5':'MBCC5');
@@ -48,8 +49,9 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   await expect(page.getByTestId('result-0').getByText(wrong.reason,{exact:true})).toBeVisible();
   await expect(page.getByTestId('result-0').getByText('Main processor',{exact:true})).toHaveCount(0);
   await page.getByTestId('result-0').getByText('Board compatibility evidence',{exact:true}).click();
-  await expect(page.getByTestId('result-0').locator('pre')).toContainText('micropcb_A');
-  await expect(page.getByTestId('result-0').locator('pre')).toContainText('micropcb_M');
+  const compatibility = page.getByTestId('result-0').locator('details').filter({has:page.getByText('Board compatibility evidence',{exact:true})}).locator('pre');
+  await expect(compatibility).toContainText('micropcb_A');
+  await expect(compatibility).toContainText('micropcb_M');
   for(const photo of batch.photos.slice(1,5)) {
     expect(photo.board_compatibility.status).toBe('SAME_DESIGN');
     expect(photo.components_evaluated).toBe(true);

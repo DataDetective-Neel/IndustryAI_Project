@@ -170,16 +170,18 @@ class WebTests(unittest.TestCase):
         self.assertEqual(response.status_code,422)
         self.assertIn('No confident components',response.json()['detail'])
 
-    def test_matching_reference_map_seeds_proposals_and_antigravity_import_is_validated(self):
+    def test_pretrained_proposals_and_explicit_reference_map_import_are_separate(self):
         source = Path('PCB_Dataset_Pilot/images/val/ECCC5.jpg')
         response = self.client.post('/api/photos', files={
             'image': (source.name, source.read_bytes(), 'image/jpeg')})
         uploaded = response.json()
         proposals = self.client.post(f"/api/photos/{uploaded['id']}/component-proposals").json()['components']
         expected = json.loads(Path('configs/components-ECCC5.json').read_text(encoding='utf-8'))['components']
-        from pcb_landmarks.component_detection import _box_iou
-        self.assertEqual(sum(max(_box_iou(item['bbox_xyxy_px'], proposal['bbox_xyxy_px'])
-                                 for proposal in proposals) >= .5 for item in expected), len(expected))
+        self.assertTrue(proposals)
+        self.assertTrue(all(p['proposal_evidence']['source'] == 'parsa_yolo26' for p in proposals))
+        sample = self.client.get(f"/api/photos/{uploaded['id']}/regions")
+        self.assertEqual(sample.status_code, 200, sample.text)
+        self.assertEqual(sample.json()['components'], expected)
 
         golden = self.upload(self.reference, 'golden_reference.png')
         mapping = {'metadata': {'reference_image_id': 'golden_reference.png',

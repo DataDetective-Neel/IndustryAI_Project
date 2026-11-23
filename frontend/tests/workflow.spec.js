@@ -25,7 +25,8 @@ test('accepts 15 inspections across uploads, rejects a 16th, and serves all over
   await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo', { exact: true }).setInputFiles(path.join(example, 'input/reference.png'));
   await expect(page.getByRole('button', { name: 'Add box', exact: true })).toBeEnabled();
-  await page.getByRole('button', { name: 'Clear all components', exact: true }).click();
+  const clear = page.getByRole('button', { name: 'Clear all components', exact: true });
+  if (await clear.isEnabled()) await clear.click();
   await mark(page, points);
   await region(page, { name: 'Retained chip', bbox_xyxy_px: [60, 45, 100, 85] });
   const files = Array.from({ length: 15 }, (_, i) => ({ name: `board-${i + 1}.png`, mimeType: 'image/png', buffer }));
@@ -98,6 +99,7 @@ async function pointsFromLabel(label, width, height) {
   ]);
 }
 async function mark(page, points) {
+  await page.getByRole('radio', {name:'Manual', exact:true}).check();
   for (let i = 0; i < 4; i++)
     for (const [axis, j] of [
       ["x", 0],
@@ -393,7 +395,8 @@ for (const [variant, url] of [
     await expect(
       page.getByRole("button", { name: "Add box", exact: true }),
     ).toBeEnabled();
-    await page.getByRole("button", { name: "Clear all components", exact: true }).click();
+    const clear = page.getByRole('button', { name: 'Clear all components', exact: true });
+    if (await clear.isEnabled()) await clear.click();
     await mark(
       page,
       await pointsFromLabel(

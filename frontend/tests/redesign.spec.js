@@ -46,7 +46,7 @@ test('comparison uses returned outcomes, aligned opacity and finding coordinates
   const result = page.getByTestId('result-0');
   await expect(result.getByRole('button', { name: 'Side by side' })).toHaveAttribute('aria-pressed', 'true');
   await result.getByRole('button', { name: 'Processor Missing' }).click();
-  await expect(result.locator('.finding-highlight.missing')).toHaveAttribute('x', '40');
+  await expect(result.locator('.finding-highlight.missing').first()).toHaveAttribute('x', '40');
   await result.getByRole('button', { name: 'Overlay', exact: true }).click();
   await result.getByRole('slider').fill('75');
   await expect(result.getByRole('img', { name: 'Aligned inspection', exact: true })).toHaveCSS('opacity', '0.75');
@@ -58,7 +58,7 @@ test('comparison uses returned outcomes, aligned opacity and finding coordinates
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(result.getByRole('slider')).toBeVisible();
-    await expect(result.locator('.finding-highlight')).toBeVisible();
+    await expect(result.locator('.finding-highlight').first()).toBeVisible();
   }
   await result.getByText('Measurement details').click();
   await expect(result.getByText('2, 3', { exact: true })).toBeVisible();
@@ -66,7 +66,7 @@ test('comparison uses returned outcomes, aligned opacity and finding coordinates
     outcome = value; aligned = false;
     await page.getByRole('button', { name: 'Run Inspection' }).click();
     await expect(result.locator('.result-heading .status')).toHaveText(value === 'review' ? 'Needs review' : value === 'DIFFERENT_BOARD' ? 'Different board' : value);
-    await expect(result.getByText('Mounting holes not verified')).toBeVisible();
+    await expect(result.getByText('Mounting holes not verified', {exact:true})).toBeVisible();
     await expect(result.getByRole('button', { name: 'Overlay', exact: true })).toBeDisabled();
     await expect(result.getByText('Different board', { exact: true })).toHaveCount(value === 'DIFFERENT_BOARD' ? 1 : 0);
   }

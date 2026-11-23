@@ -455,14 +455,9 @@ def create_app(storage=None):
         try:
             saved = (json.loads((path/'reference.json').read_text())
                      if (path/'reference.json').is_file() else None)
-            try:
-                reference_components = saved_regions(identifier)['components']
-            except HTTPException:
-                reference_components = None
             polygon = request.board_polygon if request and len(request.board_polygon) >= 3 else (saved.get('board_polygon') if saved else None)
             result = propose_components(read_image(path/'image.png'),
-                                        polygon,
-                                        reference_components=reference_components)
+                                        polygon)
             (path/'component-proposals.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
             return result
         except (ValueError, cv2.error) as error:

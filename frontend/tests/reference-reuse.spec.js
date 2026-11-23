@@ -56,7 +56,7 @@ test('mark reference once after YOLO failure, reuse across views, and reset on r
     expect(result.alignment.source).toBe('reference_registration');
     expect(result.alignment.landmark_kind).toBe('projected');
   }
-  await expect(page.getByText('Needs alignment review',{exact:true})).toHaveCount(2);
+  await expect(page.getByText('Registration: Needs review',{exact:true})).toHaveCount(2);
   const tiltedTab=page.getByRole('button').filter({has:page.locator('strong',{hasText:'tilted.png'})});
   await tiltedTab.click();
   await expect(page.locator('svg.photo-canvas text').filter({hasText:'projected'})).toHaveCount(4);
@@ -66,8 +66,10 @@ test('mark reference once after YOLO failure, reuse across views, and reset on r
   await expect(page.getByLabel('upper_left_mount x',{exact:true})).toBeEditable();
   await expect(page.getByRole('radio',{name:'Manual',exact:true})).toBeChecked();
   await page.getByRole('radio',{name:'Automatic',exact:true}).check();
+  const replacement=page.waitForResponse(r=>r.url().endsWith('/automatic') && r.request().method()==='POST');
   await page.getByLabel('Reference photo',{exact:true}).setInputFiles(path.join(output,'wrong.png'));
-  await expect(page.getByLabel('upper_left_mount x',{exact:true})).toHaveValue('');
+  expect((await replacement).ok()).toBeTruthy();
+  await expect(page.getByLabel('upper_left_mount x',{exact:true})).not.toHaveValue('');
   await expect(page.getByRole('button',{name:'Run Inspection',exact:true})).toBeDisabled();
-  await expect(page.locator('svg.photo-canvas circle')).toHaveCount(0);
+  await expect(page.locator('svg.photo-canvas circle')).toHaveCount(4);
 });

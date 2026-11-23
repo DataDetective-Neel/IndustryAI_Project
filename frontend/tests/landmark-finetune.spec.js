@@ -18,7 +18,7 @@ test('automatic landmarks sit on the Raspberry Pi mounting holes in the producti
     const point = result.landmarks[i];
     expect(Math.hypot(point.x-labels[5+i*3]*1536, point.y-labels[6+i*3]*1533)).toBeLessThan(4);
   }
-  await expect(page.getByText('Landmarks accepted', { exact: true })).toBeVisible();
+  await expect(page.getByText('Reference confirmed', { exact: true })).toBeVisible();
   await expect(page.locator('svg.photo-canvas circle')).toHaveCount(4);
   await page.screenshot({path:path.join(root,'runs/landmarks/holes_finetune_20261121/browser-accepted.png'),fullPage:true});
 });

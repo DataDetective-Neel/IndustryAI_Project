@@ -14,6 +14,7 @@ def main():
     parser.add_argument('--config', required=True)
     parser.add_argument('--sources', nargs='+', required=True)
     parser.add_argument('--generic-checkpoint')
+    parser.add_argument('--components', action='store_true', help='Also verify local ParsaVictor component inference')
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
     config = json.loads(Path(args.config).read_text(encoding='utf-8'))
@@ -36,6 +37,12 @@ def main():
             assert result['status'] in ['ok', 'failure']
             assert len(result['landmarks']) == (4 if result['status'] == 'ok' else 0)
             results.append(dict(image=Path(source).name, **result))
+            if args.components:
+                from .component_detection import propose_components
+                from .data import read_image
+                proposals = propose_components(read_image(source))
+                results[-1]['component_count'] = len(proposals['components'])
+                results[-1]['component_method'] = proposals['method']
         generic_rejected = None
         if args.generic_checkpoint:
             try:

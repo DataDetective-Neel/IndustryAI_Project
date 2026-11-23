@@ -7,6 +7,7 @@ const root = path.resolve('..');
 const evidenceDir = path.join(root, 'runs/demo-evidence');
 const names = ['upper_left_mount','upper_right_mount','lower_right_mount','lower_left_mount'];
 async function mark(page, points) {
+  await page.getByRole('radio', {name:'Manual', exact:true}).check();
   for (let i=0;i<4;i++) for (const [j,axis] of ['x','y'].entries())
     await page.getByLabel(`${names[i]} ${axis}`,{exact:true}).fill(String(points[i][j]));
 }
