@@ -173,15 +173,24 @@ def register_inspection(reference, inspection, points, features, detection):
     matches = match_surfaces(features, inspection)
     attempts = []
     if detection['status'] == 'ok':
-        ip = [[p['x'], p['y']] for p in detection['landmarks']]
+        ip = np.float64([[p['x'], p['y']] for p in detection['landmarks']])
         try:
-            candidate = cv2.getPerspectiveTransform(np.float32(ip), np.float32(rp))
-            errors = np.linalg.norm(cv2.perspectiveTransform(matches[1][None], candidate)[0]-matches[0], axis=1)
-            if np.median(errors) > max(3., .003*np.hypot(*np.asarray(reference).shape[:2])):
+            _points(ip, np.asarray(inspection), 'inspection YOLO landmarks')
+            candidates = []
+            # A rotated image can cyclically shift pose identities. Select the
+            # same physical correspondence using independent on-board matches.
+            for shift in range(4):
+                ordered = np.roll(ip, -shift, axis=0)
+                candidate = cv2.getPerspectiveTransform(np.float32(ordered), np.float32(rp))
+                errors = np.linalg.norm(cv2.perspectiveTransform(matches[1][None], candidate)[0]-matches[0], axis=1)
+                candidates.append((float(np.median(errors)), shift, ordered))
+            error, shift, ip = min(candidates, key=lambda row: row[0])
+            if error > max(3., .003*np.hypot(*np.asarray(reference).shape[:2])):
                 raise ValueError('YOLO landmark transform disagrees with on-board matches.')
             aligned, matrix, valid = align_images(reference, inspection, rp, ip)
             evidence = verify_alignment(reference, inspection, features, matches, matrix, aligned, valid)
-            return aligned, matrix, valid, dict(source='yolo_landmarks', inspection_points=ip,
+            return aligned, matrix, valid, dict(source='yolo_landmarks', inspection_points=ip.tolist(),
+                                                inspection_landmark_order=[(i+shift) % 4 for i in range(4)],
                                                 verification=evidence, attempts=attempts)
         except (ValueError, cv2.error, np.linalg.LinAlgError) as error:
             attempts.append(dict(source='yolo_landmarks', status='failure', reason=str(error)))
