@@ -64,9 +64,9 @@ Maximum Euclidean error against the existing labeled centers, in original pixels
 | HBCC5, rotated Pi | 102.06 px | 1.00 px |
 | BCCC5, black Mega | 295.85 px | 0.58 px |
 
-![Green accepted points, blue labeled centers, red raw proposals](results/mount-calibration-overlay.jpg)
+![Green accepted points, blue labeled centers, red raw proposals](../results/mount-calibration-overlay.jpg)
 
-The [machine-readable evidence](results/mount-calibration.json) records every raw
+The [machine-readable evidence](../results/mount-calibration.json) records every raw
 landmark ID, confidence and coordinate, final points, errors, local verification,
 model rejection reason, checkpoint hash, and inspection outcomes.
 

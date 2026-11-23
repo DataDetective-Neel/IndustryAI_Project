@@ -16,7 +16,7 @@ OpenCV is already installed; no model, dependency, label or threshold changes.
 - [x] Run a reviewed validation-layout pair through the CLI; inspect independent
   connector/chip features and record limitations separately from synthetic proof.
 - [x] Run the complete unittest suite, document exact Windows reproduction and
-  outputs in `docs/STEP4.md`, and link implemented status from SRS/SDD/DFD.
+  outputs in `docs/steps/STEP4.md`, and link implemented status from SRS/SDD/DFD.
 - [x] Review the alignment source/test diff and publication scope.
 
 Checkpoint procedure: explicitly stage source/tests/docs only, commit and
