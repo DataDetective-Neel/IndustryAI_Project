@@ -1,6 +1,6 @@
 # Documentation index
 
-Specifications, per-step implementation records and verification evidence for the
+Specifications, per-step implementation records, subsystem write-ups and audit evidence for the
 offline PCB inspection demo. Start with the [project README](../README.md) for
 setup and launch; the documents below cover requirements, design and measured results.
 
@@ -29,6 +29,18 @@ Each step carries an implementation document plus, where applicable, its plan an
 - [DEMO_RELIABILITY.md](guides/DEMO_RELIABILITY.md) — one-board inspection evidence, 21 November 2026.
 - [FRONTEND_REDESIGN.md](guides/FRONTEND_REDESIGN.md) — frontend verification notes.
 - [DATASET_EXPANSION.md](guides/DATASET_EXPANSION.md) — landmark collection and split plan; row format in [expanded_manifest.template.csv](expanded_manifest.template.csv).
+
+## `audits/` — repair, recovery and acceptance records
+
+Dated records from the AOI recovery and repair work, newest last.
+
+- [RECOVERY_AUDIT.md](audits/RECOVERY_AUDIT.md) — AOI functional recovery audit.
+- [ACCEPTANCE_RESULTS.md](audits/ACCEPTANCE_RESULTS.md) — functional recovery acceptance results.
+- [PCB_REPAIR_AUDIT.md](audits/PCB_REPAIR_AUDIT.md) — PCB repair audit, 23 November 2026.
+- [PCB_REPAIR_RESULTS.md](audits/PCB_REPAIR_RESULTS.md) — PCB repair results, 23 November 2026.
+- [TARGETED_REPAIR_RESULTS.md](audits/TARGETED_REPAIR_RESULTS.md) — targeted AOI changes, 23 November 2026.
+- [OPERATOR_FEEDBACK_FIXES.md](audits/OPERATOR_FEEDBACK_FIXES.md) — operator feedback fixes, 23 November 2026.
+- [FINAL_STABILIZATION.md](audits/FINAL_STABILIZATION.md) — backend stabilization, 23 November 2026.
 
 ## Evidence and fixtures
 

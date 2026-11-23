@@ -119,10 +119,10 @@ uses proximity, class, size, IoU, and local appearance. Shift tolerance is the
 maximum of 2.5 px, 5% of the smaller component dimension, and twice measured p90
 registration error plus one pixel; these thresholds remain provisional. Rotation uses bounded
 image-template evidence, not axis-aligned box angles. Unmatched detection alone
-never establishes absence. See [stabilization results](docs/FINAL_STABILIZATION.md)
+never establishes absence. See [stabilization results](docs/audits/FINAL_STABILIZATION.md)
 for validation scope and remaining limitations.
 
-The [operator feedback fixes](docs/OPERATOR_FEEDBACK_FIXES.md) cover corrected
+The [operator feedback fixes](docs/audits/OPERATOR_FEEDBACK_FIXES.md) cover corrected
 mounting-hole selection, registration-derived landmarks on inspection upload,
 small manual-click refinement, larger live views, and exposed-pad verification.
 
