@@ -9,10 +9,21 @@ export default function LiveInspection({ user }) {
   const [history, setHistory] = useState([]), [imported, setImported] = useState(null);
   const [interval, setIntervalValue] = useState(user.preferences.inspection_interval ?? 3), [error, setError] = useState("");
   const [deciding, setDeciding] = useState(null);
+  const [golden, setGolden] = useState(null), [uploadingGolden, setUploadingGolden] = useState(false);
   const alarmCount = useRef(0), alarmReady = useRef(false);
-  const refresh = () => Promise.all([platformApi("/api/simulation"), platformApi("/api/reviews"), platformApi("/api/dashboard")])
-    .then(([state, pending, dashboard]) => { setLine(state); setReviews(pending.reviews); setHistory(dashboard.recent_inspections); }).catch(error => setError(error.message));
+  const refresh = () => Promise.all([platformApi("/api/simulation"), platformApi("/api/reviews"), platformApi("/api/dashboard"), platformApi('/api/simulation/reference').catch(() => null)])
+    .then(([state, pending, dashboard, selectedGolden]) => { setLine(state); setReviews(pending.reviews); setHistory(dashboard.recent_inspections); setGolden(selectedGolden); }).catch(error => setError(error.message));
   useEffect(() => { refresh(); const timer = setInterval(refresh, 1200); return () => clearInterval(timer); }, []);
+  async function uploadGolden(event) {
+    const file = event.target.files?.[0]; event.target.value = '';
+    if (!file) return;
+    setUploadingGolden(true); setError('');
+    try {
+      const body = new FormData(); body.append('image', file);
+      setGolden(await platformApi('/api/simulation/reference', {method:'POST', body}));
+    } catch(e) { setError(`Golden reference processing failed: ${e.message}`); }
+    finally { setUploadingGolden(false); }
+  }
   useEffect(() => {
     if (alarmReady.current && line.alarms > alarmCount.current && user.preferences.alarm_sound !== false) {
       try { const audio = new AudioContext(); const oscillator = audio.createOscillator(); oscillator.frequency.value = 880; oscillator.connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + .18); } catch {}
@@ -40,6 +51,15 @@ export default function LiveInspection({ user }) {
   const active = ["running", "paused", "stopping"].includes(line.status);
   return <section className="platform-page"><PageHeader title="Live inspection" description="Simulated line input through the production inspection engine." live={line.status === "running"} status={line.status}/>
     {error && <div className="platform-alert">{error}</div>}
+    <article className="platform-panel live-golden">
+      <div><h2>Golden reference</h2><p>{golden ? `${golden.reference.filename} · ${golden.components.length} detected components` : 'Upload a golden reference before starting inspection.'}</p>
+        <label className="import-button">{uploadingGolden ? 'Processing golden reference…' : 'Upload Golden Reference'}
+          <input aria-label="Upload Golden Reference" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" onChange={uploadGolden} disabled={uploadingGolden}/>
+        </label>
+        <p>Replacement applies to subsequent frames. Manual corrections remain available in Inspection Lab.</p>
+      </div>
+      {golden && <img src={golden.reference.image_url} alt="Active golden reference"/>}
+    </article>
     <div className="line-console">
       <article className="platform-panel line-controls"><div className="panel-heading"><div><h2>Line control</h2><p>Images load sequentially from a configurable folder.</p></div><span className={`line-state ${line.status}`}>{line.status}</span></div>
         <div className="import-row"><label className="import-button">Import images<input aria-label="Import inspection images" type="file" accept="image/jpeg,image/png" multiple onChange={importFiles} disabled={active}/></label>
@@ -48,7 +68,7 @@ export default function LiveInspection({ user }) {
           {!!imported.skipped.length && <details><summary>Skipped files and reasons</summary><ul>{imported.skipped.map((item, index) => <li key={`${item.filename}-${index}`}>{item.filename}: {item.reason}</li>)}</ul></details>}</div>}
         <label>Dataset directory<input value={directory} onChange={e => setDirectory(e.target.value)} disabled={active}/></label>
         <label>Inspection interval <span>{interval}s</span><input type="range" min="0.5" max="15" step="0.5" value={interval} onChange={e => setIntervalValue(e.target.value)} disabled={active}/></label>
-        <div className="control-row"><button className="primary" onClick={start} disabled={active}>Start simulation</button>
+        <div className="control-row"><button className="primary" onClick={start} disabled={active || uploadingGolden || !golden}>Start simulation</button>
           <button onClick={() => control(line.status === "paused" ? "resume" : "pause")} disabled={!active || line.status === "stopping"}>{line.status === "paused" ? "Resume" : "Pause"}</button>
           <button onClick={() => control("stop")} disabled={!active || line.status === "stopping"}>Stop</button></div>
       </article>

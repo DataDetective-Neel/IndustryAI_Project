@@ -505,11 +505,6 @@ def create_app(storage=None):
         saved_reference = (json.loads((reference_path/'reference.json').read_text())
                            if (reference_path/'reference.json').is_file() else None)
         automatic_setup_error = None
-        if request.mode == 'automatic' and not saved_reference and ref_image is not None:
-            try:
-                saved_reference = automatic_reference_setup(request.reference_id)
-            except HTTPException as error:
-                automatic_setup_error = error.detail
         reference_layout = identify_board(ref_image) if ref_image is not None else None
         results = []
         for index, item in enumerate(request.inspections):
@@ -537,6 +532,11 @@ def create_app(storage=None):
                                                  reason='Board compatibility must pass before component scoring.'))
                     results.append(result)
                     continue
+                if request.mode == 'automatic' and not saved_reference and ref_image is not None:
+                    try:
+                        saved_reference = automatic_reference_setup(request.reference_id)
+                    except HTTPException as error:
+                        automatic_setup_error = error.detail
                 rp, ip = request.reference_points, item.points
                 registration = None
                 if request.mode == 'automatic' and saved_reference:
@@ -630,9 +630,46 @@ def create_app(storage=None):
                                           sharpen=golden.get('sharpen', False), synthetic=False, simulated=True))
         result = batch['photos'][0]
         result['current_image_url'] = uploaded['image_url']
+        result['golden_reference_id'] = golden['reference_id']
         return result
 
     simulator = LineSimulator(simulate_image)
+    live_reference = None
+    live_reference_lock = threading.Lock()
+
+    def selected_live_reference():
+        with live_reference_lock:
+            return live_reference or store.golden()
+
+    def live_reference_view(config):
+        record, path = photo(config['reference_id'])
+        setup = json.loads((path/'reference.json').read_text())
+        return dict(config, reference={**record, **setup})
+
+    @app.get('/api/simulation/reference')
+    def simulation_reference(authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        config = selected_live_reference()
+        if not config:
+            raise HTTPException(404, 'Upload a golden reference before starting live inspection')
+        return live_reference_view(config)
+
+    @app.post('/api/simulation/reference')
+    def upload_simulation_reference(image: UploadFile, authorization: str | None = Header(default=None)):
+        nonlocal live_reference
+        authorize(authorization, ROLES)
+        record = upload(image)
+        if record['error']:
+            raise HTTPException(422, record['error'])
+        automatic_reference_setup(record['id'])
+        proposal = component_proposals(record['id'])
+        # Publish only complete references; an in-flight frame retains its snapshot.
+        config = dict(reference_id=record['id'], components=[dict(p, candidate_status='DETECTED')
+                      for p in proposal['components']], mode='automatic', sharpen=False,
+                      updated_at=record.get('created_at'), source='live_upload')
+        with live_reference_lock:
+            live_reference = config
+        return live_reference_view(config)
 
     @app.get('/api/simulation')
     def simulation_status(authorization: str | None = Header(default=None)):
@@ -691,13 +728,13 @@ def create_app(storage=None):
     @app.post('/api/simulation/start')
     def simulation_start(request: SimulationStart, authorization: str | None = Header(default=None)):
         authorize(authorization, {'administrator', 'supervisor', 'operator'})
-        golden = store.golden()
+        golden = selected_live_reference()
         if not golden:
-            raise HTTPException(422, 'Save a golden configuration before starting simulation')
+            raise HTTPException(422, 'Upload a golden reference or save a golden configuration before starting simulation')
         try:
             return simulator.start(
                 request.dataset_directory, request.interval,
-                process_image=lambda path, pinned=golden: simulate_image(path, pinned),
+                process_image=lambda path: simulate_image(path, selected_live_reference()),
                 metadata={'golden_reference_id': golden['reference_id'],
                           'golden_updated_at': golden['updated_at'], 'simulated': True},
             )

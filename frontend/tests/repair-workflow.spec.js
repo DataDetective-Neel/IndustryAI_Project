@@ -13,6 +13,7 @@ test('automatic ELEGOO setup, imported map, registered defect and persisted resu
   const setupResponse = page.waitForResponse(r => r.url().endsWith('/automatic') && r.request().method() === 'POST');
   await page.getByLabel('Reference photo', {exact:true}).setInputFiles(path.join(dataset,'golden/golden_reference.png'));
   expect((await setupResponse).ok()).toBeTruthy();
+  await expect(page.locator('svg.photo-canvas polygon')).toHaveCount(0);
   await expect(page.getByRole('button', {name:'Detect components',exact:true})).toBeEnabled();
   const imported = page.waitForResponse(r => r.url().endsWith('/component-map'));
   await page.getByLabel('Import Antigravity component map').setInputFiles(path.join(dataset,'golden/golden_components.json'));
@@ -57,4 +58,35 @@ test('automatic ELEGOO setup, imported map, registered defect and persisted resu
   await page.reload();
   await expect(page.getByText('Saved golden configuration restored.')).toBeVisible();
   await expect(page.locator('.part-list button')).toHaveCount(34);
+});
+
+test('Live Inspection uploads, previews, replaces and uses a golden reference', async ({page}) => {
+  const dataset = process.env.PCB_REPAIR_DATASET || 'A:/IndustryAI_Dataset_Worktree/dataset_generation';
+  await page.goto('/#live');
+  await page.getByLabel('Password', {exact:true}).fill('repair-browser-test-password');
+  await page.getByLabel('Username', {exact:true}).fill('repair');
+  await page.getByRole('button', {name:'Open AOI console'}).click();
+  const pending=page.waitForResponse(r=>r.url().endsWith('/api/simulation/reference') && r.request().method()==='POST');
+  await page.getByLabel('Upload Golden Reference', {exact:true}).setInputFiles(path.join(dataset,'golden/golden_reference.png'));
+  const first=await (await pending).json();
+  expect(first.components.length).toBeGreaterThan(20);
+  expect(first.reference.points).toHaveLength(4);
+  await expect(page.getByAltText('Active golden reference')).toBeVisible();
+  await expect(page.getByAltText('Active golden reference')).toHaveAttribute('src',first.reference.image_url);
+  const imported=page.waitForResponse(r=>r.url().endsWith('/api/simulation/import'));
+  await page.getByLabel('Import inspection images', {exact:true}).setInputFiles(path.join(dataset,'golden/golden_reference.png'));
+  expect((await imported).ok()).toBeTruthy();
+  await page.getByRole('button',{name:'Start simulation',exact:true}).click();
+  await expect.poll(async()=>{
+    const token=await page.evaluate(()=>localStorage.getItem('aoi_token'));
+    const response=await page.request.get('/api/simulation',{headers:{Authorization:`Bearer ${token}`}});
+    return (await response.json()).last_result;
+  },{timeout:45000}).toMatchObject({golden_reference_id:first.reference_id,alignment:{status:'ok'}});
+  await expect(page.getByRole('button',{name:'Start simulation',exact:true})).toBeEnabled({timeout:15000});
+  const replaced=page.waitForResponse(r=>r.url().endsWith('/api/simulation/reference') && r.request().method()==='POST');
+  await page.getByLabel('Upload Golden Reference', {exact:true}).setInputFiles(path.join(dataset,'golden/golden_reference.png'));
+  const second=await (await replaced).json();
+  expect(second.reference_id).not.toBe(first.reference_id);
+  await expect(page.getByAltText('Active golden reference')).toHaveAttribute('src',second.reference.image_url);
+  await page.screenshot({path:'../runs/repair-browser/live-golden.png',fullPage:true});
 });

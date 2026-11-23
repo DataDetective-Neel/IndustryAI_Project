@@ -143,8 +143,12 @@ class WebTests(unittest.TestCase):
         self.assertEqual(len(response.json()['landmark_names']), 4)
 
     def test_component_proposals_are_generated_for_uploaded_reference(self):
-        uploaded = self.upload(self.reference)
-        outline = [[0, 0], [319, 0], [319, 239], [0, 239]]
+        # A pretrained component locator must be exercised with actual parts,
+        # not the random rectangles used by comparison-only fixtures.
+        real = np.asarray(Image.open('PCB_Dataset_Pilot/images/val/ECCC5.jpg').convert('RGB'))[5:-5,5:-5]
+        uploaded = self.upload(real)
+        height, width = real.shape[:2]
+        outline = [[0, 0], [width-1, 0], [width-1, height-1], [0, height-1]]
         response = self.client.post(f"/api/photos/{uploaded['id']}/component-proposals",
                                     json={'board_polygon': outline})
         self.assertEqual(response.status_code, 200, response.text)
@@ -153,6 +157,13 @@ class WebTests(unittest.TestCase):
         self.assertFalse(result['verified'])
         self.assertEqual(result['board_polygon'], [[float(x), float(y)] for x, y in outline])
         self.assertTrue(all(part['candidate_status'] == 'UNKNOWN' for part in result['components']))
+
+    def test_empty_component_detections_require_review_instead_of_fake_boxes(self):
+        uploaded = self.upload(np.full_like(self.reference, 120))
+        response = self.client.post(f"/api/photos/{uploaded['id']}/component-proposals",
+                                    json={'board_polygon': [[0,0],[319,0],[319,239],[0,239]]})
+        self.assertEqual(response.status_code,422)
+        self.assertIn('No confident components',response.json()['detail'])
 
     def test_matching_reference_map_seeds_proposals_and_antigravity_import_is_validated(self):
         source = Path('PCB_Dataset_Pilot/images/val/ECCC5.jpg')
