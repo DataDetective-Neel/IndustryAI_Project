@@ -28,6 +28,15 @@ export default function Comparison({ result, reference, inspection, index, mode,
       <h3>{result.filename}</h3>
       <strong className={`status ${outcome}`}>{alignmentReview ? 'Needs alignment review' : outcomes[outcome] || outcome || 'Outcome unavailable'}</strong>
     </div>
+    <div className="registration-status" role="status">
+      <strong>Registration: {failed ? 'Needs review' : 'Verified'}</strong>
+      {result.alignment?.verification && <span>
+        {result.alignment.verification.inliers} inliers · median error {result.alignment.verification.median_error_px.toFixed(3)} px · board overlap {(100 * result.alignment.verification.board_overlap).toFixed(1)}%
+      </span>}
+    </div>
+    <details className="registration-diagnostics"><summary>Registration diagnostics</summary>
+      <pre>{JSON.stringify({ alignment: result.alignment, landmarks: result.landmark_diagnostics }, null, 2)}</pre>
+    </details>
     {result.alignment?.source && <p className="alignment-summary">Alignment: {result.alignment.source === 'reference_registration' ? 'Reference registration · landmarks projected from confirmed reference' : 'YOLO landmarks verified against reference'}</p>}
     {result.reason && <p className="result-reason">{result.reason}</p>}
     {result.board_compatibility && <details>

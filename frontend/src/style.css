@@ -1,20 +1,20 @@
 :root {
-  color-scheme: dark;
-  --canvas: #010102;
-  --surface: #0f1011;
-  --raised: #18191a;
-  --ink: #f7f8f8;
-  --muted: #a4a9b3;
-  --border: #23252a;
-  --border-strong: #3e3e44;
-  --accent: #5e6ad2;
-  --accent-hover: #a5afff;
-  --red: #ff929b;
-  --red-bg: #30191e;
-  --amber: #e8be6b;
-  --amber-bg: #292316;
-  --green: #8bcca1;
-  --green-bg: #18271e;
+  color-scheme: light;
+  --canvas: #f5f8f8;
+  --surface: #ffffff;
+  --raised: #edf3f2;
+  --ink: #172426;
+  --muted: #526467;
+  --border: #dce5e4;
+  --border-strong: #9eb3b1;
+  --accent: #087e78;
+  --accent-hover: #05635f;
+  --red: #a92d39;
+  --red-bg: #fff0f2;
+  --amber: #87500b;
+  --amber-bg: #fff3df;
+  --green: #176443;
+  --green-bg: #e6f5ed;
   --space: 8px;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--ink);
@@ -791,6 +791,18 @@ input[type="file"]::file-selector-button { background: var(--raised); color: var
 @media (pointer: coarse) { button, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), .replace-photo { min-height: 44px; } }
 
 .comparison-canvas, .inspection-original { height: clamp(280px, 65vh, 760px); object-fit: contain; }
+.registration-status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; color: var(--ink); background: var(--raised); border-bottom: 1px solid var(--border); }
+.registration-status span { font-size: 14px; }
+.registration-diagnostics { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.registration-diagnostics summary { cursor: pointer; font-weight: 600; }
+.registration-diagnostics pre { max-height: 360px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
+.app-shell { --muted: #526467; --amber: #87500b; color-scheme: light; color: var(--ink); }
+.app-shell .status { font-size: 12px; }
+.workspace-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; border-bottom: 1px solid var(--border); background: var(--canvas); }
+.workspace-preview figure { min-width: 0; margin: 0; }
+.workspace-preview figcaption { font-weight: 600; padding-bottom: 12px; }
+.workspace-preview svg, .workspace-preview img { display: block; width: 100%; height: 420px; object-fit: contain; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+@media (max-width: 700px) { .workspace-preview { grid-template-columns: 1fr; } }
 .findings-panel { max-height: calc(65vh + 60px); overflow-y: auto; }
 @media (max-width: 1050px) { .findings-panel { max-height: none; overflow: visible; } }
 @media (max-width: 600px) { .comparison-canvas, .inspection-original { height: auto; } }

@@ -491,13 +491,13 @@ function App() {
                 Golden configuration and inspection workspace
               </h2>
               <p>
-                Confirm four stable reference points once. The PCB outline is separate from these landmarks.
+                Automatic board references and component regions. Correct the golden configuration here; reuse it for every inspection.
               </p>
             </div>
             <div className="mode-row">
               <fieldset className="mode-switch">
                 <legend>Landmark mode</legend>
-                {["manual", "automatic"].map((value) => (
+                {["automatic", "manual"].map((value) => (
                   <label key={value}>
                     <input
                       type="radio"
@@ -513,7 +513,7 @@ function App() {
               <p>
                 {mode === "manual"
                   ? "Mark points manually, or confirm the reference setup to align inspection photos automatically."
-                  : "Confirm the reference once. Inspection photos use verified YOLO landmarks or reference registration before manual review."}
+                  : "Board references are saved automatically. Inspection uses verified landmarks or independent on-board registration."}
               </p>
             </div>
             {mode === "automatic" && (
@@ -583,6 +583,18 @@ function App() {
                 </div>
               ))}
             </div>
+            {reference && inspections.length > 0 && <div className="workspace-preview" aria-label="Inspection workspace overview">
+              <figure><figcaption>Golden PCB · reference points and component regions</figcaption>
+                <svg viewBox={`0 0 ${reference.width} ${reference.height}`} role="img" aria-label="Golden board configuration">
+                  <image href={reference.image_url} width={reference.width} height={reference.height} />
+                  {components.map((part) => { const [x1,y1,x2,y2] = part.bbox_xyxy_px; return <rect key={part.id} x={x1} y={y1} width={x2-x1} height={y2-y1} fill="none" stroke="#ffbf00" strokeWidth="2" />; })}
+                  {(reference.points || []).map(([x,y],i) => <g key={i}><circle cx={x} cy={y} r={Math.max(reference.width,reference.height)/70} fill="#087e78" stroke="white" strokeWidth="3" /><text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill="white" fontSize={Math.max(reference.width,reference.height)/50}>{i+1}</text></g>)}
+                </svg>
+              </figure>
+              <figure><figcaption>Inspection PCB · {inspections.find((p) => p.id === selected)?.filename || inspections[0].filename}</figcaption>
+                <img src={(inspections.find((p) => p.id === selected) || inspections[0]).image_url} alt="Inspection workspace input" />
+              </figure>
+            </div>}
             {!photo && (
               <div className="empty-editor">
                 <div aria-hidden="true">▦</div>
