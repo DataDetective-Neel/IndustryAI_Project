@@ -1,6 +1,7 @@
 """Offline registration against a user-confirmed reference, without a board catalog."""
 import cv2
 import numpy as np
+from itertools import combinations
 
 from .align import _points, align_images
 
@@ -41,6 +42,115 @@ def surface_mask(image, polygon):
     return cv2.erode(mask, np.ones((2*radius+1, 2*radius+1), np.uint8))
 
 
+def mounting_centers(image, polygon):
+    """Conservative circular bare-hole proposals, independent of pose predictions."""
+    rgb = np.asarray(image)
+    scale = min(1., 1000/max(rgb.shape[:2]))
+    small = cv2.resize(rgb, None, fx=scale, fy=scale)
+    hsv = cv2.cvtColor(small, cv2.COLOR_RGB2HSV)
+    neutral = cv2.inRange(hsv, (0, 0, 25), (179, 80, 255))
+    neutral = cv2.morphologyEx(neutral, cv2.MORPH_OPEN, np.ones((5,5), np.uint8))
+    neutral = cv2.morphologyEx(neutral, cv2.MORPH_CLOSE, np.ones((3,3), np.uint8))
+    board = np.zeros(neutral.shape, np.uint8)
+    cv2.fillConvexPoly(board, np.int32(np.asarray(polygon)*scale), 255)
+    contours, _ = cv2.findContours(neutral & board, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    holes = []
+    side = min(neutral.shape)
+    angles = np.linspace(0, 2*np.pi, 64, endpoint=False)
+    for contour in contours:
+        area, perimeter = cv2.contourArea(contour), cv2.arcLength(contour, True)
+        if len(contour) < 5 or perimeter == 0 or 4*np.pi*area/perimeter**2 < .7:
+            continue
+        (x,y),(w,h),_ = cv2.fitEllipse(contour)
+        if not (.025*side < min(w,h) <= max(w,h) < .06*side) or min(w,h)/max(w,h) < .8:
+            continue
+        xs = np.clip((x+.8*max(w,h)*np.cos(angles)).astype(int), 0, small.shape[1]-1)
+        ys = np.clip((y+.8*max(w,h)*np.sin(angles)).astype(int), 0, small.shape[0]-1)
+        if (hsv[ys,xs,1] > 80).mean() < .6:
+            continue  # Neutral components/buttons lack a surrounding solder-mask ring.
+        point = np.array([x,y])/scale
+        if all(np.linalg.norm(point-other) > .4*max(w,h)/scale for other in holes):
+            holes.append(point)
+    # Threshold blobs can join a hole to adjacent connector/silkscreen pixels.
+    # Closed circular edges recover that geometry without using component boxes.
+    gray = cv2.cvtColor(small, cv2.COLOR_RGB2GRAY)
+    circles = cv2.HoughCircles(cv2.GaussianBlur(gray, (5,5), 1), cv2.HOUGH_GRADIENT_ALT,
+        1., max(10, .025*side), param1=200, param2=.9,
+        minRadius=max(5, round(.012*side)), maxRadius=max(6, round(.03*side)))
+    for x, y, radius in ([] if circles is None else circles[0]):
+        if cv2.pointPolygonTest(np.float32(polygon)*scale, (float(x), float(y)), False) < 0:
+            continue
+        def sample(factor):
+            xs = np.clip(np.rint(x+factor*radius*np.cos(angles)).astype(int), 0, small.shape[1]-1)
+            ys = np.clip(np.rint(y+factor*radius*np.sin(angles)).astype(int), 0, small.shape[0]-1)
+            return hsv[ys, xs, 1]
+        left, top = max(0, int(x-radius)), max(0, int(y-radius))
+        right, bottom = min(gray.shape[1], int(x+radius)+1), min(gray.shape[0], int(y+radius)+1)
+        yy, xx = np.mgrid[top:bottom, left:right]
+        interior = gray[top:bottom, left:right][(xx-x)**2+(yy-y)**2 < (.65*radius)**2]
+        if ((sample(.55) < 80).mean() < .9 or (sample(1.25) > 80).mean() < .6
+                or not interior.size or interior.std() > 45):
+            continue
+        point = np.array([x,y])/scale
+        if all(np.linalg.norm(point-other) > radius/scale for other in holes):
+            holes.append(point)
+    return holes
+
+
+def automatic_reference(image):
+    """Use board geometry as reference coordinates, never component centers.
+
+    These points define a coordinate frame; inspection correspondences are
+    independently recovered from distributed RANSAC matches.
+    """
+    polygon = board_polygon(image)
+    holes = mounting_centers(image, polygon)
+    if 4 <= len(holes) <= 16:
+        choices = []
+        for group in combinations(holes,4):
+            hull = cv2.convexHull(np.float32(group))[:,0]
+            if len(hull) == 4:
+                choices.append((cv2.contourArea(hull), hull))
+        if choices:
+            area, contour = max(choices, key=lambda row: row[0])
+            if area >= .2*cv2.contourArea(np.float32(polygon)):
+                center = contour.mean(axis=0)
+                points = contour[np.argsort(np.arctan2(contour[:,1]-center[1],contour[:,0]-center[0]))]
+                points = np.roll(points, -int(np.argmin(points.sum(axis=1))), axis=0)
+                _points(points, np.asarray(image), 'reference mounting centers')
+                features = reference_features(image, polygon)
+                if len(features['xy']) >= 35:
+                    return dict(points=points.tolist(),board_polygon=polygon,confirmed=True,
+                        source='opencv_mounting_centers',landmark_kind='mounting_holes',
+                        coordinate_system='decoded_original_image_pixels',feature_count=len(features['xy']))
+    contour = np.float32(polygon)
+    if len(contour) != 4:
+        # Chamfers and connectors can add outline vertices. Fit a board frame,
+        # then keep every coordinate anchor inside the observed surface.
+        contour = cv2.boxPoints(cv2.minAreaRect(contour))
+    # Order clockwise in image coordinates, starting nearest the upper-left.
+    center = contour.mean(axis=0)
+    order = np.argsort(np.arctan2(contour[:, 1]-center[1], contour[:, 0]-center[0]))
+    points = contour[order]
+    points = np.roll(points, -int(np.argmin(points.sum(axis=1))), axis=0)
+    # Inset boundary points to avoid rounding outside the segmented surface.
+    for inset in (.96, .9, .8, .7):
+        candidate = center + inset*(points-center)
+        if all(cv2.pointPolygonTest(np.float32(polygon), tuple(map(float, p)), False) >= 0 for p in candidate):
+            points = candidate
+            break
+    else:
+        raise ValueError('PCB outline has no safe distributed reference frame; correct it manually.')
+    _points(points, np.asarray(image), 'automatic reference')
+    features = reference_features(image, polygon)
+    if len(features['xy']) < 35:
+        raise ValueError('Insufficient on-board detail; correct reference or retake a sharper photo.')
+    return dict(points=points.tolist(), board_polygon=polygon, confirmed=True,
+                source='automatic_board_corners', landmark_kind='board_coordinate_frame',
+                coordinate_system='decoded_original_image_pixels',
+                feature_count=len(features['xy']))
+
+
 def reference_features(image, polygon):
     rgb = np.asarray(image)
     mask = surface_mask(rgb, polygon)
@@ -77,7 +187,7 @@ def match_surfaces(features, inspection):
             seen_a.add(x)
             seen_b.add(y)
     if len(matches) < 35:
-        raise ValueError('Insufficient unique reciprocal on-board matches; manual alignment required.')
+        raise ValueError('Insufficient unique reciprocal on-board matches; manual alignment required. Check both images show the same PCB layout and board side.')
     return (np.float64([features['xy'][m.queryIdx] for m in matches]),
             np.float64([other['xy'][m.trainIdx] for m in matches]), other)
 
@@ -133,20 +243,29 @@ def verify_alignment(reference, inspection, features, matches, homography, align
                 occupied_cells=len(cells), board_overlap=float(overlap), stable_regions=scores)
 
 
-def register_inspection(reference, inspection, points, features, detection):
+def register_inspection(reference, inspection, points, features, detection, matches=None):
     rp = _points(points, np.asarray(reference), 'confirmed reference')
-    matches = match_surfaces(features, inspection)
+    matches = match_surfaces(features, inspection) if matches is None else matches
     attempts = []
     if detection['status'] == 'ok':
-        ip = [[p['x'], p['y']] for p in detection['landmarks']]
+        ip = np.float64([[p['x'], p['y']] for p in detection['landmarks']])
         try:
-            candidate = cv2.getPerspectiveTransform(np.float32(ip), np.float32(rp))
-            errors = np.linalg.norm(cv2.perspectiveTransform(matches[1][None], candidate)[0]-matches[0], axis=1)
-            if np.median(errors) > max(3., .003*np.hypot(*np.asarray(reference).shape[:2])):
+            _points(ip, np.asarray(inspection), 'inspection YOLO landmarks')
+            candidates = []
+            # A rotated image can cyclically shift pose identities. Select the
+            # same physical correspondence using independent on-board matches.
+            for shift in range(4):
+                ordered = np.roll(ip, -shift, axis=0)
+                candidate = cv2.getPerspectiveTransform(np.float32(ordered), np.float32(rp))
+                errors = np.linalg.norm(cv2.perspectiveTransform(matches[1][None], candidate)[0]-matches[0], axis=1)
+                candidates.append((float(np.median(errors)), shift, ordered))
+            error, shift, ip = min(candidates, key=lambda row: row[0])
+            if error > max(3., .003*np.hypot(*np.asarray(reference).shape[:2])):
                 raise ValueError('YOLO landmark transform disagrees with on-board matches.')
             aligned, matrix, valid = align_images(reference, inspection, rp, ip)
             evidence = verify_alignment(reference, inspection, features, matches, matrix, aligned, valid)
-            return aligned, matrix, valid, dict(source='yolo_landmarks', inspection_points=ip,
+            return aligned, matrix, valid, dict(source='yolo_landmarks', inspection_points=ip.tolist(),
+                                                inspection_landmark_order=[(i+shift) % 4 for i in range(4)],
                                                 verification=evidence, attempts=attempts)
         except (ValueError, cv2.error, np.linalg.LinAlgError) as error:
             attempts.append(dict(source='yolo_landmarks', status='failure', reason=str(error)))
@@ -167,3 +286,22 @@ def register_inspection(reference, inspection, points, features, detection):
     evidence = verify_alignment(reference, inspection, features, matches, matrix, aligned, valid)
     return aligned, matrix, valid, dict(source='reference_registration', inspection_points=ip.tolist(),
                                         landmark_kind='projected', verification=evidence, attempts=attempts)
+
+
+def refine_manual_registration(reference, inspection, reference_points, inspection_points, features, matrix):
+    """Refine small click errors only when independent board evidence improves."""
+    matches = match_surfaces(features, inspection)
+    before = np.linalg.norm(cv2.perspectiveTransform(matches[1][None], matrix)[0]-matches[0], axis=1)
+    if np.median(before) <= .75:
+        return None
+    candidate = register_inspection(reference, inspection, reference_points, features,
+        dict(status='failure', reason='Refining manual click residuals'), matches=matches)
+    aligned, refined, valid, details = candidate
+    correction = np.linalg.norm(np.asarray(details['inspection_points'])-inspection_points, axis=1).max()
+    if (correction > max(3., .015*np.hypot(*np.asarray(inspection).shape[:2])) or
+            details['verification']['p90_error_px'] >= .5*np.median(before)):
+        return None
+    details.update(source='manual_landmarks_refined', landmark_kind='manual_refined',
+        manual_inspection_points=np.asarray(inspection_points).tolist(),
+        manual_median_error_px=float(np.median(before)), max_click_correction_px=float(correction))
+    return aligned, refined, valid, details

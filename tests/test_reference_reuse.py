@@ -115,6 +115,21 @@ class ReferenceReuseTests(unittest.TestCase):
         self.assertEqual(result['alignment']['source'], 'yolo_landmarks')
         self.assertGreater(result['alignment']['verification']['held_out_inliers'], 8)
 
+    def test_rotated_cyclic_yolo_landmarks_keep_physical_identity(self):
+        self.setup_reference()
+        from types import SimpleNamespace
+        forward = cv2.getRotationMatrix2D((300,240), 8, 1)
+        transformed = cv2.transform(np.float64([self.points]), forward)[0]
+        cyclic = np.roll(transformed, 2, axis=0)
+        detector = SimpleNamespace(predict=lambda *args: dict(status='ok', reason=None,
+            landmarks=[dict(x=x,y=y) for x,y in cyclic]))
+        with patch('pcb_landmarks.web._detector', return_value=(detector, dict(board_conf=.75,point_conf=.85))):
+            result = self.inspect([cv2.warpAffine(self.reference,forward,(600,480))])[0]
+        self.assertTrue(result['components_evaluated'], result)
+        self.assertEqual(result['alignment']['source'], 'yolo_landmarks')
+        self.assertEqual(result['alignment']['inspection_landmark_order'], [2,3,0,1])
+        self.assertLess(np.max(np.linalg.norm(np.array(result['alignment']['inspection_points'])-transformed,axis=1)), .01)
+
     def test_features_cached_per_reference_and_recomputed_on_replacement(self):
         from pcb_landmarks.registration import reference_features
         with patch('pcb_landmarks.web.reference_features', wraps=reference_features) as extract:

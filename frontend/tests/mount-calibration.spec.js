@@ -7,7 +7,7 @@ test('the four pictured layouts show verified mounting holes and hide rejected g
   const output = path.join(root, 'runs/mount-calibration');
   await fs.mkdir(output, {recursive:true});
   const report = [];
-  await page.goto('http://127.0.0.1:8000/');
+  await page.goto('http://127.0.0.1:8000/#lab');
   for (const name of ['HCCC5', 'ACCC5', 'HBCC5', 'BCCC5', 'BCCB5']) {
     const pending = page.waitForResponse(r => r.url().includes('/api/landmarks/') && r.request().method() === 'POST');
     await page.getByLabel('Reference photo', {exact:true}).setInputFiles(path.join(root, `PCB_Dataset_Pilot/images/train/${name}.jpg`));

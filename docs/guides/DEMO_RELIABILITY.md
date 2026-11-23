@@ -1,5 +1,9 @@
 # One-board inspection evidence — November 21, 2026
 
+> Historical baseline: recovery work on November 22 adds provisional multi-evidence
+> synthetic `MISSING` and isolated-offset `MISALIGNED` findings. No verified real
+> missing-component pair exists, so real-photo accuracy remains unmeasured.
+
 **Historical baseline before mounting-hole fine-tuning.** Current Raspberry Pi automatic-mode results are in [LANDMARK_FINE_TUNING.md](LANDMARK_FINE_TUNING.md).
 
 Target submission: November 24. Scope: micropcb_E, ECCC5 known-good reference, eight named component regions.

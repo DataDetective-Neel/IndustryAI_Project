@@ -17,8 +17,10 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
     for(let i=0;i<4;i++) for(const [axis,side] of [['x',width],['y',height]])
       await page.getByLabel(`${names[i]} ${axis}`,{exact:true}).fill(String(values[5+i*3+(axis==='y'?1:0)]*side));
   }
-  await page.goto('http://127.0.0.1:8000/');
+  await page.goto('http://127.0.0.1:8000/#lab');
   await page.getByLabel('Reference photo',{exact:true}).setInputFiles(path.join(root,'PCB_Dataset_Pilot/images/train/ACCC5.jpg'));
+  await expect(page.getByRole('button',{name:'Clear all components',exact:true})).toBeEnabled();
+  await page.getByRole('button',{name:'Clear all components',exact:true}).click();
   await expect(page.getByRole('button',{name:'Add box',exact:true})).toBeEnabled();
   await mark('ACCC5');
   await page.getByRole('button',{name:'Add box',exact:true}).click();
@@ -30,6 +32,7 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   files.push(path.join(output,'SIMULATED-processor-absence.png'),path.join(output,'blurred.png'));
   await page.getByLabel('Inspection photos',{exact:true}).setInputFiles(files);
   await expect(page.getByRole('button',{name:/Inspection 7 blurred.png/})).toBeVisible();
+  await page.getByRole('radio', {name:'Manual', exact:true}).check();
   for(let i=0;i<files.length;i++) {
     await page.getByRole('button',{name:new RegExp(`Inspection ${i+1} ${path.basename(files[i]).replaceAll('.','\\.')}`)}).click();
     await mark(i<5?sourceNames[i]:i===5?'ACCC5':'MBCC5');
@@ -46,8 +49,9 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   await expect(page.getByTestId('result-0').getByText(wrong.reason,{exact:true})).toBeVisible();
   await expect(page.getByTestId('result-0').getByText('Main processor',{exact:true})).toHaveCount(0);
   await page.getByTestId('result-0').getByText('Board compatibility evidence',{exact:true}).click();
-  await expect(page.getByTestId('result-0').locator('pre')).toContainText('micropcb_A');
-  await expect(page.getByTestId('result-0').locator('pre')).toContainText('micropcb_M');
+  const compatibility = page.getByTestId('result-0').locator('details').filter({has:page.getByText('Board compatibility evidence',{exact:true})}).locator('pre');
+  await expect(compatibility).toContainText('micropcb_A');
+  await expect(compatibility).toContainText('micropcb_M');
   for(const photo of batch.photos.slice(1,5)) {
     expect(photo.board_compatibility.status).toBe('SAME_DESIGN');
     expect(photo.components_evaluated).toBe(true);
@@ -55,7 +59,7 @@ test('wrong-board, blue-board angle controls, local absence and blur through the
   }
   expect(batch.photos[5].board_compatibility.status).toBe('SAME_DESIGN');
   expect(batch.photos[5].components_evaluated).toBe(true);
-  expect(batch.photos[5].components[0].status).toBe('uncertain');
+  expect(batch.photos[5].components[0].status).toBe('missing');
   expect(batch.photos[6].outcome).toBe('review');
   expect(batch.photos[6].components_evaluated).toBe(false);
   await fs.writeFile(path.join(output,'browser-report.json'),JSON.stringify(batch,null,2));

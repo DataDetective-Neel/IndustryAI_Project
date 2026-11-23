@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import cv2
 import numpy as np
 from PIL import Image
 
@@ -16,8 +17,8 @@ from pcb_landmarks.compare import compare_regions, load_config
 
 class ComparisonTests(unittest.TestCase):
     def setUp(self):
-        self.reference, inspection, rp, ip, self.regions = comparison_pair()
-        self.aligned, _, self.mask = align_images(self.reference, inspection, rp, ip)
+        self.reference, inspection, self.rp, ip, self.regions = comparison_pair()
+        self.aligned, _, self.mask = align_images(self.reference, inspection, self.rp, ip)
         self.config = load_config('configs/comparison.json')
         self.alignment = dict(status='ok', reference_wh=[320, 240])
 
@@ -27,14 +28,15 @@ class ComparisonTests(unittest.TestCase):
         args.update(changes)
         return compare_regions(**args)
 
-    def test_present_ambiguous_appearance_and_coverage(self):
+    def test_present_corroborated_synthetic_absence_and_coverage(self):
         result = self.compare()
-        self.assertEqual(result['outcome'], 'review')
+        self.assertEqual(result['outcome'], 'defect')
         self.assertTrue(result['review_required'])
         parts = result['components']
-        self.assertEqual([p['status'] for p in parts], ['present', 'uncertain', 'uncertain'])
+        self.assertEqual([p['status'] for p in parts], ['present', 'missing', 'uncertain'])
         self.assertGreater(parts[0]['score'], .9)
         self.assertLess(parts[1]['score'], .25)
+        self.assertLess(parts[1]['evidence']['edge_energy_ratio'], .45)
         self.assertLess(parts[2]['overlap'], 1)
         self.assertIsNone(parts[2]['score'])
         self.assertEqual(parts[2]['display_status'], 'Needs review')
@@ -61,7 +63,7 @@ class ComparisonTests(unittest.TestCase):
 
     def test_threshold_boundaries_and_intermediate_review(self):
         score = self.compare()['components'][1]['score']
-        for missing, present, expected in [(score, .9, 'uncertain'), (-.5, score, 'present'),
+        for missing, present, expected in [(score, .9, 'missing'), (-.5, score, 'present'),
                                             (score-.1, score+.1, 'uncertain')]:
             config = dict(self.config, missing_max=missing, present_min=present)
             result = self.compare(config=config)
@@ -119,6 +121,50 @@ class ComparisonTests(unittest.TestCase):
             for part in result['components']:
                 self.assertAlmostEqual(part['score'], 1, places=6)
 
+    def test_local_rotation_after_board_registration_is_misaligned_with_evidence(self):
+        reference = self.reference.copy()
+        inspection = reference.copy()
+        x1, y1, x2, y2 = self.regions['components'][0]['bbox_xyxy_px']
+        crop = reference[y1:y2, x1:x2]
+        matrix = cv2.getRotationMatrix2D(((x2-x1-1)/2, (y2-y1-1)/2), 15, 1)
+        inspection[y1:y2, x1:x2] = cv2.warpAffine(
+            crop, matrix, (x2-x1, y2-y1), flags=cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_REFLECT,
+        )
+        regions = dict(self.regions, components=self.regions['components'][:2])
+        result = self.compare(reference=reference, aligned=inspection, regions=regions)
+        rotated = result['components'][0]
+        self.assertEqual(rotated['status'], 'misaligned')
+        self.assertGreaterEqual(abs(rotated['evidence']['rotation_deg']), 10)
+        self.assertIn('displacement_px', rotated['evidence'])
+        self.assertTrue(result['review_required'])
+
+    def test_whole_board_rotation_is_removed_before_component_scoring(self):
+        inspection = np.rot90(self.reference, 2).copy()
+        rotated_points = np.array([self.reference.shape[1]-1, self.reference.shape[0]-1]) - self.rp
+        aligned, _, mask = align_images(self.reference, inspection, self.rp, rotated_points)
+        regions = dict(self.regions, components=self.regions['components'][:2])
+        result = self.compare(reference=self.reference, aligned=aligned, mask=mask, regions=regions)
+        self.assertEqual([part['status'] for part in result['components']], ['present', 'present'])
+        self.assertEqual(result['outcome'], 'ok')
+
+    def test_single_shifted_component_uses_verified_registration_uncertainty(self):
+        inspection = self.reference.copy()
+        x1, y1, x2, y2 = self.regions['components'][0]['bbox_xyxy_px']
+        inspection[y1:y2, x1:x2] = (25, 95, 55)
+        inspection[y1:y2, x1+8:x2+8] = self.reference[y1:y2, x1:x2]
+        alignment = dict(self.alignment, verification_status='verified', verification=dict(p90_error_px=.5))
+        regions = dict(self.regions, components=self.regions['components'][:1])
+        result = self.compare(aligned=inspection, regions=regions, alignment=alignment)
+        row = result['components'][0]
+        self.assertEqual(row['decision'], 'SHIFTED')
+        self.assertAlmostEqual(row['evidence']['normalized_displacement'], .2)
+        self.assertGreater(row['evidence']['displacement_tolerance_px'], .5)
+        # A larger residual registration error makes the same offset inconclusive.
+        alignment['verification']['p90_error_px'] = 9
+        result = self.compare(aligned=inspection, regions=regions, alignment=alignment)
+        self.assertNotEqual(result['components'][0]['decision'], 'SHIFTED')
+
     def test_constant_gradient_is_degenerate_despite_grayscale_texture(self):
         ramp = np.broadcast_to((np.arange(320) % 256)[None, :, None], self.reference.shape).astype(np.uint8)
         self.assertGreater(ramp[45:85, 60:100].std(), 2)
@@ -143,7 +189,7 @@ class ComparisonTests(unittest.TestCase):
             run = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(run.returncode, 0, run.stdout+run.stderr)
             report = json.loads((root/'result/report.json').read_text())
-            self.assertEqual(report['outcome'], 'review')
+            self.assertEqual(report['outcome'], 'defect')
             with Image.open(root/'result/overlay.png') as overlay:
                 self.assertEqual(overlay.size, (320, 240))
             repeat = subprocess.run(command, capture_output=True, text=True)

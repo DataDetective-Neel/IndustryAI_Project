@@ -3,6 +3,10 @@ import { createRoot } from "react-dom/client";
 import { imagePoint, pixelBox } from "./coordinates.js";
 import "./style.css";
 import Comparison from "./Comparison.jsx";
+import Landmarks from "./Landmarks.jsx";
+import PlatformApp from "./PlatformApp.jsx";
+import { jsonBody, platformApi } from "./platformApi.js";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 async function api(path, options) {
   const response = await fetch(path, options);
@@ -32,7 +36,7 @@ function App() {
   const [selected, setSelected] = useState(null);
   const [components, setComponents] = useState([]);
   const [regionId, setRegionId] = useState(null);
-  const [mode, setMode] = useState("manual");
+  const [mode, setMode] = useState("automatic");
   const [tool, setTool] = useState("landmarks");
   const [pointIndex, setPointIndex] = useState(0);
   const [previewWidth, setPreviewWidth] = useState(720);
@@ -42,10 +46,17 @@ function App() {
   const [batch, setBatch] = useState(null);
   const [busy, setBusy] = useState(false);
   const [detecting, setDetecting] = useState(false);
+  const [proposing, setProposing] = useState(false);
+  const [verifiedRegionsAvailable, setVerifiedRegionsAvailable] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const drag = useRef(null);
+  const rawLandmarkRequests = useRef(new Map());
   const photos = [reference, ...inspections].filter(Boolean);
   const photo = photos.find((p) => p.id === selected) || reference;
+  const previewInspection = inspections.find((p) => p.id === selected) || inspections[0];
+  const previewPoints = previewInspection?.registered_points || (mode === 'manual' ? previewInspection?.points :
+    previewInspection?.detection?.status === 'ok' ? previewInspection.detection.landmarks.map(p=>[p.x,p.y]) : []);
   const names = health?.landmark_names || [
     "upper_left_mount",
     "upper_right_mount",
@@ -60,13 +71,24 @@ function App() {
       .then(setHealth)
       .catch((e) => setError(`Local backend unavailable: ${e.message}`));
   }, []);
+  useEffect(() => {
+    platformApi("/api/golden-config").then((saved) => {
+      setReference(saved.reference);
+      setComponents(saved.components);
+      setSelected(saved.reference.id);
+      setRegionId(saved.components[0]?.id || null);
+      setMode(saved.mode || "automatic");
+      setSharpen(!!saved.sharpen);
+      setNotice("Saved golden configuration restored.");
+    }).catch(() => {});
+  }, []);
   function changePhoto(id, update) {
     const referencePointsChanged = id === reference?.id && update.points &&
       JSON.stringify(update.points) !== JSON.stringify(reference.points);
     setReference((p) => (p?.id === id ? { ...p, ...update } : p));
     setInspections((items) =>
       items.map((p) => id === reference?.id && (update.points || update.board_polygon)
-        ? { ...p, ...(referencePointsChanged ? { points: [] } : {}), projected: null } : p.id === id ? { ...p, ...update } : p),
+        ? { ...p, ...(referencePointsChanged ? { points: [] } : {}), projected: null, registered_points:null } : p.id === id ? { ...p, ...update, ...(update.points ? {registered_points:null,projected:null} : {}) } : p),
     );
     setBatch(null);
   }
@@ -82,12 +104,24 @@ function App() {
       photoIds.split(",").filter((id) => mode === "automatic" || id === reference?.id).map(async (id) => {
         let detection;
         try {
-          detection = await api(`/api/landmarks/${id}`, { method: "POST" });
+          const useReference = mode === 'automatic' && reference?.confirmed && id !== reference.id;
+          if (useReference) {
+            detection = await api(`/api/landmarks/${id}?reference_id=${reference.id}`, { method: 'POST' });
+          } else {
+            if (!rawLandmarkRequests.current.has(id))
+              rawLandmarkRequests.current.set(id, api(`/api/landmarks/${id}`, {method:'POST'}).catch(error => {
+                rawLandmarkRequests.current.delete(id); throw error;
+              }));
+            detection = await rawLandmarkRequests.current.get(id);
+          }
         } catch (e) {
           detection = { status: "failure", reason: e.message, landmarks: [] };
         }
         if (!cancelled) {
-          changePhoto(id, { detection });
+          const registered = detection.status === 'ok' && detection.verification && id !== reference?.id
+            ? detection.landmarks.map(p => [p.x, p.y]) : null;
+          changePhoto(id, { detection, registered_points: registered,
+            projected: registered && detection.landmark_kind === 'projected' ? registered : null });
           setReference((p) => p?.id === id && !p.points?.length && detection.status === "ok"
             ? { ...p, points: detection.landmarks.map((v) => [v.x, v.y]) } : p);
         }
@@ -98,7 +132,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode, photoIds]);
+  }, [mode, photoIds, reference?.confirmed, JSON.stringify(reference?.points)]);
 
   async function upload(event, isReference, replaceId = null) {
     const files = [...event.target.files];
@@ -126,10 +160,12 @@ function App() {
         const body = new FormData();
         body.append("image", file);
         try {
-          uploaded.push({
-            ...(await api("/api/photos", { method: "POST", body })),
-            points: [],
-          });
+          const result = await api("/api/photos", { method: "POST", body });
+          if (result.error) {
+            failures.push(`${file.name}: ${result.error}`);
+            continue;
+          }
+          uploaded.push({ ...result, points: [] });
         } catch (e) {
           failures.push(`${file.name}: ${e.message}`);
         }
@@ -137,17 +173,30 @@ function App() {
       if (failures.length) setError(failures.join(" "));
       if (!uploaded.length) return;
       if (isReference) {
+        setVerifiedRegionsAvailable(false);
         setReference({ ...uploaded[0], board_polygon: [], confirmed: false });
-        setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null })));
+        setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null, registered_points: null })));
         const setup = await api(`/api/references/${uploaded[0].id}`);
-        setReference((p) => p?.id === uploaded[0].id ? { ...p, board_polygon: setup.board_polygon } : p);
+        let automatic = setup;
         try {
-          const preset = await api(`/api/photos/${uploaded[0].id}/regions`);
-          setComponents(preset.components);
-        } catch {
-          setComponents([]);
+          automatic = await api(`/api/references/${uploaded[0].id}/automatic`, { method: "POST" });
+        } catch (e) {
+          setNotice(`Automatic reference setup needs correction: ${e.message}`);
         }
-        setRegionId(null);
+        setReference((p) => p?.id === uploaded[0].id ? { ...p, ...automatic } : p);
+        setMode("automatic");
+        setProposing(true);
+        try {
+          const proposal = await api(`/api/photos/${uploaded[0].id}/component-proposals`, { method: "POST" });
+          setComponents(proposal.components);
+          setRegionId(proposal.components[0]?.id || null);
+          setReference((p) => p?.id === uploaded[0].id ? { ...p, board_polygon: proposal.board_polygon } : p);
+          setNotice(`${proposal.candidate_count} component candidates proposed. Review UNKNOWN regions before saving.`);
+          try { await api(`/api/photos/${uploaded[0].id}/regions`); setVerifiedRegionsAvailable(true); } catch {}
+        } catch (proposalError) {
+          setComponents([]);
+          setError(`Reference uploaded, but automatic component proposals failed: ${proposalError.message}`);
+        } finally { setProposing(false); }
       } else setInspections((items) => replaceId
         ? items.map((p) => p.id === replaceId ? uploaded[0] : p)
         : [...items, ...uploaded]);
@@ -228,18 +277,31 @@ function App() {
   }
   function movePointer(event) {
     if (!drag.current) return;
+    const currentDrag = drag.current;
     const position = pointerPosition(event);
-    if (drag.current.kind === "point") setPoint(drag.current.index, position);
-    else setDraft(pixelBox(drag.current.start, position));
+    if (currentDrag.kind === "point") setPoint(currentDrag.index, position);
+    else if (currentDrag.kind === "move-box") {
+      const { id, start, box } = currentDrag;
+      const [x1, y1, x2, y2] = box;
+      const width = x2 - x1, height = y2 - y1;
+      const dx = position[0] - start[0], dy = position[1] - start[1];
+      const left = Math.max(0, Math.min(photo.width - width, Math.round(x1 + dx)));
+      const top = Math.max(0, Math.min(photo.height - height, Math.round(y1 + dy)));
+      setComponents((items) => items.map((part) => part.id === id
+        ? { ...part, bbox_xyxy_px: [left, top, left + width, top + height], candidate_status: "VERIFIED" } : part));
+      setBatch(null);
+    } else setDraft(pixelBox(currentDrag.start, position));
   }
   function endPointer(event) {
     if (!drag.current) return;
     const position = pointerPosition(event);
     if (drag.current.kind === "box")
       addRegion(pixelBox(drag.current.start, position));
-    else {
+    else if (drag.current.kind === "point") {
       setPoint(drag.current.index, position);
       setPointIndex(Math.min(3, drag.current.index + 1));
+    } else if (drag.current.kind === "move-box") {
+      movePointer(event);
     }
     drag.current = null;
     setDraft(null);
@@ -256,6 +318,58 @@ function App() {
       setTool("landmarks");
     } catch (e) { setError(e.message); }
     finally { setBusy(false); }
+  }
+  async function saveGolden() {
+    if (components.some((component) => component.candidate_status === "UNKNOWN")) {
+      setError("Accept, edit, or remove every UNKNOWN component proposal before saving.");
+      return;
+    }
+    setBusy(true); setError(""); setNotice("");
+    try {
+      await platformApi("/api/golden-config", jsonBody({
+        reference_id: reference.id, components, mode: "automatic", sharpen,
+      }));
+      setNotice("Golden configuration saved for Live Inspection.");
+    } catch (e) { setError(e.message); }
+    finally { setBusy(false); }
+  }
+  async function detectComponents() {
+    if (!reference) return;
+    setProposing(true); setError(""); setNotice("");
+    try {
+      const proposal = await api(`/api/photos/${reference.id}/component-proposals`, jsonPost({
+        board_polygon: reference.board_polygon || [],
+      }));
+      setComponents(proposal.components);
+      setRegionId(proposal.components[0]?.id || null);
+      changePhoto(reference.id, { board_polygon: proposal.board_polygon });
+      setNotice(`${proposal.candidate_count} UNKNOWN candidates proposed. Confirm, rename, resize, add, or remove regions.`);
+    } catch (e) { setError(e.message); }
+    finally { setProposing(false); }
+  }
+  async function loadVerifiedRegions() {
+    try {
+      const saved = await api(`/api/photos/${reference.id}/regions`);
+      setComponents(saved.components);
+      setRegionId(saved.components[0]?.id || null);
+      setNotice("Verified sample annotations loaded. Review before saving this golden configuration.");
+    } catch (e) { setError(e.message); }
+  }
+  async function importComponentMap(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !reference) return;
+    setProposing(true); setError(""); setNotice("");
+    try {
+      const body = new FormData();
+      body.append("component_map", file);
+      const proposal = await api(`/api/photos/${reference.id}/component-map`, { method: "POST", body });
+      setComponents(proposal.components);
+      setRegionId(proposal.components[0]?.id || null);
+      changePhoto(reference.id, { board_polygon: proposal.board_polygon });
+      setNotice(`${proposal.imported_component_count} reference components imported; review and accept each proposal before saving.`);
+    } catch (e) { setError(e.message); }
+    finally { setProposing(false); }
   }
   async function run() {
     setBusy(true);
@@ -278,9 +392,15 @@ function App() {
         }),
       );
       setBatch(result);
-      setInspections((items) => items.map((p) => ({ ...p, projected:
-        result.photos.find((r) => r.photo_id === p.id)?.alignment?.landmark_kind === "projected"
-          ? result.photos.find((r) => r.photo_id === p.id).alignment.inspection_points : null })));
+      const referencePoints = result.photos.find(r=>r.alignment?.verification_status === 'verified')?.alignment.reference_points;
+      if (referencePoints) setReference(p=>({...p,points:referencePoints}));
+      setInspections((items) => items.map((p) => {
+        const alignment=result.photos.find(r=>r.photo_id===p.id)?.alignment;
+        const verified=alignment?.verification_status === 'verified';
+        return {...p,registered_points:verified ? alignment.inspection_points : null,
+          landmark_source:alignment?.landmark_kind === 'projected' ? 'Registration-derived' : alignment?.source === 'manual_landmarks' ? 'Manual' : 'Model-detected',
+          projected:verified && alignment.landmark_kind === 'projected' ? alignment.inspection_points : null};
+      }));
 
       setTimeout(
         () =>
@@ -299,7 +419,7 @@ function App() {
   const pointNames = editingOutline ? ["outline upper left", "outline upper right", "outline lower right", "outline lower left"] : names;
   const displayedPoints = editingOutline ? reference.board_polygon || []
     : referenceSelected || mode === "manual" ? photo?.points || []
-    : photo?.projected || (photo?.detection?.status === "ok"
+    : photo?.registered_points || photo?.projected || (photo?.detection?.status === "ok"
       ? photo.detection.landmarks.map((p) => [p.x, p.y]) : []);
   const radius = photo ? Math.max(photo.width, photo.height) / 85 : 10;
   const runHint = !health ? "Connect the local backend to begin."
@@ -319,9 +439,9 @@ function App() {
           ▦
         </div>
         <div>
-          <h1>IndustryAI PCB inspection</h1>
+          <h1>Inspection Lab</h1>
           <p>
-            Inspection workspace · Reference, alignment and component evidence.
+            Golden configuration, registered comparison, and component evidence.
           </p>
         </div>
         <span className="local-tag">Local files only</span>
@@ -332,10 +452,11 @@ function App() {
             {error}
           </div>
         )}
+        {notice && <div role="status" className="message notice">{notice}</div>}
         <fieldset className="workflow" disabled={busy}>
           <section className="upload-section" aria-labelledby="photos-heading">
             <div className="section-heading">
-              <h2 id="photos-heading">1. Choose the board photos</h2>
+              <h2 id="photos-heading">Board inputs</h2>
               <p>
                 One layout and board side per run. JPEG or PNG, up to 12 MiB
                 each.
@@ -390,16 +511,16 @@ function App() {
           >
             <div className="section-heading">
               <h2 id="annotations-heading">
-                2. Define landmarks and expected parts
+                Golden configuration and inspection workspace
               </h2>
               <p>
-                Confirm four stable reference points once. The PCB outline is separate from these landmarks.
+                Automatic board references and component regions. Correct the golden configuration here; reuse it for every inspection.
               </p>
             </div>
             <div className="mode-row">
               <fieldset className="mode-switch">
                 <legend>Landmark mode</legend>
-                {["manual", "automatic"].map((value) => (
+                {["automatic", "manual"].map((value) => (
                   <label key={value}>
                     <input
                       type="radio"
@@ -415,7 +536,7 @@ function App() {
               <p>
                 {mode === "manual"
                   ? "Mark points manually, or confirm the reference setup to align inspection photos automatically."
-                  : "Confirm the reference once. Inspection photos use verified YOLO landmarks or reference registration before manual review."}
+                  : "Board references are saved automatically. Inspection uses verified landmarks or independent on-board registration."}
               </p>
             </div>
             {mode === "automatic" && (
@@ -468,7 +589,7 @@ function App() {
                       onClick={() => {
                         if (p.id === reference?.id) {
                           setReference(null);
-                          setInspections((items) => items.map((item) => ({ ...item, points: [], projected: null })));
+                          setInspections((items) => items.map((item) => ({ ...item, points: [], projected: null, registered_points: null })));
                           setComponents([]);
                           setRegionId(null);
                         }
@@ -485,6 +606,21 @@ function App() {
                 </div>
               ))}
             </div>
+            {reference && inspections.length > 0 && <div className="workspace-preview" aria-label="Inspection workspace overview">
+              <figure><figcaption>Golden PCB · reference points and component regions</figcaption>
+                <svg viewBox={`0 0 ${reference.width} ${reference.height}`} role="img" aria-label="Golden board configuration">
+                  <image href={reference.image_url} width={reference.width} height={reference.height} />
+                  {components.map((part) => { const [x1,y1,x2,y2] = part.bbox_xyxy_px; return <rect key={part.id} x={x1} y={y1} width={x2-x1} height={y2-y1} fill="none" stroke="#ffbf00" strokeWidth="2" />; })}
+                  <Landmarks points={reference.points} width={reference.width} height={reference.height} verified={reference.confirmed}/>
+                </svg>
+              </figure>
+              <figure><figcaption>Inspection PCB · {previewInspection.filename} · {previewInspection.registered_points ? `${previewInspection.landmark_source} · verified` : 'Landmark correspondence pending'}</figcaption>
+                <svg viewBox={`0 0 ${previewInspection.width} ${previewInspection.height}`} role="img" aria-label="Inspection workspace input">
+                  <image href={previewInspection.image_url} width={previewInspection.width} height={previewInspection.height}/>
+                  <Landmarks points={previewPoints} width={previewInspection.width} height={previewInspection.height} verified={!!previewInspection.registered_points}/>
+                </svg>
+              </figure>
+            </div>}
             {!photo && (
               <div className="empty-editor">
                 <div aria-hidden="true">▦</div>
@@ -585,9 +721,15 @@ function App() {
                                 <g
                                   key={p.id}
                                   onPointerDown={(e) => {
-                                    if (tool === "boxes") return;
                                     e.stopPropagation();
                                     setRegionId(p.id);
+                                    if (tool === "boxes") {
+                                      const canvas = e.currentTarget.closest("svg");
+                                      drag.current = { kind: "move-box", id: p.id,
+                                        start: imagePoint(e.clientX, e.clientY, canvas.getBoundingClientRect(), [photo.width, photo.height]),
+                                        box: [...p.bbox_xyxy_px] };
+                                      canvas?.setPointerCapture(e.pointerId);
+                                    }
                                   }}
                                 >
                                   <rect
@@ -619,9 +761,7 @@ function App() {
                               strokeWidth={radius / 4}
                             />
                           )}
-                          {referenceSelected && reference.board_polygon?.length >= 3 && <polygon
-                            points={reference.board_polygon.filter(Boolean).map((p) => p.join(",")).join(" ")}
-                            fill="none" stroke="#5ce7ff" strokeDasharray="10 5" strokeWidth={radius / 4} pointerEvents="none" />}
+
                           {displayedPoints.map(
                             (point, index) =>
                               point && point.every(Number.isFinite) && (
@@ -673,7 +813,7 @@ function App() {
                   )}
                 </div>
                 <aside className="annotation-panel">
-                  <h3>{editingOutline ? "PCB surface outline" : "Four landmark identities"}</h3>
+                  <h3>{editingOutline ? "PCB surface outline" : "Alignment"}</h3>
                   {referenceSelected && <div className="message notice">
                     <p>{reference.confirmed ? "Reference saved. Its points and surface features will be reused." : "Review or correct the four landmarks and the PCB outline, then confirm once."}</p>
                     <button className="secondary" onClick={() => {
@@ -682,10 +822,19 @@ function App() {
                     }}>Mark PCB outline</button>
                     <button className="secondary" disabled={reference.points?.filter(Boolean).length !== 4 || (reference.board_polygon?.filter(Boolean).length || 0) < 3}
                       onClick={confirmReference}>Confirm reference setup</button>
+                    <button className="secondary" disabled={!reference.confirmed || !components.length || components.some((component) => component.candidate_status === "UNKNOWN")}
+                      onClick={saveGolden}>Save for live line</button>
+                    <button className="secondary" disabled={proposing} onClick={detectComponents}>
+                      {proposing ? "Detecting components…" : "Detect components"}
+                    </button>
+                    <label className="secondary import-map">Import Antigravity map
+                      <input aria-label="Import Antigravity component map" type="file" accept="application/json,.json"
+                        disabled={proposing} onChange={importComponentMap} />
+                    </label>
                     <p className="muted">Outline only the PCB surface, excluding background and off-board watermarks. Landmarks can be interior board details.</p>
                   </div>}
                   <p className="muted">
-                    Board-relative order, clockwise. Select a point, then click
+                    Four manual landmarks remain available when automatic registration needs help. Board-relative order, clockwise. Select a point, then click
                     its center.
                   </p>
                   <ol className="point-list">
@@ -737,6 +886,15 @@ function App() {
                   </ol>
                   <div className="parts-heading">
                     <h3>Expected components</h3>
+                    {verifiedRegionsAvailable && <button className="secondary" onClick={loadVerifiedRegions}>Load verified sample regions</button>}
+                    <button className="secondary" disabled={!components.some((component) => component.candidate_status === "UNKNOWN")} onClick={() => {
+                      setComponents((items) => items.map((component) => component.candidate_status === "UNKNOWN"
+                        ? { ...component, candidate_status: "VERIFIED" } : component));
+                      setNotice("All current proposals explicitly accepted. You can still edit or remove them before saving.");
+                    }}>Accept all proposals</button>
+                    <button className="secondary" disabled={!components.length} onClick={() => {
+                      setComponents([]); setRegionId(null); setBatch(null); setNotice("Component regions cleared.");
+                    }}>Clear all components</button>
                     <button
                       className="secondary"
                       disabled={!referenceSelected || !!photo.error}
@@ -774,12 +932,15 @@ function App() {
                         }}
                       >
                         {p.name}
+                        {p.candidate_status && <small>{p.candidate_status}</small>}
                         {p.review_reason && <small>Review flagged</small>}
                       </button>
                     ))}
                   </div>
                   {activeRegion && referenceSelected && (
                     <div className="region-editor">
+                      {activeRegion.candidate_status === "UNKNOWN" && <button className="secondary" onClick={() =>
+                        updateRegion({ candidate_status: "VERIFIED" })}>Accept component</button>}
                       <label>
                         Component name
                         <input
@@ -787,7 +948,7 @@ function App() {
                           value={activeRegion.name}
                           maxLength="120"
                           onChange={(e) =>
-                            updateRegion({ name: e.target.value })
+                            updateRegion({ name: e.target.value, candidate_status: "VERIFIED" })
                           }
                         />
                       </label>
@@ -805,7 +966,7 @@ function App() {
                               onChange={(e) => {
                                 const box = [...activeRegion.bbox_xyxy_px];
                                 box[i] = Number(e.target.value);
-                                updateRegion({ bbox_xyxy_px: box });
+                                updateRegion({ bbox_xyxy_px: box, candidate_status: "VERIFIED" });
                               }}
                             />
                           </label>
@@ -859,12 +1020,12 @@ function App() {
           </section>
           <section className="run-section" aria-labelledby="run-heading">
             <div>
-              <h2 id="run-heading">3. Inspect and review</h2>
+              <h2 id="run-heading">Run registered inspection</h2>
               <p className="run-hint" id="run-hint" role="status">{runHint}</p>
               <p className="threshold-note">
                 Provisional Present threshold: {health?.comparison.present_min ?? "0.50"}.
-                Other scores need review. Missing-part detection requires verified absence evidence;
-                this one-board demo has no verified absence exemplar.
+                Missing requires low correlation plus lost edge energy and appearance change.
+                Thresholds are provisional; suspected defects always require operator review.
               </p>
               <label className="check">
                 <input
@@ -947,4 +1108,4 @@ function App() {
   );
 }
 
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(<ErrorBoundary><PlatformApp inspectionLab={<App />} /></ErrorBoundary>);

@@ -1,0 +1,9 @@
+{
+  "checkpoint_path": "models/pcb-components-yolo26s.pt",
+  "checkpoint_sha256": "1065cdb4a32d65799b6308dc267ec9c66a1a0d261293738417bff316697725ec",
+  "tile_size": 1024,
+  "overlap": 0.2,
+  "confidence": 0.25,
+  "iou": 0.45,
+  "source": "ParsaVictor pcb-component-detection-yolo26 any_best.pt"
+}

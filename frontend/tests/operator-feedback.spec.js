@@ -1,0 +1,45 @@
+import {test, expect} from '@playwright/test';
+import path from 'node:path';
+
+test('inspection upload displays registered landmarks and live results are operator-sized', async ({page}) => {
+  const dataset = process.env.PCB_REPAIR_DATASET || 'A:/IndustryAI_Dataset_Worktree/dataset_generation';
+  const errors = [];
+  const rawRequests = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('request', request => {
+    if (request.method() === 'POST' && /\/api\/landmarks\/[^?]+$/.test(request.url())) rawRequests.push(request.url());
+  });
+  await page.goto('/#lab');
+  const proposals = page.waitForResponse(r => r.url().includes('/component-proposals') && r.request().method() === 'POST');
+  await page.getByLabel('Reference photo', {exact:true}).setInputFiles(path.join(dataset,'golden/golden_reference.png'));
+  const proposed = await proposals;
+  expect(proposed.ok()).toBeTruthy();
+  const referenceId = proposed.url().split('/api/photos/')[1].split('/')[0];
+  expect(rawRequests.filter(url => url.endsWith(referenceId))).toHaveLength(1);
+  const preview = page.waitForResponse(r => r.url().includes('/api/landmarks/') && r.url().includes('reference_id='));
+  await page.getByLabel('Inspection photos', {exact:true}).setInputFiles(path.join(dataset,'images/good/good_038.png'));
+  const registered = await (await preview).json();
+  expect(registered.status).toBe('ok');
+  expect(registered.verification_status).toBe('verified');
+  await expect(page.locator('svg.photo-canvas circle')).toHaveCount(4);
+  const inspected = page.waitForResponse(r => r.url().endsWith('/api/inspections') && r.request().method() === 'POST');
+  await page.getByRole('button',{name:'Run Inspection',exact:true}).click();
+  const result = (await (await inspected).json()).photos[0];
+  expect(result.alignment_state).toBe('ALIGNED');
+  expect(result.components.every(p => p.status === 'present')).toBeTruthy();
+  await page.getByRole('button',{name:'Live Inspection',exact:true}).click();
+  const golden = page.waitForResponse(r => r.url().endsWith('/api/simulation/reference') && r.request().method() === 'POST');
+  await page.getByLabel('Upload Golden Reference').setInputFiles(path.join(dataset,'golden/golden_reference.png'));
+  expect((await golden).ok()).toBeTruthy();
+  await expect(page.getByRole('button',{name:'Start simulation',exact:true})).toBeDisabled();
+  await page.getByLabel('Import inspection images').setInputFiles(path.join(dataset,'images/good/good_038.png'));
+  await page.getByLabel(/Inspection interval/).fill('0.5');
+  await page.getByRole('button',{name:'Start simulation',exact:true}).click();
+  await expect(page.locator('.line-state')).toHaveText('completed',{timeout:60000});
+  await expect(page.getByRole('link',{name:'Open full-size inspection'})).toBeVisible();
+  const size = await page.locator('.scanner').boundingBox();
+  expect(size.height).toBeGreaterThanOrEqual(440);
+  expect(size.width).toBeGreaterThan(350);
+  await page.screenshot({path:'../runs/operator-feedback/operator-live.png',fullPage:true});
+  expect(errors).toEqual([]);
+});
