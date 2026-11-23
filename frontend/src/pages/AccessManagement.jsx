@@ -7,7 +7,7 @@ const blank = { username: "", display_name: "", role: "operator", password: "" }
 export default function AccessManagement() {
   const [users, setUsers] = useState([]), [form, setForm] = useState(blank), [error, setError] = useState("");
   const load = () => platformApi("/api/users").then(data => setUsers(data.users)).catch(error => setError(error.message));
-  useEffect(load, []);
+  useEffect(() => { void load(); }, []);
   async function create(event) { event.preventDefault(); try { await platformApi("/api/users", jsonBody(form)); setForm(blank); load(); } catch (e) { setError(e.message); } }
   return <section className="platform-page"><PageHeader title="Access management" description="Local users and backend-enforced AOI roles."/>
     {error && <div className="platform-alert">{error}</div>}<div className="access-grid">

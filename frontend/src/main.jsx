@@ -143,10 +143,12 @@ function App() {
         const body = new FormData();
         body.append("image", file);
         try {
-          uploaded.push({
-            ...(await api("/api/photos", { method: "POST", body })),
-            points: [],
-          });
+          const result = await api("/api/photos", { method: "POST", body });
+          if (result.error) {
+            failures.push(`${file.name}: ${result.error}`);
+            continue;
+          }
+          uploaded.push({ ...result, points: [] });
         } catch (e) {
           failures.push(`${file.name}: ${e.message}`);
         }
@@ -251,18 +253,20 @@ function App() {
   }
   function movePointer(event) {
     if (!drag.current) return;
+    const currentDrag = drag.current;
     const position = pointerPosition(event);
-    if (drag.current.kind === "point") setPoint(drag.current.index, position);
-    else if (drag.current.kind === "move-box") {
-      const [x1, y1, x2, y2] = drag.current.box;
+    if (currentDrag.kind === "point") setPoint(currentDrag.index, position);
+    else if (currentDrag.kind === "move-box") {
+      const { id, start, box } = currentDrag;
+      const [x1, y1, x2, y2] = box;
       const width = x2 - x1, height = y2 - y1;
-      const dx = position[0] - drag.current.start[0], dy = position[1] - drag.current.start[1];
+      const dx = position[0] - start[0], dy = position[1] - start[1];
       const left = Math.max(0, Math.min(photo.width - width, Math.round(x1 + dx)));
       const top = Math.max(0, Math.min(photo.height - height, Math.round(y1 + dy)));
-      setComponents((items) => items.map((part) => part.id === drag.current.id
+      setComponents((items) => items.map((part) => part.id === id
         ? { ...part, bbox_xyxy_px: [left, top, left + width, top + height], candidate_status: "VERIFIED" } : part));
       setBatch(null);
-    } else setDraft(pixelBox(drag.current.start, position));
+    } else setDraft(pixelBox(currentDrag.start, position));
   }
   function endPointer(event) {
     if (!drag.current) return;
