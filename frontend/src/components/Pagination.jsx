@@ -1,11 +1,11 @@
 import React from "react";
 
-export default function Pagination({ page, pageCount, onChange }) {
+export default function Pagination({ page, pageCount, onChange, setPage }) {
   if (pageCount <= 1) return null;
   return <nav className="pagination" aria-label="Pagination">
-    <button onClick={() => onChange(page - 1)} disabled={page <= 1}>Previous</button>
+    <button onClick={() => (onChange || setPage)(page - 1)} disabled={page <= 1}>Previous</button>
     <span>Page {page} of {pageCount}</span>
-    <button onClick={() => onChange(page + 1)} disabled={page >= pageCount}>Next</button>
+    <button onClick={() => (onChange || setPage)(page + 1)} disabled={page >= pageCount}>Next</button>
   </nav>;
 }
 

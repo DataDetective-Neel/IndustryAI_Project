@@ -49,8 +49,10 @@ export default function LiveInspection({ user }) {
   }
   async function selectGolden(event) {
     const id = event.target.value; if (!id) return;
+    goldenRevision.current += 1; goldenUploadPending.current = true; setUploadingGolden(true);
     try { setGolden(await platformApi(`/api/simulation/reference/${id}`, {method:'PUT'})); setError(''); }
     catch (e) { setError(e.message); }
+    finally { goldenRevision.current += 1; goldenUploadPending.current = false; setUploadingGolden(false); }
   }
   useEffect(() => {
     if (alarmReady.current && line.alarms > alarmCount.current && user.preferences.alarm_sound !== false && localStorage.getItem("aoi_alarm_sound") !== "false") {

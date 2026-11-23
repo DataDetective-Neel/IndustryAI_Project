@@ -49,3 +49,5 @@ button:focus-visible,input:focus-visible,select:focus-visible { outline:3px soli
 .operator-image{display:block;width:100%;height:clamp(440px,70vh,900px);object-fit:contain;background:#edf3f2}
 @media(max-width:1000px){.line-console{grid-template-columns:1fr}}
 @media(max-width:560px){.line-visual .scanner,.operator-image{height:65vh;min-height:320px}}
+
+.sidebar-user{margin-top:auto}
