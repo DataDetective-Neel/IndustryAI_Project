@@ -41,6 +41,33 @@ def surface_mask(image, polygon):
     return cv2.erode(mask, np.ones((2*radius+1, 2*radius+1), np.uint8))
 
 
+def automatic_reference(image):
+    """Use board geometry as reference coordinates, never component centers.
+
+    These points define a coordinate frame; inspection correspondences are
+    independently recovered from distributed RANSAC matches.
+    """
+    polygon = board_polygon(image)
+    contour = np.float32(polygon)
+    if len(contour) != 4:
+        raise ValueError('PCB outline is not quadrilateral; correct reference points manually.')
+    # Order clockwise in image coordinates, starting nearest the upper-left.
+    center = contour.mean(axis=0)
+    order = np.argsort(np.arctan2(contour[:, 1]-center[1], contour[:, 0]-center[0]))
+    points = contour[order]
+    points = np.roll(points, -int(np.argmin(points.sum(axis=1))), axis=0)
+    # Inset boundary points to avoid rounding outside the segmented surface.
+    points = center + .96*(points-center)
+    _points(points, np.asarray(image), 'automatic reference')
+    features = reference_features(image, polygon)
+    if len(features['xy']) < 35:
+        raise ValueError('Insufficient on-board detail; correct reference or retake a sharper photo.')
+    return dict(points=points.tolist(), board_polygon=polygon, confirmed=True,
+                source='automatic_board_corners', landmark_kind='board_coordinate_frame',
+                coordinate_system='decoded_original_image_pixels',
+                feature_count=len(features['xy']))
+
+
 def reference_features(image, polygon):
     rgb = np.asarray(image)
     mask = surface_mask(rgb, polygon)

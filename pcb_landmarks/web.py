@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field, StrictBool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .align import _points, align_images, blend_overlay
-from .registration import board_polygon, surface_mask, reference_features, register_inspection
+from .registration import automatic_reference, board_polygon, surface_mask, reference_features, register_inspection
 from .compare import _validate_regions, annotated_overlay, compare_regions, load_config
 from .compatibility import check_compatibility, identify_board
 from .data import open_image, read_image
@@ -333,6 +333,22 @@ def create_app(storage=None):
             temporary = path/'reference.tmp'
             temporary.write_text(json.dumps(saved, allow_nan=False), encoding='utf-8')
             temporary.replace(path/'reference.json')
+            return saved
+        except (ValueError, cv2.error) as error:
+            raise HTTPException(422, str(error)) from error
+
+    @app.post('/api/references/{identifier}/automatic')
+    def automatic_reference_setup(identifier: str):
+        record, path = photo(identifier)
+        if (path/'reference.json').is_file():
+            return json.loads((path/'reference.json').read_text())
+        try:
+            if record['error']:
+                raise ValueError(record['error'])
+            proposal = automatic_reference(read_image(path/'image.png'))
+            saved = save_reference(identifier, ReferenceSetup(**proposal))
+            saved.update(source=proposal['source'], landmark_kind=proposal['landmark_kind'])
+            (path/'reference.json').write_text(json.dumps(saved, allow_nan=False), encoding='utf-8')
             return saved
         except (ValueError, cv2.error) as error:
             raise HTTPException(422, str(error)) from error

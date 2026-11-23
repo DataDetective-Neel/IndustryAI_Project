@@ -35,7 +35,7 @@ function App() {
   const [selected, setSelected] = useState(null);
   const [components, setComponents] = useState([]);
   const [regionId, setRegionId] = useState(null);
-  const [mode, setMode] = useState("manual");
+  const [mode, setMode] = useState("automatic");
   const [tool, setTool] = useState("landmarks");
   const [pointIndex, setPointIndex] = useState(0);
   const [previewWidth, setPreviewWidth] = useState(720);
@@ -160,7 +160,14 @@ function App() {
         setReference({ ...uploaded[0], board_polygon: [], confirmed: false });
         setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null })));
         const setup = await api(`/api/references/${uploaded[0].id}`);
-        setReference((p) => p?.id === uploaded[0].id ? { ...p, board_polygon: setup.board_polygon } : p);
+        let automatic = setup;
+        try {
+          automatic = await api(`/api/references/${uploaded[0].id}/automatic`, { method: "POST" });
+        } catch (e) {
+          setNotice(`Automatic reference setup needs correction: ${e.message}`);
+        }
+        setReference((p) => p?.id === uploaded[0].id ? { ...p, ...automatic } : p);
+        setMode("automatic");
         setProposing(true);
         try {
           const proposal = await api(`/api/photos/${uploaded[0].id}/component-proposals`, { method: "POST" });
