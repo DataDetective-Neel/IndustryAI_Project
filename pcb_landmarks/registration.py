@@ -1,6 +1,7 @@
 """Offline registration against a user-confirmed reference, without a board catalog."""
 import cv2
 import numpy as np
+from itertools import combinations
 
 from .align import _points, align_images
 
@@ -41,6 +42,38 @@ def surface_mask(image, polygon):
     return cv2.erode(mask, np.ones((2*radius+1, 2*radius+1), np.uint8))
 
 
+def mounting_centers(image, polygon):
+    """Conservative circular bare-hole proposals, independent of pose predictions."""
+    rgb = np.asarray(image)
+    scale = min(1., 1000/max(rgb.shape[:2]))
+    small = cv2.resize(rgb, None, fx=scale, fy=scale)
+    hsv = cv2.cvtColor(small, cv2.COLOR_RGB2HSV)
+    neutral = cv2.inRange(hsv, (0, 0, 25), (179, 80, 255))
+    neutral = cv2.morphologyEx(neutral, cv2.MORPH_OPEN, np.ones((5,5), np.uint8))
+    neutral = cv2.morphologyEx(neutral, cv2.MORPH_CLOSE, np.ones((3,3), np.uint8))
+    board = np.zeros(neutral.shape, np.uint8)
+    cv2.fillConvexPoly(board, np.int32(np.asarray(polygon)*scale), 255)
+    contours, _ = cv2.findContours(neutral & board, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    holes = []
+    side = min(neutral.shape)
+    angles = np.linspace(0, 2*np.pi, 64, endpoint=False)
+    for contour in contours:
+        area, perimeter = cv2.contourArea(contour), cv2.arcLength(contour, True)
+        if len(contour) < 5 or perimeter == 0 or 4*np.pi*area/perimeter**2 < .7:
+            continue
+        (x,y),(w,h),_ = cv2.fitEllipse(contour)
+        if not (.025*side < min(w,h) <= max(w,h) < .06*side) or min(w,h)/max(w,h) < .8:
+            continue
+        xs = np.clip((x+.8*max(w,h)*np.cos(angles)).astype(int), 0, small.shape[1]-1)
+        ys = np.clip((y+.8*max(w,h)*np.sin(angles)).astype(int), 0, small.shape[0]-1)
+        if (hsv[ys,xs,1] > 80).mean() < .6:
+            continue  # Neutral components/buttons lack a surrounding solder-mask ring.
+        point = np.array([x,y])/scale
+        if all(np.linalg.norm(point-other) > .4*max(w,h)/scale for other in holes):
+            holes.append(point)
+    return holes
+
+
 def automatic_reference(image):
     """Use board geometry as reference coordinates, never component centers.
 
@@ -48,6 +81,25 @@ def automatic_reference(image):
     independently recovered from distributed RANSAC matches.
     """
     polygon = board_polygon(image)
+    holes = mounting_centers(image, polygon)
+    if 4 <= len(holes) <= 16:
+        choices = []
+        for group in combinations(holes,4):
+            hull = cv2.convexHull(np.float32(group))[:,0]
+            if len(hull) == 4:
+                choices.append((cv2.contourArea(hull), hull))
+        if choices:
+            area, contour = max(choices, key=lambda row: row[0])
+            if area >= .2*cv2.contourArea(np.float32(polygon)):
+                center = contour.mean(axis=0)
+                points = contour[np.argsort(np.arctan2(contour[:,1]-center[1],contour[:,0]-center[0]))]
+                points = np.roll(points, -int(np.argmin(points.sum(axis=1))), axis=0)
+                _points(points, np.asarray(image), 'reference mounting centers')
+                features = reference_features(image, polygon)
+                if len(features['xy']) >= 35:
+                    return dict(points=points.tolist(),board_polygon=polygon,confirmed=True,
+                        source='opencv_mounting_centers',landmark_kind='mounting_holes',
+                        coordinate_system='decoded_original_image_pixels',feature_count=len(features['xy']))
     contour = np.float32(polygon)
     if len(contour) != 4:
         # Chamfers and connectors can add outline vertices. Fit a board frame,

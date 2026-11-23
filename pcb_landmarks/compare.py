@@ -161,7 +161,7 @@ def _overlay_score(reference, aligned, mask):
     return float(np.corrcoef(a,b)[0,1])
 
 
-def compare_regions(reference, aligned, mask, regions, config, alignment, sharpen=False):
+def compare_regions(reference, aligned, mask, regions, config, alignment, sharpen=False, detection_evidence=None):
     """Return region findings; invalid crops/coverage are uncertain, failed alignment skips all.
 
     Arrays are decoded RGB uint8; mask is Step 4 single-channel uint8 0/255.
@@ -252,6 +252,29 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
         states = {p['status'] for p in result['components']}
         defects = states & {'missing', 'misaligned'}
         result['review_required'] = bool('uncertain' in states or defects)
+        result['outcome'] = 'defect' if defects else 'review' if result['review_required'] else 'ok'
+    if detection_evidence is not None:
+        from .component_detection import _box_iou
+        for row in result['components']:
+            if not row.get('bbox_xyxy_px'):
+                continue
+            evidence = {}
+            for side in ['reference', 'inspection']:
+                candidates = detection_evidence.get(side, {}).get('components', [])
+                best = max(candidates, key=lambda p: _box_iou(row['bbox_xyxy_px'],p['bbox_xyxy_px']), default=None)
+                evidence[side] = (dict(iou=_box_iou(row['bbox_xyxy_px'],best['bbox_xyxy_px']),
+                    bbox_xyxy_px=best['bbox_xyxy_px'], confidence=best.get('proposal_confidence')) if best else None)
+            row['detector_evidence'] = evidence
+            observed = evidence['inspection']
+            # A detection cannot establish presence by itself. Strong conflicting
+            # evidence makes an absence decision reviewable rather than certain.
+            if (row['status'] == 'missing' and observed and observed['iou'] >= .5
+                    and (observed['confidence'] or 0) >= .65):
+                row.update(status='uncertain', display_status=DISPLAY['uncertain'],
+                           reason='conflicting_component_detection_and_absence_evidence')
+        states = {p['status'] for p in result['components']}
+        defects = states & {'missing','misaligned'}
+        result['review_required'] = bool('uncertain' in states or defects or failed)
         result['outcome'] = 'defect' if defects else 'review' if result['review_required'] else 'ok'
     for row in result['components']:
         row['classification'] = dict(present='GOOD', missing='MISSING_COMPONENT',

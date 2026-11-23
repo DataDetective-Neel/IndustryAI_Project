@@ -30,6 +30,19 @@ test('automatic ELEGOO setup, imported map, registered defect and persisted resu
   const batch = await (await inspectionResponse).json();
   const result = batch.photos[0];
   expect(result.alignment.status).toBe('ok');
+  expect(result.alignment.verification_status).toBe('verified');
+  expect(result.component_inspection).toMatchObject({status:'completed',decision_count:34});
+  expect(result.landmark_diagnostics.inspection.model_inference_ran).toBe(true);
+  const overview=page.getByLabel('Inspection workspace overview');
+  await expect(overview.getByRole('img',{name:'Golden board configuration'}).locator('[data-landmark-id]')).toHaveCount(4);
+  const inspectionMarkers=overview.getByRole('img',{name:'Inspection workspace input'}).locator('.landmark-markers');
+  await expect(inspectionMarkers).toHaveAttribute('data-verification','verified');
+  await expect(inspectionMarkers.locator('[data-landmark-id]')).toHaveCount(4);
+  for(let i=0;i<4;i++) {
+    const circle=inspectionMarkers.locator(`[data-landmark-id="L${i}"] circle`);
+    expect(Number(await circle.getAttribute('cx'))).toBeCloseTo(result.alignment.inspection_points[i][0],3);
+    expect(Number(await circle.getAttribute('cy'))).toBeCloseTo(result.alignment.inspection_points[i][1],3);
+  }
   expect(result.components.filter(p => p.status === 'misaligned').map(p => p.id)).toEqual(['U2']);
   expect(result.components.filter(p => p.status === 'present')).toHaveLength(33);
   const report = await page.request.get(batch.report_url);
@@ -37,6 +50,8 @@ test('automatic ELEGOO setup, imported map, registered defect and persisted resu
   const sheet = page.getByTestId('result-0');
   await expect(sheet.getByRole('img', {name:'Registered findings for misaligned_002.png'}).locator('rect.misaligned')).toHaveCount(1);
   await expect(sheet.getByText('Registration: Verified', {exact:true})).toBeVisible();
+  await expect(sheet.getByText(/Component scoring (skipped|blocked)/)).toHaveCount(0);
+  await expect(sheet.getByRole('heading',{name:'Findings 34 decisions · 1 defects'})).toBeVisible();
   for (const label of ['Reference', 'Inspection', 'Overlay', 'Difference', 'Side by side']) {
     await sheet.getByRole('button', {name:label,exact:true}).click();
   }

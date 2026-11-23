@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { findingBox, homographyTransform } from './comparison.js';
+import Landmarks from './Landmarks.jsx';
 
 const outcomes = {
   ok: 'Scored regions present', defect: 'Suspected defect', missing: 'Missing component', review: 'Needs review',
@@ -21,16 +22,19 @@ export default function Comparison({ result, reference, inspection, index, mode,
   const part = parts[selected];
   const box = findingBox(part?.bbox_xyxy_px, reference?.width, reference?.height);
   const outcome = result.board_compatibility?.status === 'DIFFERENT_BOARD' ? 'DIFFERENT_BOARD' : result.outcome;
-  const alignmentReview = outcome === 'review' && result.components_evaluated === false;
+  const identityBlocked = result.components_evaluated === false && result.alignment?.status === 'ok';
   const failed = result.alignment?.status !== 'ok';
+  const verified = result.alignment?.verification_status === 'verified';
+  const inspectionPoints = result.alignment?.inspection_points || [];
+  const referencePoints = result.alignment?.reference_points || reference?.points || [];
   const unreliable = result.alignment_validation?.reliable === false;
   return <article className="result-sheet" data-testid={`result-${index}`}>
     <div className="result-heading">
       <h3>{result.filename}</h3>
-      <strong className={`status ${outcome}`}>{alignmentReview ? 'Needs alignment review' : outcomes[outcome] || outcome || 'Outcome unavailable'}</strong>
+      <strong className={`status ${outcome}`}>{identityBlocked ? 'Inspection blocked' : outcomes[outcome] || outcome || 'Outcome unavailable'}</strong>
     </div>
     <div className="registration-status" role="status">
-      <strong>Registration: {failed ? 'Needs review' : 'Verified'}</strong>
+      <strong>Registration: {failed ? 'Needs review' : verified ? 'Verified' : 'Geometry valid; image verification pending'}</strong>
       {result.alignment?.verification && <span>
         {result.alignment.verification.inliers} inliers · median error {result.alignment.verification.median_error_px.toFixed(3)} px · board overlap {(100 * result.alignment.verification.board_overlap).toFixed(1)}%
       </span>}
@@ -38,7 +42,8 @@ export default function Comparison({ result, reference, inspection, index, mode,
     <details className="registration-diagnostics"><summary>Registration diagnostics</summary>
       <pre>{JSON.stringify({ alignment: result.alignment, landmarks: result.landmark_diagnostics }, null, 2)}</pre>
     </details>
-    {result.alignment?.source && <p className="alignment-summary">Alignment: {result.alignment.source === 'reference_registration' ? 'Reference registration · landmarks projected from confirmed reference' : 'YOLO landmarks verified against reference'}</p>}
+    {result.alignment?.source && <p className="alignment-summary">Landmarks: {result.alignment.source === 'reference_registration' ? 'Registration-derived' : result.alignment.source === 'manual_landmarks' ? 'Manual corrections' : 'Model-detected'} · {verified ? 'verified correspondence' : 'tentative correspondence'}</p>}
+    <p className="alignment-summary">Board identity: {result.board_compatibility?.status || 'Not evaluated'} · Component inspection: {result.component_inspection?.status || (result.components_evaluated ? 'completed' : 'not attempted')}</p>
     {result.reason && <p className="result-reason">{result.reason}</p>}
     {result.board_compatibility && <details>
       <summary>Board compatibility evidence</summary>
@@ -49,7 +54,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
       <span>{result.alignment?.reason || 'Correct the mounting holes or retake the photo before trusting component scores.'}</span>
       {mode === 'automatic' && outcome !== 'DIFFERENT_BOARD' && <button className="secondary" onClick={onManual}>Switch to Manual</button>}
     </div>}
-    {result.components_evaluated === false && !failed && <div className="message notice">Component scoring skipped. {result.board_compatibility?.message || 'Board compatibility needs review.'}</div>}
+    {result.components_evaluated === false && !failed && <div className="message notice">Component scoring blocked: {result.component_inspection?.reason || result.reason || result.board_compatibility?.reason || 'Board identity needs verification.'}</div>}
     {result.alignment_validation && <p className="alignment-summary">Alignment overlay score: {result.alignment_validation.overlay_score?.toFixed(4) ?? 'unavailable'}; {result.alignment_validation.reliable ? 'validated' : 'REVIEW — correct landmarks or retake photo'}</p>}
     <div className="comparison-toolbar">
       <div className="tool-switch" aria-label={`Comparison view for ${result.filename}`}>
@@ -75,6 +80,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
                 <img alt="Aligned inspection" src={inspection.image_url} style={{ width: inspection.width, height: inspection.height, maxWidth: 'none', transform, transformOrigin: '0 0', opacity, display: 'block' }} />
               </div>
             </foreignObject>}
+            <Landmarks points={referencePoints} width={reference.width} height={reference.height} verified={verified}/>
             {box && <rect className={`finding-highlight ${part.status}`} x={box[0]} y={box[1]} width={box[2] - box[0]} height={box[3] - box[1]} vectorEffect="non-scaling-stroke" />}
             {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <rect key={p.id} className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect>; })}
           </svg>}
@@ -87,15 +93,19 @@ export default function Comparison({ result, reference, inspection, index, mode,
                 <img alt="Registered inspection" src={inspection.image_url} style={{width:inspection.width,height:inspection.height,maxWidth:'none',transform,transformOrigin:'0 0',display:'block'}} />
               </div>
             </foreignObject>
+            <Landmarks points={referencePoints} width={reference.width} height={reference.height} verified={verified}/>
             {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <rect key={p.id} className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect>; })}
-          </svg> : inspection?.image_url ? <img className="inspection-original" src={inspection.image_url} alt={`Inspection original for ${result.filename}`} /> : <p className="message notice">Inspection photo unavailable. Replace the photo and retry.</p>}
+          </svg> : inspection?.image_url ? <svg className="comparison-canvas" role="img" aria-label={`Inspection original for ${result.filename}`} viewBox={`0 0 ${inspection.width} ${inspection.height}`}>
+            <image href={inspection.image_url} width={inspection.width} height={inspection.height}/>
+            <Landmarks points={inspectionPoints} width={inspection.width} height={inspection.height} verified={verified}/>
+          </svg> : <p className="message notice">Inspection photo unavailable. Replace the photo and retry.</p>}
         </figure>}
         {view === 'difference' && <figure><figcaption>Structural difference heatmap</figcaption>
           <img className="inspection-original" src={result.difference_overlay_url} alt={`Difference heatmap for ${result.filename}`} />
         </figure>}
       </div>
       <aside className="findings-panel" aria-label={`Findings for ${result.filename}`}>
-        <h3>Findings <span className="muted">{parts.length}</span></h3>
+        <h3>Findings <span className="muted">{parts.filter(p=>p.status!=='not_evaluated').length} decisions · {defects.length} defects</span></h3>
         {!parts.length && <p className="muted">No component decisions returned. {result.reason || 'Review the alignment and board compatibility above.'}</p>}
         {parts.map((p, i) => <div className={`finding ${selected === i ? 'active-finding' : ''}`} key={`${p.id}-${i}`}>
           <button className="finding-select" aria-pressed={selected === i} onClick={() => setSelected(selected === i ? null : i)}>

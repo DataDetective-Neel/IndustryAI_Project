@@ -115,6 +115,7 @@ def assess(boxes, scores, keypoints, names, size, board_conf, point_conf):
 
 def assess_mounts(image, boxes, scores, keypoints, names, board_conf, point_conf):
     verified = []
+    rejections = []
     candidates = [i for i, score in enumerate(scores) if np.isfinite(score) and score > board_conf]
     for i in candidates:
         points = keypoints[i] if i < len(keypoints) else []
@@ -122,6 +123,8 @@ def assess_mounts(image, boxes, scores, keypoints, names, board_conf, point_conf
         if candidate['status'] != 'ok':
             continue
         refined, details = refine_mounts(image, keypoints[i, :, :2])
+        if refined is None:
+            rejections.append(dict(board_id=i, **details))
         if refined is not None:
             candidate = assess([boxes[i]], [scores[i]], [np.column_stack((refined, keypoints[i, :, 2]))],
                                names, image.size, board_conf, point_conf)
@@ -132,6 +135,7 @@ def assess_mounts(image, boxes, scores, keypoints, names, board_conf, point_conf
         result = assess(boxes, scores, keypoints, names, image.size, board_conf, point_conf)
         if result['status'] == 'ok' or result['reason'] == 'ambiguous_boards':
             result.update(status='failure', reason='mounting_holes_not_verified', landmarks=[])
+        result['mounting_verification'] = dict(status='failure', candidates=rejections)
         return result
     selected = max(verified, key=lambda c: c['board_confidence'])
     box = np.asarray(selected['bbox_xyxy'])
@@ -256,6 +260,9 @@ class LandmarkDetector:
                                    candidates=candidates)
         result['image_wh'] = list(image.size)
         result['checkpoint_sha256'] = self.sha256
+        result['model_inference_ran'] = True
+        result['raw_board_predictions'] = len(boxes)
+        result['verification_status'] = 'verified' if result['status'] == 'ok' else 'rejected'
         return result
 
 

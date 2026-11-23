@@ -18,7 +18,8 @@ from pydantic import BaseModel, Field, StrictBool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .align import _points, align_images, blend_overlay
-from .registration import automatic_reference, board_polygon, surface_mask, reference_features, register_inspection
+from .registration import (automatic_reference, board_polygon, surface_mask, reference_features,
+                           register_inspection, match_surfaces, verify_alignment)
 from .compare import _validate_regions, annotated_overlay, compare_regions, load_config
 from .compatibility import check_compatibility, identify_board
 from .data import open_image, read_image
@@ -286,11 +287,13 @@ def create_app(storage=None):
         if record['error']:
             return dict(status='failure', reason=record['error'], landmarks=[])
         if not CHECKPOINT.is_file():
-            return dict(status='failure', reason=f'checkpoint_unavailable: {CHECKPOINT.resolve()}', landmarks=[])
+            return dict(status='failure', reason=f'checkpoint_unavailable: {CHECKPOINT.resolve()}', landmarks=[],
+                        checkpoint_available=False, model_inference_ran=False, verification_status='unavailable')
         with MODEL_LOCK:
             try:
                 detector, config = _detector(str(CHECKPOINT.resolve()))
                 result = detector.predict(path/'image.png', config['board_conf'], config['point_conf'])
+                result['checkpoint_available'] = True
                 (path/'landmarks.json').write_text(json.dumps(result, indent=2, allow_nan=False), encoding='utf-8')
                 return result
             except Exception as error:
@@ -341,7 +344,12 @@ def create_app(storage=None):
     def automatic_reference_setup(identifier: str):
         record, path = photo(identifier)
         if (path/'reference.json').is_file():
-            return json.loads((path/'reference.json').read_text())
+            existing = json.loads((path/'reference.json').read_text())
+            if existing.get('source') != 'automatic_board_corners':
+                return existing
+            upgraded = automatic_reference(read_image(path/'image.png'))
+            if upgraded['landmark_kind'] != 'mounting_holes':
+                return existing
         try:
             if record['error']:
                 raise ValueError(record['error'])
@@ -359,13 +367,19 @@ def create_app(storage=None):
                 except ValueError:
                     pass  # Validated geometry remains the independent fallback.
             saved = save_reference(identifier, ReferenceSetup(**proposal))
-            saved.update(source=proposal['source'], landmark_kind=proposal['landmark_kind'])
+            saved.update(source=proposal['source'], landmark_kind=proposal['landmark_kind'],
+                         model_detection={k:detection.get(k) for k in ['status','reason','model_inference_ran','raw_board_predictions','verification_status','mounting_verification']})
             temporary = path/'reference.tmp'
             temporary.write_text(json.dumps(saved, allow_nan=False), encoding='utf-8')
             temporary.replace(path/'reference.json')
             return saved
         except (ValueError, cv2.error) as error:
             raise HTTPException(422, str(error)) from error
+
+    @lru_cache(maxsize=8)
+    def reference_component_detections(identifier, polygon_json):
+        _, path = photo(identifier)
+        return propose_components(read_image(path/'image.png'), json.loads(polygon_json))['components']
 
     @app.get('/api/health')
     def health():
@@ -513,6 +527,7 @@ def create_app(storage=None):
                           simulated=bool(request.simulated or request.synthetic),
                           alignment=dict(status='failure', reason=None), components=[],
                           components_evaluated=False, board_compatibility=None,
+                          component_inspection=dict(status='not_attempted', reason=None, decision_count=0),
                           alignment_overlay_url=None, component_overlay_url=None)
             try:
                 current, current_path = photo(item.photo_id)
@@ -526,23 +541,27 @@ def create_app(storage=None):
                 compatibility = check_compatibility(reference_layout, inspection_layout)
                 result['board_compatibility'] = compatibility
                 if compatibility['status'] == 'DIFFERENT_BOARD':
+                    result['component_inspection'].update(status='blocked', reason=compatibility['reason'])
                     result.update(outcome='DIFFERENT_BOARD' if compatibility['status'] == 'DIFFERENT_BOARD' else 'review',
                                   reason=compatibility['message'],
                                   alignment=dict(status='not_attempted',
                                                  reason='Board compatibility must pass before component scoring.'))
                     results.append(result)
                     continue
-                if request.mode == 'automatic' and not saved_reference and ref_image is not None:
+                if request.mode == 'automatic' and (not saved_reference or saved_reference.get('source') == 'automatic_board_corners') and ref_image is not None:
                     try:
                         saved_reference = automatic_reference_setup(request.reference_id)
                     except HTTPException as error:
                         automatic_setup_error = error.detail
-                rp, ip = request.reference_points, item.points
+                rp = request.reference_points or (saved_reference['points'] if saved_reference else [])
+                ip = item.points
                 registration = None
                 if request.mode == 'automatic' and saved_reference:
                     rp = saved_reference['points']
                     detection = detect(item.photo_id)
-                    result['landmark_diagnostics'] = dict(reference=dict(status='confirmed', landmarks=rp), inspection=detection)
+                    result['landmark_diagnostics'] = dict(reference=dict(status='confirmed', landmarks=rp,
+                        source=saved_reference.get('source','manual'), landmark_kind=saved_reference.get('landmark_kind','manual'),
+                        model_detection=saved_reference.get('model_detection')), inspection=detection)
                     features = cached_reference(request.reference_id, json.dumps(saved_reference['board_polygon']))
                     aligned, homography, mask, registration = register_inspection(
                         ref_image, inspection_image, rp, features, detection)
@@ -561,7 +580,11 @@ def create_app(storage=None):
                     aligned, homography, mask = align_images(ref_image, inspection_image, rp, ip)
                 alignment = dict(status='ok', reference_wh=list(ref_image.size),
                                  homography_inspection_to_reference=homography.tolist(),
-                                 valid_overlap_fraction=float((mask > 0).mean()))
+                                 valid_overlap_fraction=float((mask > 0).mean()),
+                                 verification_status='geometry_only', source='manual_landmarks' if request.mode == 'manual' else 'yolo_landmarks',
+                                 reference_points=np.asarray(rp).tolist(), inspection_points=np.asarray(ip).tolist(),
+                                 reference_landmark_kind=(saved_reference or {}).get('landmark_kind','manual'),
+                                 landmark_kind='manual' if request.mode == 'manual' else 'model_detected')
                 if registration:
                     alignment.update(registration)
                 output = batch_path/str(index)
@@ -576,13 +599,42 @@ def create_app(storage=None):
                                       alignment_evidence=registration['verification']) if registration else
                                  check_compatibility(reference_layout, inspection_layout, ref_image,
                                                      aligned, mask, homography, rp))
+                if compatibility['status'] == 'REVIEW' and not registration:
+                    # A four-point warp alone is geometry, not image verification.
+                    # Catalog/appearance review may be stale after a local defect.
+                    # Verify this supplied transform against distributed features.
+                    try:
+                        polygon = saved_reference['board_polygon'] if saved_reference else board_polygon(ref_image)
+                        features = cached_reference(request.reference_id, json.dumps(polygon))
+                        matches = match_surfaces(features, inspection_image)
+                        evidence = verify_alignment(ref_image, inspection_image, features, matches, homography, aligned, mask)
+                        alignment['verification'] = evidence
+                        compatibility = dict(status='SAME_DESIGN', message='Distributed on-board structure verifies the active reference.',
+                                             reason='verified_reference_structure', alignment_evidence=evidence,
+                                             previous_assessment=compatibility)
+                    except (ValueError, cv2.error) as error:
+                        compatibility = dict(compatibility, verification_failure=str(error))
                 result['board_compatibility'] = compatibility
                 if compatibility['status'] != 'SAME_DESIGN':
-                    result['reason'] = compatibility['message']
+                    result['reason'] = compatibility.get('verification_failure') or compatibility.get('reason') or compatibility['message']
+                    result['component_inspection'].update(status='blocked', reason=result['reason'])
                     results.append(result)
                     continue
+                alignment['verification_status'] = 'verified'
+                detector_evidence = dict(coordinate_system='decoded_reference_pixels')
+                polygon = saved_reference['board_polygon'] if saved_reference else None
+                for side in ['reference','inspection']:
+                    try:
+                        detected = (reference_component_detections(request.reference_id, json.dumps(polygon)) if side == 'reference'
+                                    else propose_components(Image.fromarray(aligned), polygon)['components'])
+                        detector_evidence[side] = dict(status='ok', components=detected)
+                    except (ValueError, cv2.error) as error:
+                        detector_evidence[side] = dict(status='unavailable', reason=str(error), components=[])
+                result['component_detection_evidence'] = detector_evidence
+                comparison = compare_regions(ref_image, aligned, mask, regions, config, alignment, request.sharpen,
+                                             detection_evidence=detector_evidence)
                 result['components_evaluated'] = True
-                comparison = compare_regions(ref_image, aligned, mask, regions, config, alignment, request.sharpen)
+                result['component_inspection'].update(status='completed', reason=None, decision_count=len(comparison['components']))
                 annotated_overlay(ref_image, aligned, mask, comparison).save(output/'components.png')
                 result.update(comparison, photo_id=item.photo_id, filename=current['filename'], alignment=alignment,
                               alignment_overlay_url=f'/api/batches/{batch_id}/{index}/alignment',
@@ -592,9 +644,13 @@ def create_app(storage=None):
                 if not isinstance(error, (ValueError, cv2.error)):
                     result['outcome'] = 'error'
                 reason = str(error) if isinstance(error, (ValueError, HTTPException)) else f'{type(error).__name__}: {error}'
-                result['alignment'] = dict(status='failure', reason=reason)
-                result['board_compatibility'] = dict(status='REVIEW', message='Board compatibility needs review.',
-                                                    reason=reason, evidence=result.get('board_compatibility'))
+                if result['alignment']['status'] != 'ok':
+                    result['alignment'] = dict(status='failure', reason=reason, verification_status='rejected')
+                    result['board_compatibility'] = dict(status='REVIEW', message='Board identity could not be verified.',
+                                                        reason=reason, evidence=result.get('board_compatibility'))
+                result['reason'] = reason
+                result['components_evaluated'] = False
+                result['component_inspection'].update(status='error' if result['alignment']['status'] == 'ok' else 'blocked', reason=reason)
                 result['components'] = [dict(id=p.get('id'), name=p.get('name'), bbox_xyxy_px=p.get('bbox_xyxy_px'),
                                              status='not_evaluated', display_status='Not evaluated', score=None,
                                              overlap=None, reason=reason) for p in request.components]

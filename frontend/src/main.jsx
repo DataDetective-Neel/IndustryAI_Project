@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { imagePoint, pixelBox } from "./coordinates.js";
 import "./style.css";
 import Comparison from "./Comparison.jsx";
+import Landmarks from "./Landmarks.jsx";
 import PlatformApp from "./PlatformApp.jsx";
 import { jsonBody, platformApi } from "./platformApi.js";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
@@ -52,6 +53,9 @@ function App() {
   const drag = useRef(null);
   const photos = [reference, ...inspections].filter(Boolean);
   const photo = photos.find((p) => p.id === selected) || reference;
+  const previewInspection = inspections.find((p) => p.id === selected) || inspections[0];
+  const previewPoints = previewInspection?.registered_points || (mode === 'manual' ? previewInspection?.points :
+    previewInspection?.detection?.status === 'ok' ? previewInspection.detection.landmarks.map(p=>[p.x,p.y]) : []);
   const names = health?.landmark_names || [
     "upper_left_mount",
     "upper_right_mount",
@@ -83,7 +87,7 @@ function App() {
     setReference((p) => (p?.id === id ? { ...p, ...update } : p));
     setInspections((items) =>
       items.map((p) => id === reference?.id && (update.points || update.board_polygon)
-        ? { ...p, ...(referencePointsChanged ? { points: [] } : {}), projected: null } : p.id === id ? { ...p, ...update } : p),
+        ? { ...p, ...(referencePointsChanged ? { points: [] } : {}), projected: null, registered_points:null } : p.id === id ? { ...p, ...update, ...(update.points ? {registered_points:null,projected:null} : {}) } : p),
     );
     setBatch(null);
   }
@@ -158,7 +162,7 @@ function App() {
       if (isReference) {
         setVerifiedRegionsAvailable(false);
         setReference({ ...uploaded[0], board_polygon: [], confirmed: false });
-        setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null })));
+        setInspections((items) => items.map((p) => ({ ...p, points: [], projected: null, registered_points: null })));
         const setup = await api(`/api/references/${uploaded[0].id}`);
         let automatic = setup;
         try {
@@ -375,9 +379,15 @@ function App() {
         }),
       );
       setBatch(result);
-      setInspections((items) => items.map((p) => ({ ...p, projected:
-        result.photos.find((r) => r.photo_id === p.id)?.alignment?.landmark_kind === "projected"
-          ? result.photos.find((r) => r.photo_id === p.id).alignment.inspection_points : null })));
+      const referencePoints = result.photos.find(r=>r.alignment?.verification_status === 'verified')?.alignment.reference_points;
+      if (referencePoints) setReference(p=>({...p,points:referencePoints}));
+      setInspections((items) => items.map((p) => {
+        const alignment=result.photos.find(r=>r.photo_id===p.id)?.alignment;
+        const verified=alignment?.verification_status === 'verified';
+        return {...p,registered_points:verified ? alignment.inspection_points : null,
+          landmark_source:alignment?.landmark_kind === 'projected' ? 'Registration-derived' : alignment?.source === 'manual_landmarks' ? 'Manual' : 'Model-detected',
+          projected:verified && alignment.landmark_kind === 'projected' ? alignment.inspection_points : null};
+      }));
 
       setTimeout(
         () =>
@@ -396,7 +406,7 @@ function App() {
   const pointNames = editingOutline ? ["outline upper left", "outline upper right", "outline lower right", "outline lower left"] : names;
   const displayedPoints = editingOutline ? reference.board_polygon || []
     : referenceSelected || mode === "manual" ? photo?.points || []
-    : photo?.projected || (photo?.detection?.status === "ok"
+    : photo?.registered_points || photo?.projected || (photo?.detection?.status === "ok"
       ? photo.detection.landmarks.map((p) => [p.x, p.y]) : []);
   const radius = photo ? Math.max(photo.width, photo.height) / 85 : 10;
   const runHint = !health ? "Connect the local backend to begin."
@@ -566,7 +576,7 @@ function App() {
                       onClick={() => {
                         if (p.id === reference?.id) {
                           setReference(null);
-                          setInspections((items) => items.map((item) => ({ ...item, points: [], projected: null })));
+                          setInspections((items) => items.map((item) => ({ ...item, points: [], projected: null, registered_points: null })));
                           setComponents([]);
                           setRegionId(null);
                         }
@@ -588,11 +598,14 @@ function App() {
                 <svg viewBox={`0 0 ${reference.width} ${reference.height}`} role="img" aria-label="Golden board configuration">
                   <image href={reference.image_url} width={reference.width} height={reference.height} />
                   {components.map((part) => { const [x1,y1,x2,y2] = part.bbox_xyxy_px; return <rect key={part.id} x={x1} y={y1} width={x2-x1} height={y2-y1} fill="none" stroke="#ffbf00" strokeWidth="2" />; })}
-                  {(reference.points || []).map(([x,y],i) => <g key={i}><circle cx={x} cy={y} r={Math.max(reference.width,reference.height)/70} fill="#087e78" stroke="white" strokeWidth="3" /><text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill="white" fontSize={Math.max(reference.width,reference.height)/50}>{i+1}</text></g>)}
+                  <Landmarks points={reference.points} width={reference.width} height={reference.height} verified={reference.confirmed}/>
                 </svg>
               </figure>
-              <figure><figcaption>Inspection PCB · {inspections.find((p) => p.id === selected)?.filename || inspections[0].filename}</figcaption>
-                <img src={(inspections.find((p) => p.id === selected) || inspections[0]).image_url} alt="Inspection workspace input" />
+              <figure><figcaption>Inspection PCB · {previewInspection.filename} · {previewInspection.registered_points ? `${previewInspection.landmark_source} · verified` : 'Landmark correspondence pending'}</figcaption>
+                <svg viewBox={`0 0 ${previewInspection.width} ${previewInspection.height}`} role="img" aria-label="Inspection workspace input">
+                  <image href={previewInspection.image_url} width={previewInspection.width} height={previewInspection.height}/>
+                  <Landmarks points={previewPoints} width={previewInspection.width} height={previewInspection.height} verified={!!previewInspection.registered_points}/>
+                </svg>
               </figure>
             </div>}
             {!photo && (
