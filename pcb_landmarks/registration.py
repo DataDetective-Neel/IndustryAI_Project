@@ -50,14 +50,22 @@ def automatic_reference(image):
     polygon = board_polygon(image)
     contour = np.float32(polygon)
     if len(contour) != 4:
-        raise ValueError('PCB outline is not quadrilateral; correct reference points manually.')
+        # Chamfers and connectors can add outline vertices. Fit a board frame,
+        # then keep every coordinate anchor inside the observed surface.
+        contour = cv2.boxPoints(cv2.minAreaRect(contour))
     # Order clockwise in image coordinates, starting nearest the upper-left.
     center = contour.mean(axis=0)
     order = np.argsort(np.arctan2(contour[:, 1]-center[1], contour[:, 0]-center[0]))
     points = contour[order]
     points = np.roll(points, -int(np.argmin(points.sum(axis=1))), axis=0)
     # Inset boundary points to avoid rounding outside the segmented surface.
-    points = center + .96*(points-center)
+    for inset in (.96, .9, .8, .7):
+        candidate = center + inset*(points-center)
+        if all(cv2.pointPolygonTest(np.float32(polygon), tuple(map(float, p)), False) >= 0 for p in candidate):
+            points = candidate
+            break
+    else:
+        raise ValueError('PCB outline has no safe distributed reference frame; correct it manually.')
     _points(points, np.asarray(image), 'automatic reference')
     features = reference_features(image, polygon)
     if len(features['xy']) < 35:

@@ -483,6 +483,12 @@ def create_app(storage=None):
         reference_detection = None
         saved_reference = (json.loads((reference_path/'reference.json').read_text())
                            if (reference_path/'reference.json').is_file() else None)
+        automatic_setup_error = None
+        if request.mode == 'automatic' and not saved_reference and ref_image is not None:
+            try:
+                saved_reference = automatic_reference_setup(request.reference_id)
+            except HTTPException as error:
+                automatic_setup_error = error.detail
         reference_layout = identify_board(ref_image) if ref_image is not None else None
         results = []
         for index, item in enumerate(request.inspections):
@@ -503,7 +509,7 @@ def create_app(storage=None):
                 inspection_layout = identify_board(inspection_image)
                 compatibility = check_compatibility(reference_layout, inspection_layout)
                 result['board_compatibility'] = compatibility
-                if compatibility['status'] == 'DIFFERENT_BOARD' or (compatibility['status'] == 'REVIEW' and not saved_reference):
+                if compatibility['status'] == 'DIFFERENT_BOARD':
                     result.update(outcome='DIFFERENT_BOARD' if compatibility['status'] == 'DIFFERENT_BOARD' else 'review',
                                   reason=compatibility['message'],
                                   alignment=dict(status='not_attempted',
@@ -526,7 +532,7 @@ def create_app(storage=None):
                         detection = detect(item.photo_id)
                         result['landmark_diagnostics'] = dict(reference=reference_detection, inspection=detection)
                         if reference_detection['status'] != 'ok':
-                            raise ValueError('Reference: ' + reference_detection['reason'])
+                            raise ValueError('Reference: ' + (automatic_setup_error or reference_detection['reason']))
                         if detection['status'] != 'ok':
                             raise ValueError(detection['reason'])
                         rp = [[p['x'], p['y']] for p in reference_detection['landmarks']]
