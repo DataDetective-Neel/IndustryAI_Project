@@ -167,7 +167,7 @@ Only alignment source, tests, the original synthetic generator and documentation
 are added. No private photos, generated run images, feature crops, caches, weights
 or machine-specific run JSON are published. Existing real inputs were already
 tracked and publication-cleared: Adam Byerly (frettapper), **micro-PCB Images**,
-Kaggle version 2, CC BY 4.0, per the [Step 2 provenance](../PCB_Dataset_Pilot/README.md).
+Kaggle version 2, CC BY 4.0, per the [Step 2 provenance](../../PCB_Dataset_Pilot/README.md).
 The local real overlays blend/warp those sources. Their outputs stay under ignored
 `runs/alignment/`. Reproduction uses the existing normal-push branch
 `origin/docs/pcb-srs-sdd-dfd`; no history rewrite is required.

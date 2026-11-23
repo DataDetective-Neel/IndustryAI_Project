@@ -1,11 +1,11 @@
 # Step 6: local React / FastAPI inspection app
 
-Windows setup/launch scripts are now documented in the [README](../README.md)
+Windows setup/launch scripts are now documented in the [README](../../README.md)
 and [Step 7 verification](STEP7.md); startup limitations below describe Step 6.
 
 Implemented and verified on 20 November 2026. The app calls the existing Python
 inference, alignment and comparison functions; there is no second scoring
-implementation. See [Step 4](STEP4.md), [Step 5](STEP5.md) and the [design](SDD.md).
+implementation. See [Step 4](STEP4.md), [Step 5](STEP5.md) and the [design](../specs/SDD.md).
 Manual landmarks are the default because the frozen pilot rejects development
 photos. Thresholds remain provisional. Windows `.bat` packaging belongs to Step 7.
 
@@ -270,4 +270,4 @@ overlay-label calibration remain outside this provisional pilot.
 Only backend/frontend source and lock files, tests and documentation are committed.
 Local weights, private photos, uploads, run evidence, browser logs, node_modules
 and built dist assets remain ignored. Real test inputs were already tracked and
-publication-cleared under the [Step 2 provenance](../PCB_Dataset_Pilot/README.md).
+publication-cleared under the [Step 2 provenance](../../PCB_Dataset_Pilot/README.md).

@@ -102,8 +102,8 @@ Localization matches the highest-confidence prediction with box IoU >= 0.5 and
 score >= 0.001, independently of runtime acceptance, and measures Euclidean
 error against visibility > 0 labels in full decoded image pixels. Each landmark
 has 5 validation and 8 held-out matches. Medians, 95th percentiles, per-image
-errors and failure reasons are in [validation JSON](results/val.json) and
-[held-out JSON](results/test.json). The broad custom-four-point OKS sigma (0.25
+errors and failure reasons are in [validation JSON](../results/val.json) and
+[held-out JSON](../results/test.json). The broad custom-four-point OKS sigma (0.25
 per point) means strong AP cannot establish precise mounting-hole localization.
 AP precision/recall come from the library's metric curve; they are not the
 operating-point acceptance rate.
@@ -119,7 +119,7 @@ frozen config, returned `failure/no_confident_board`, empty landmarks and exit
 code 2. A fresh CPU process loaded that checkpoint and inferred on ECCC5 (val),
 FCCC5 (held-out) and ACCC5 (train) with DNS/socket connections blocked: **zero
 network attempts**. All three returned explicit failure; see
-[offline verification JSON](results/offline.json). Generic local human-pose
+[offline verification JSON](../results/offline.json). Generic local human-pose
 weights were rejected. Ten focused unit tests and `pip check` pass.
 
 The success JSON contract is tested with synthetic ordered points; no real
@@ -147,10 +147,10 @@ Only failures are shown because no qualifying four-landmark success was observed
 Cyan circles are labels; red crosses are the highest-confidence model candidate,
 shown for diagnosis even when rejected. Indices retain dataset order.
 
-![Validation failure](samples/val/EBCC5.jpg)
-![Held-out failure](samples/test/FBCC5.jpg)
+![Validation failure](../samples/val/EBCC5.jpg)
+![Held-out failure](../samples/test/FBCC5.jpg)
 
-Additional examples: [ECCB5](samples/val/ECCB5.jpg), [FCCB5](samples/test/FCCB5.jpg).
+Additional examples: [ECCB5](../samples/val/ECCB5.jpg), [FCCB5](../samples/test/FCCB5.jpg).
 
 Photos: Adam Byerly (frettapper), **micro-PCB Images**, Kaggle dataset version 2,
 under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), as recorded in

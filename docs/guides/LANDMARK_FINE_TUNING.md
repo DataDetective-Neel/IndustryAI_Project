@@ -106,10 +106,10 @@ identities. Clipped, unrelated-board and 90° cases returned REVIEW. Direct and 
 exactly. The production browser test also confirms four accepted screenshot-photo
 markers within 4px of the reviewed centers.
 
-[Tracked evidence JSON](results/landmark-finetune.json) ·
-[Corrected screenshot-photo overlay](../runs/landmarks/holes_finetune_20261121/MCCB5-verified.png) ·
-[Production browser screenshot](../runs/landmarks/holes_finetune_20261121/browser-accepted.png) ·
-[Live API evidence](../runs/landmarks/holes_finetune_20261121/live-app-evidence.json)
+[Tracked evidence JSON](../results/landmark-finetune.json) ·
+[Corrected screenshot-photo overlay](../../runs/landmarks/holes_finetune_20261121/MCCB5-verified.png) ·
+[Production browser screenshot](../../runs/landmarks/holes_finetune_20261121/browser-accepted.png) ·
+[Live API evidence](../../runs/landmarks/holes_finetune_20261121/live-app-evidence.json)
 
 Regression verification: **49 Python tests, 2 coordinate tests, 7 browser tests,
 production build and git diff --check passed**. The tests cover

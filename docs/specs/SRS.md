@@ -8,14 +8,14 @@
 
 Related documents: [Software Design Document](SDD.md) · [Data Flow Diagrams](DFD.md).
 
-Implementation update: [Step 3 commands](STEP3.md) and [measured results](STEP3_RESULTS.md)
+Implementation update: [Step 3 commands](../steps/STEP3.md) and [measured results](../steps/STEP3_RESULTS.md)
 record the executed landmark training/evaluation. Its four-point accuracy failed
-readiness. [Step 4](STEP4.md) implements alignment and review overlays from reviewed
-Step 2 labels. [Step 5](STEP5.md) implements provisional component-region scoring,
+readiness. [Step 4](../steps/STEP4.md) implements alignment and review overlays from reviewed
+Step 2 labels. [Step 5](../steps/STEP5.md) implements provisional component-region scoring,
 local Needs review coverage/parallax handling and optional symmetric sharpening;
 failed alignment skips classification. The wider application requirements below
 remain the design baseline, including pending global quality/acceptance policy.
-[Step 6](STEP6.md) implements the local React/FastAPI upload-to-results workflow,
+[Step 6](../steps/STEP6.md) implements the local React/FastAPI upload-to-results workflow,
 including requested Manual landmark correction and explicit Automatic failure handling.
 
 ## 1. Purpose and source basis
