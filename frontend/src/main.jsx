@@ -735,9 +735,7 @@ function App() {
                               strokeWidth={radius / 4}
                             />
                           )}
-                          {referenceSelected && reference.board_polygon?.length >= 3 && <polygon
-                            points={reference.board_polygon.filter(Boolean).map((p) => p.join(",")).join(" ")}
-                            fill="none" stroke="#5ce7ff" strokeDasharray="10 5" strokeWidth={radius / 4} pointerEvents="none" />}
+
                           {displayedPoints.map(
                             (point, index) =>
                               point && point.every(Number.isFinite) && (

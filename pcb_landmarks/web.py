@@ -52,7 +52,7 @@ class InspectionRequest(BaseModel):
     reference_id: str
     reference_points: list[list[float]] = Field(default_factory=list, max_length=4)
     inspections: list[PhotoPoints] = Field(min_length=1, max_length=MAX_PHOTOS)
-    components: list[dict] = Field(min_length=1, max_length=100)
+    components: list[dict] = Field(min_length=1, max_length=1000)
     mode: Literal['manual', 'automatic']
     sharpen: StrictBool = False
     synthetic: StrictBool = False
@@ -78,7 +78,7 @@ class DecisionRequest(BaseModel):
 
 class GoldenConfigRequest(BaseModel):
     reference_id: str = Field(min_length=32, max_length=32)
-    components: list[dict] = Field(min_length=1, max_length=100)
+    components: list[dict] = Field(min_length=1, max_length=1000)
     mode: Literal['manual', 'automatic'] = 'automatic'
     sharpen: StrictBool = False
 
