@@ -806,3 +806,5 @@ input[type="file"]::file-selector-button { background: var(--raised); color: var
 .findings-panel { max-height: calc(65vh + 60px); overflow-y: auto; }
 @media (max-width: 1050px) { .findings-panel { max-height: none; overflow: visible; } }
 @media (max-width: 600px) { .comparison-canvas, .inspection-original { height: auto; } }
+
+.finding-highlight.uncertain,.finding-highlight.review{stroke:#eab308;fill:rgba(234,179,8,.12);stroke-width:3px}

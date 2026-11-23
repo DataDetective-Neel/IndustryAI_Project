@@ -791,7 +791,7 @@ def create_app(storage=None):
         authorize(authorization, ROLES)
         config = selected_live_reference()
         if not config:
-            raise HTTPException(404, 'Upload a golden reference before starting live inspection')
+            return None
         return live_reference_view(config)
 
     @app.put('/api/simulation/reference/{reference_id}')

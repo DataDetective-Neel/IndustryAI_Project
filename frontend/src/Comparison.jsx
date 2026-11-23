@@ -12,13 +12,14 @@ export default function Comparison({ result, reference, inspection, index, mode,
   const [view, setView] = useState('side');
   const [opacity, setOpacity] = useState(0.5);
   const [selected, setSelected] = useState(null);
+  const [showAll, setShowAll] = useState(false);
   const transform = result.alignment?.status === 'ok'
     ? homographyTransform(result.alignment.homography_inspection_to_reference) : null;
   const canOverlay = !!(transform && reference?.image_url && inspection?.image_url);
   const canDifference = !!result.difference_overlay_url;
   const overlay = view === 'overlay' && canOverlay;
   const parts = result.components || [];
-  const defects = parts.filter(p => ['missing', 'misaligned'].includes(p.status));
+  const defects = parts.filter(p => showAll || ['missing', 'misaligned', 'uncertain', 'review'].includes(p.status) || /needs.?review/i.test(p.decision || ''));
   const part = parts[selected];
   const box = findingBox(part?.bbox_xyxy_px, reference?.width, reference?.height);
   const outcome = result.board_compatibility?.status === 'DIFFERENT_BOARD' ? 'DIFFERENT_BOARD' : result.outcome;
@@ -82,7 +83,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
             </foreignObject>}
             <Landmarks points={referencePoints} width={reference.width} height={reference.height} verified={verified}/>
             {box && !defects.some(p => p.id === part.id) && <rect className={`finding-highlight ${part.status}`} x={box[0]} y={box[1]} width={box[2] - box[0]} height={box[3] - box[1]} vectorEffect="non-scaling-stroke" />}
-            {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <rect key={p.id} className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect>; })}
+            {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <g key={p.id}><rect className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect><text x={b[0]} y={Math.max(16,b[1]-5)} fill="#b77900" stroke="#fff" strokeWidth="0.8" paintOrder="stroke" fontSize={Math.max(13, reference.width/65)}>{p.name || p.id}: {p.display_status || p.status}</text></g>; })}
           </svg>}
         </figure>}
         {(view === 'side' || view === 'inspection') && <figure>
@@ -94,7 +95,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
               </div>
             </foreignObject>
             <Landmarks points={referencePoints} width={reference.width} height={reference.height} verified={verified}/>
-            {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <rect key={p.id} className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect>; })}
+            {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <g key={p.id}><rect className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect><text x={b[0]} y={Math.max(16,b[1]-5)} fill="#b77900" stroke="#fff" strokeWidth="0.8" paintOrder="stroke" fontSize={Math.max(13, reference.width/65)}>{p.name || p.id}: {p.display_status || p.status}</text></g>; })}
           </svg> : inspection?.image_url ? <svg className="comparison-canvas" role="img" aria-label={`Inspection original for ${result.filename}`} viewBox={`0 0 ${inspection.width} ${inspection.height}`}>
             <image href={inspection.image_url} width={inspection.width} height={inspection.height}/>
             <Landmarks points={inspectionPoints} width={inspection.width} height={inspection.height} verified={verified}/>
@@ -105,9 +106,10 @@ export default function Comparison({ result, reference, inspection, index, mode,
         </figure>}
       </div>
       <aside className="findings-panel" aria-label={`Findings for ${result.filename}`}>
+        <div className="tool-switch"><button aria-pressed={!showAll} onClick={() => setShowAll(false)}>Issues / Needs review</button><button aria-pressed={showAll} onClick={() => setShowAll(true)}>All</button></div>
         <h3>Findings <span className="muted">{parts.filter(p=>p.status!=='not_evaluated').length} decisions · {defects.length} defects</span></h3>
         {!parts.length && <p className="muted">No component decisions returned. {result.reason || 'Review the alignment and board compatibility above.'}</p>}
-        {parts.map((p, i) => <div className={`finding ${selected === i ? 'active-finding' : ''}`} key={`${p.id}-${i}`}>
+        {parts.map((p, i) => (showAll || defects.includes(p)) && <div className={`finding ${selected === i ? 'active-finding' : ''}`} key={`${p.id}-${i}`}>
           <button className="finding-select" aria-pressed={selected === i} onClick={() => setSelected(selected === i ? null : i)}>
             <span>{p.name}</span><span className={`status ${p.status}`}>{p.display_status || p.status}</span>
           </button>
