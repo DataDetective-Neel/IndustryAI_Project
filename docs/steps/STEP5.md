@@ -199,7 +199,7 @@ Alignment/comparison run on local files with no model/network service.
 Only source, configuration, original synthetic generator/tests and documentation
 with portable measured numbers are published. All run reports, overlays, diagnostic
 crops and photos stay local under ignored `runs/`; no private image is added.
-Existing real inputs were already publication-cleared, per [Step 2 provenance](../PCB_Dataset_Pilot/README.md)
+Existing real inputs were already publication-cleared, per [Step 2 provenance](../../PCB_Dataset_Pilot/README.md)
 (Adam Byerly / frettapper, micro-PCB Images v2, CC BY 4.0).
 
 Real missing-part validation, automatic local quality/parallax checks and robust

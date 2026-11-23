@@ -47,7 +47,7 @@ The generated mild warp has additional low-confidence board candidates (0.0446 a
 | L2 | (771.78, 1112.59) | (908.95, 1323.61) |
 | L3 | (498.51, 1162.68) | (308.07, 1325.00) |
 
-[Reference overlay: green reviewed / red raw](../runs/demo-evidence/reference-landmarks.png). [Mild perspective overlay](../runs/demo-evidence/mild_perspective-landmarks.png). [Real angled ECCB5 overlay](../runs/demo-evidence/real_angle_ECCB5-landmarks.png).
+[Reference overlay: green reviewed / red raw](../../runs/demo-evidence/reference-landmarks.png). [Mild perspective overlay](../../runs/demo-evidence/mild_perspective-landmarks.png). [Real angled ECCB5 overlay](../../runs/demo-evidence/real_angle_ECCB5-landmarks.png).
 
 ## What changed
 
@@ -76,7 +76,7 @@ The normal production React upload-and-inspect UI and FastAPI routes were exerci
 
 Inspection→reference H is fitted from `ip` to `rp`; the saved `transform.json` records both directions. At eight component centers beyond the four fitted landmarks, transformed-point max error with reviewed/known points is **0.00003278 px**. The rejected raw YOLO point sets would give **49.0–106.7 px** errors at those same features. All eight mild-warp local match offsets are **(0,0)**; scores range **0.9643–0.9874**. The tiny matrix error is a synthetic transform-consistency check, not a claim of that accuracy on independently captured real photos.
 
-[Full runtime JSON](results/demo-reliability.json), [generated matrix](../runs/demo-evidence/transform.json), [mild-warp component overlay](../runs/demo-evidence/mild_perspective-manual-component.png), [browser cases screenshot](../runs/demo-evidence/browser-three-cases.png), [browser JSON](../runs/demo-evidence/browser-evidence.json). Generated assets live in ignored runs/; the JSON snapshot here is tracked and the command regenerates assets.
+[Full runtime JSON](../results/demo-reliability.json), [generated matrix](../../runs/demo-evidence/transform.json), [mild-warp component overlay](../../runs/demo-evidence/mild_perspective-manual-component.png), [browser cases screenshot](../../runs/demo-evidence/browser-three-cases.png), [browser JSON](../../runs/demo-evidence/browser-evidence.json). Generated assets live in ignored runs/; the JSON snapshot here is tracked and the command regenerates assets.
 
 ## Verification and reproduction
 

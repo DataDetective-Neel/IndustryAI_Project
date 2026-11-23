@@ -170,4 +170,4 @@ hosted binary is not implied.
 Technical references: [official YOLO26 models](https://docs.ultralytics.com/models/yolo26/),
 [pose API](https://docs.ultralytics.com/tasks/pose/),
 [PyTorch versioned wheel commands](https://pytorch.org/get-started/previous-versions/).
-Dataset provenance/license is in `../PCB_Dataset_Pilot/README.md`.
+Dataset provenance/license is in `../../PCB_Dataset_Pilot/README.md`.

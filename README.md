@@ -6,14 +6,14 @@ functions. **Thresholds are provisional; real missing-part validation is pending
 Controlled synthetic erasures verify the multi-evidence `MISSING` workflow, but do
 not establish real-photo accuracy. Missing requires low structural correlation,
 lost edge energy, and changed appearance; every suspected defect requires review.
-See [November 21 evidence](docs/DEMO_RELIABILITY.md) for the earlier conservative baseline.
+See [November 21 evidence](docs/guides/DEMO_RELIABILITY.md) for the earlier conservative baseline.
 
-Before component scoring, a [board compatibility check](docs/BOARD_COMPATIBILITY.md)
+Before component scoring, a [board compatibility check](docs/guides/BOARD_COMPATIBILITY.md)
 uses distributed connector, mounting-region and silkscreen features. Positively
 recognized mismatched layouts return `DIFFERENT_BOARD` and skip component decisions.
 Blur, cropping, unknown layouts and uncertain alignment remain `REVIEW`.
 
-[Mounting-hole correction evidence](docs/MOUNT_CALIBRATION.md) covers the pictured
+[Mounting-hole correction evidence](docs/guides/MOUNT_CALIBRATION.md) covers the pictured
 Pi and Mega2560 layouts, direct-versus-uploaded inference, and remaining REVIEW cases.
 
 ## Windows prerequisites
@@ -82,7 +82,7 @@ registration before requesting manual clicks. Projected landmarks are labeled;
 component boxes remain in original reference pixels. Replacing the reference
 clears its setup and stale inspection points.
 
-See [reference registration and verification](docs/reference-registration.md) for
+See [reference registration and verification](docs/guides/reference-registration.md) for
 workflow details, tested designs, rejection cases and remaining limitations.
 
 ## Component model and live camera
@@ -200,7 +200,7 @@ settings in `configs/landmarks.json`; it never downloads a model or silently
 substitutes Manual points. Current checkpoint: `models/pcb-mounting-holes-yolo26n-pose.pt`.
 The tuned profile targets the Raspberry Pi board shown in MCCB5, with mandatory
 OpenCV verification of visible gold mounting rims and a known-board orientation
-pattern stored in `configs/mounting-holes-M.png`. See [fine-tuning evidence](docs/LANDMARK_FINE_TUNING.md).
+pattern stored in `configs/mounting-holes-M.png`. See [fine-tuning evidence](docs/guides/LANDMARK_FINE_TUNING.md).
 For another local path, set it before launching in the same PowerShell terminal:
 
 ```powershell
@@ -219,8 +219,8 @@ regions remain available for the Manual benchmark; they are not applied to the R
 
 ## Verification and limitations
 
-See [Step 7 actual verification](docs/STEP7.md), [web workflow](docs/STEP6.md),
-[alignment](docs/STEP4.md) and [comparison](docs/STEP5.md).
+See [Step 7 actual verification](docs/steps/STEP7.md), [web workflow](docs/steps/STEP6.md),
+[alignment](docs/steps/STEP4.md) and [comparison](docs/steps/STEP5.md).
 
 Clean-copy setup, rerun, a spaces/outside-directory invocation, production
 synthetic inspection under process-level external-network blocking, missing-weight

@@ -21,7 +21,7 @@ packaging changes; no new dependency. Full application quality gates stay pendin
   a retake report with null scores, no overlay and nonzero exit.
 - [x] Run same synthetic/real pairs and regions with sharpening off/on; record actual
   scores/decisions, full suite results and lack of real missing-part ground truth
-  in `docs/STEP5.md`. Publish source, fixtures and portable measured results only.
+  in `docs/steps/STEP5.md`. Publish source, fixtures and portable measured results only.
 
 Checkpoint procedure: inspect and explicitly stage changes, commit, normal-push
 existing `docs/pcb-srs-sdd-dfd`, and verify remote hash. Keep run assets local;

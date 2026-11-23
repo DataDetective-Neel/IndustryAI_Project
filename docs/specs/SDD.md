@@ -8,13 +8,13 @@
 Related documents: [Software Requirements Specification](SRS.md) · [Data Flow Diagrams](DFD.md).
 
 Implementation update: the landmark-only training and local inference commands
-are documented in [Step 3](STEP3.md), with [actual results](STEP3_RESULTS.md).
-The trained pilot is not ready for alignment. [Step 4](STEP4.md) now implements
+are documented in [Step 3](../steps/STEP3.md), with [actual results](../steps/STEP3_RESULTS.md).
+The trained pilot is not ready for alignment. [Step 4](../steps/STEP4.md) now implements
 four-point alignment and overlays using reviewed Step 2 labels; remaining modules
-and full quality/acceptance gates below are proposed. [Step 5](STEP5.md) now adds
+and full quality/acceptance gates below are proposed. [Step 5](../steps/STEP5.md) now adds
 provisional region correlation, per-region review gates, symmetric optional
 sharpening and a local annotated report; this is not full-app acceptance.
-[Step 6](STEP6.md) adds the React/Vite and loopback FastAPI workflow with explicit
+[Step 6](../steps/STEP6.md) adds the React/Vite and loopback FastAPI workflow with explicit
 Manual/Automatic modes, original-pixel annotation editing and per-photo reports.
 
 ## 1. Design basis and boundary
@@ -97,7 +97,7 @@ For each photo, check JPEG/PNG content and decoder success, byte and decoded-dim
 
 Detect the same four semantic landmarks. Require confidence above calibrated thresholds, finite in-image coordinates, distinct well-spread points, a non-self-intersecting convex quadrilateral with consistent order, adequate area, and a numerically usable transform. Reject collinear, near-degenerate, mirrored/identity-inconsistent, or incomplete observations. Numeric cutoffs are TBD.
 
-Use `cv2.getPerspectiveTransform(inspection_points, reference_points)` and `cv2.warpPerspective` to produce a reference-sized image [T7]. Warp an all-valid source mask with the same transform and invalid border. Step 4 conservatively requires full bilinear source support plus inverse-coordinate bounds rather than nearest-neighbor support alone; see its [implemented contract](STEP4.md#coordinate-and-validation-contract). Step 5 requires full coverage of each scored rectangle, routing partial local coverage to Needs review as requested for this pilot. The full application's global coverage/retake policy remains to be calibrated. Padding outside the photographed image must not become comparison evidence.
+Use `cv2.getPerspectiveTransform(inspection_points, reference_points)` and `cv2.warpPerspective` to produce a reference-sized image [T7]. Warp an all-valid source mask with the same transform and invalid border. Step 4 conservatively requires full bilinear source support plus inverse-coordinate bounds rather than nearest-neighbor support alone; see its [implemented contract](../steps/STEP4.md#coordinate-and-validation-contract). Step 5 requires full coverage of each scored rectangle, routing partial local coverage to Needs review as requested for this pilot. The full application's global coverage/retake policy remains to be calibrated. Padding outside the photographed image must not become comparison evidence.
 
 **Four fitted points cannot independently validate their own alignment:** mapping residual at those same four correspondences can be tiny even for wrong identities. Check transform plausibility and board containment; where available, compare independent stable features such as mounting holes, silkscreen, or board-edge correspondences outside inspected components. The feature method, matching tolerance, minimum evidence, and fallback acceptance gates without independent features are TBD and must be calibrated before demo acceptance. If confidence in the alignment cannot be established, return `retake` rather than OK. Generate a blend overlay for operator verification; visual review supplements automated gates.
 
@@ -181,7 +181,7 @@ The proposed `setup.bat` runs from the project directory while online, checks a 
 
 Prepare `frontend/dist/` through the Vite build on a development machine and ship it with the demo [T2]. Package the trained model and configuration explicitly; setup must verify all required local assets. FastAPI serves the HTML and static files after API routes are registered [T4], binds to `127.0.0.1` (proposed port `8000`), and loads weights from disk once at startup. No Vite development server, Node.js runtime, CDN font/script, cloud API, or first-run model download is required at demo time. Disable optional network telemetry/update checks in packaged libraries and verify actual offline behavior rather than assuming it.
 
-The implemented Step 6 entry point is `uvicorn pcb_landmarks.web:app --host 127.0.0.1 --port 8000`, with React/Vite development and production-build commands in [Step 6](STEP6.md). Manual annotation is an explicit operator-selected alternative to the frozen detector in this pilot. The complete saved-reference library, launcher and packaging remain pending. Final packaging verification must stop the app, disable Wi-Fi, restart from the packaged files, reload a saved reference, inspect a batch, and review evidence. Repeat on the actual target laptop and record versions/hardware.
+The implemented Step 6 entry point is `uvicorn pcb_landmarks.web:app --host 127.0.0.1 --port 8000`, with React/Vite development and production-build commands in [Step 6](../steps/STEP6.md). Manual annotation is an explicit operator-selected alternative to the frozen detector in this pilot. The complete saved-reference library, launcher and packaging remain pending. Final packaging verification must stop the app, disable Wi-Fi, restart from the packaged files, reload a saved reference, inspect a batch, and review evidence. Repeat on the actual target laptop and record versions/hardware.
 
 ## 8. Validation and SRS traceability
 

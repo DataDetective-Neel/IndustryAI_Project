@@ -76,9 +76,9 @@ The processor erasure is a clearly labeled demo fixture, **not a verified real
 missing-component photo**. The component layer retains its conservative REVIEW
 policy for ambiguous absence evidence.
 
-[API evidence JSON](results/board-compatibility.json) ·
-[Production browser report](../runs/board-compatibility/browser-report.json) ·
-[Wrong-board screenshot](../runs/board-compatibility/wrong-board.png)
+[API evidence JSON](../results/board-compatibility.json) ·
+[Production browser report](../../runs/board-compatibility/browser-report.json) ·
+[Wrong-board screenshot](../../runs/board-compatibility/wrong-board.png)
 
 Reproduce with:
 

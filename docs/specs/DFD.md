@@ -7,14 +7,14 @@
 
 Related documents: [Software Requirements Specification](SRS.md) · [Software Design Document](SDD.md).
 
-Implementation update: [Step 3](STEP3.md) implements offline landmark training,
-evaluation and a local detector entry point; [measured accuracy](STEP3_RESULTS.md)
-failed readiness. [Step 4](STEP4.md) implements the four-point warp, validity mask
+Implementation update: [Step 3](../steps/STEP3.md) implements offline landmark training,
+evaluation and a local detector entry point; [measured accuracy](../steps/STEP3_RESULTS.md)
+failed readiness. [Step 4](../steps/STEP4.md) implements the four-point warp, validity mask
 and review overlay from reviewed Step 2 labels. The complete application flows
-and automated quality/acceptance gates below remain proposed. [Step 5](STEP5.md)
+and automated quality/acceptance gates below remain proposed. [Step 5](../steps/STEP5.md)
 implements the region crop/correlation, optional sharpening and annotated local
 report slice, with per-region coverage/review gates and provisional thresholds.
-[Step 6](STEP6.md) connects that slice to a local React/FastAPI workflow. Operator
+[Step 6](../steps/STEP6.md) connects that slice to a local React/FastAPI workflow. Operator
 Manual coordinates can explicitly replace automatic detection for this pilot;
 complete global quality/persistence/packaging acceptance remains pending.
 
