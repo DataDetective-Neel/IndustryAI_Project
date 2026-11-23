@@ -78,10 +78,10 @@ def _score(reference, inspection, sharpen):
     return float(np.clip(score, -1, 1)), None
 
 
-def _local_match(reference, aligned, mask, box, sharpen):
+def _local_match(reference, aligned, mask, box, sharpen, search_radius=None, convincing_min=.5):
     x1, y1, x2, y2 = box
     # Search within the expected footprint neighborhood, independently of board registration.
-    radius = min(24, max(2, int(min(x2-x1, y2-y1)*.3)))
+    radius = search_radius if search_radius is not None else min(24, max(2, int(min(x2-x1, y2-y1)*.3)))
     height, width = mask.shape
     left, top = max(0, x1-radius), max(0, y1-radius)
     right, bottom = min(width, x2+radius), min(height, y2+radius)
@@ -127,6 +127,13 @@ def _local_match(reference, aligned, mask, box, sharpen):
                                              (template.shape[1], template.shape[0]), flags=cv2.INTER_LINEAR,
                                              borderMode=cv2.BORDER_REFLECT)
     score, reason = _score(comparison_template, matched, sharpen)
+    narrow_radius = min(6, max(1, int(min(x2-x1, y2-y1)*.08)))
+    if search_radius is None and radius > narrow_radius and (score is None or score < convincing_min):
+        # Nearby traces cannot substitute for an absent component. Keep the
+        # original footprint evidence unless relocation has a convincing match.
+        local = _local_match(reference, aligned, mask, box, sharpen, narrow_radius, convincing_min)
+        local.setdefault('evidence', {})['rejected_wide_search_score'] = score
+        return local
     ref_gray = cv2.cvtColor(template, cv2.COLOR_RGB2GRAY).astype(np.float32)
     current_gray = cv2.cvtColor(matched, cv2.COLOR_RGB2GRAY).astype(np.float32)
     ref_energy, current_energy = float(_features(ref_gray).mean()), float(_features(current_gray).mean())
@@ -204,7 +211,8 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
             elif part.get('review_reason'):
                 row['reason'] = 'explicit_review: ' + part['review_reason']
             else:
-                row.update(_local_match(reference, aligned, mask, box, sharpen))
+                row.update(_local_match(reference, aligned, mask, box, sharpen,
+                                        convincing_min=config['present_min']))
                 if row['score'] is not None:
                     rotation = abs(row.get('evidence', {}).get('rotation_deg', 0))
                     if rotation >= config.get('misalignment_rotation_min_deg', 8) and row['score'] >= config['present_min']:

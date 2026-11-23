@@ -82,14 +82,15 @@ class WebTests(unittest.TestCase):
         for index in [-1, 15]:
             self.assertEqual(self.client.get(f"/api/batches/{batch['batch_id']}/{index}/alignment").status_code, 404)
 
-    def test_automatic_missing_checkpoint_is_explicit_and_never_manual_fallback(self):
+    def test_automatic_missing_checkpoint_tries_classical_registration_without_manual_points(self):
         payload = self.payload()
         payload['mode'] = 'automatic'
         with patch('pcb_landmarks.web.CHECKPOINT', Path(self.folder.name)/'absent.pt'):
             result = self.client.post('/api/inspections', json=payload).json()['photos'][0]
             detection = self.client.post(f"/api/landmarks/{payload['reference_id']}").json()
         self.assertEqual(result['outcome'], 'review')
-        self.assertIn('checkpoint_unavailable', result['alignment']['reason'])
+        self.assertIn('on-board matches', result['alignment']['reason'])
+        self.assertEqual(result['landmark_diagnostics']['inspection']['status'], 'failure')
         self.assertIn('checkpoint_unavailable', detection['reason'])
         self.assertTrue(all(p['score'] is None for p in result['components']))
 

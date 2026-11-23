@@ -345,10 +345,24 @@ def create_app(storage=None):
         try:
             if record['error']:
                 raise ValueError(record['error'])
-            proposal = automatic_reference(read_image(path/'image.png'))
+            image = read_image(path/'image.png')
+            proposal = automatic_reference(image)
+            detection = detect(identifier)
+            if detection['status'] == 'ok':
+                points = [[p['x'], p['y']] for p in detection['landmarks']]
+                try:
+                    validated = _points(points, np.asarray(image), 'automatic YOLO reference')
+                    polygon = np.float32(proposal['board_polygon'])
+                    if (cv2.contourArea(validated.astype(np.float32)) >= .2*cv2.contourArea(polygon)
+                            and all(cv2.pointPolygonTest(polygon, tuple(map(float, p)), False) >= 0 for p in validated)):
+                        proposal.update(points=points, source='yolo_landmarks', landmark_kind='mounting_holes')
+                except ValueError:
+                    pass  # Validated geometry remains the independent fallback.
             saved = save_reference(identifier, ReferenceSetup(**proposal))
             saved.update(source=proposal['source'], landmark_kind=proposal['landmark_kind'])
-            (path/'reference.json').write_text(json.dumps(saved, allow_nan=False), encoding='utf-8')
+            temporary = path/'reference.tmp'
+            temporary.write_text(json.dumps(saved, allow_nan=False), encoding='utf-8')
+            temporary.replace(path/'reference.json')
             return saved
         except (ValueError, cv2.error) as error:
             raise HTTPException(422, str(error)) from error
@@ -449,6 +463,13 @@ def create_app(storage=None):
             result = propose_components(read_image(path/'image.png'),
                                         saved.get('board_polygon') if saved else None,
                                         reference_components=components)
+            # A supplied golden map owns its boxes and IDs; proposals must not
+            # silently replace or resize the operator's reference configuration.
+            result['components'] = [dict(part, candidate_status='UNKNOWN',
+                                         proposal_evidence=dict(source='reference_component_map'))
+                                    for part in components]
+            result['candidate_count'] = len(components)
+            result['method'] = 'Validated golden component map; operator acceptance required'
             result['imported_component_count'] = len(components)
             result['import_source'] = 'Antigravity golden_components.json (reference setup only)'
             (path/'component-proposals.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
@@ -578,6 +599,13 @@ def create_app(storage=None):
                                              status='not_evaluated', display_status='Not evaluated', score=None,
                                              overlap=None, reason=reason) for p in request.components]
             results.append(result)
+        for result in results:
+            compatibility = result.get('board_compatibility') or {}
+            result['classification'] = ('BOARD_MISMATCH' if compatibility.get('status') == 'DIFFERENT_BOARD'
+                else 'NEEDS_REVIEW' if not result['components_evaluated'] or result.get('outcome') == 'review'
+                else 'MISALIGNED_COMPONENT' if any(p['status'] == 'misaligned' for p in result['components'])
+                else 'MISSING_COMPONENT' if any(p['status'] == 'missing' for p in result['components'])
+                else 'GOOD')
         batch = dict(batch_id=batch_id, reference_id=request.reference_id, mode=request.mode,
                      synthetic=request.synthetic, sharpening_enabled=request.sharpen,
                      simulated=request.simulated,

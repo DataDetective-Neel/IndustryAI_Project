@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch
 
-from test_reference_reuse import ReferenceReuseTests
+import test_reference_reuse as fixtures
 
 
 class AutomaticReferenceTests(unittest.TestCase):
-    setUp = ReferenceReuseTests.setUp
-    upload = ReferenceReuseTests.upload
-    inspect = ReferenceReuseTests.inspect
+    setUp = fixtures.ReferenceReuseTests.setUp
+    upload = fixtures.ReferenceReuseTests.upload
+    inspect = fixtures.ReferenceReuseTests.inspect
 
     def test_automatic_setup_is_ordered_persisted_and_reusable(self):
         self.ref = self.upload(self.reference)
@@ -29,3 +29,15 @@ class AutomaticReferenceTests(unittest.TestCase):
         saved = self.client.post(f'/api/references/{self.ref}', json=dict(
             points=self.points, board_polygon=self.polygon)).json()
         self.assertEqual(self.client.post(f'/api/references/{self.ref}/automatic').json(), saved)
+
+    def test_reliable_distributed_yolo_mounts_are_preferred(self):
+        from types import SimpleNamespace
+        detector = SimpleNamespace(predict=lambda *args: dict(status='ok', reason=None,
+            landmarks=[dict(x=x, y=y) for x,y in self.points]))
+        self.ref = self.upload(self.reference)
+        with patch('pcb_landmarks.web._detector', return_value=(detector, dict(board_conf=.75, point_conf=.85))):
+            setup = self.client.post(f'/api/references/{self.ref}/automatic').json()
+            result = self.inspect([self.reference])[0]
+        self.assertEqual(setup['points'], self.points)
+        self.assertEqual(setup['source'], 'yolo_landmarks')
+        self.assertEqual(result['alignment']['source'], 'yolo_landmarks')

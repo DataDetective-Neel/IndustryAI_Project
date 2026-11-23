@@ -12,4 +12,8 @@ Confirmed control-flow failures:
 
 Existing registration checks reciprocal, spatially distributed on-board matches, held-out reprojection, overlap, and stable edge regions. Keep these checks. Local changes must not be used to reject the board before these checks run.
 
-The requested `misaligned_002.png` was not found in the repository or searched user download locations. Its actual prediction remains unverified until the source image is available. Synthetic tests cannot replace that result.
+The user subsequently located the dataset at `A:/IndustryAI_Dataset_Worktree/dataset_generation`. The exact sample is now tested through the production inspection API; see `PCB_REPAIR_RESULTS.md`.
+
+Actual ELEGOO diagnostics: YOLO reports `mounting_holes_not_verified`. Its failure is not a reason to lower detection thresholds. The outline contains five vertices, including a chamfer/connector protrusion, so automatic reference setup fits an inset board frame within the observed polygon. Inspection uses reciprocal on-board SIFT matches and independent validation rather than assuming those frame coordinates are visible mounting holes.
+
+The original component search covered only five pixels for the rotated IC. The actual registered displacement is approximately 17 pixels. Expanding bounded translation and rotation hypotheses recovers a convincing match at −18 degrees. A wide search is accepted only when it reaches the configured present threshold; otherwise the original narrow footprint supplies absence evidence. This prevents neighboring traces from hiding removed components.

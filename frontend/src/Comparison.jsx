@@ -17,6 +17,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
   const canDifference = !!result.difference_overlay_url;
   const overlay = view === 'overlay' && canOverlay;
   const parts = result.components || [];
+  const defects = parts.filter(p => ['missing', 'misaligned'].includes(p.status));
   const part = parts[selected];
   const box = findingBox(part?.bbox_xyxy_px, reference?.width, reference?.height);
   const outcome = result.board_compatibility?.status === 'DIFFERENT_BOARD' ? 'DIFFERENT_BOARD' : result.outcome;
@@ -75,11 +76,19 @@ export default function Comparison({ result, reference, inspection, index, mode,
               </div>
             </foreignObject>}
             {box && <rect className={`finding-highlight ${part.status}`} x={box[0]} y={box[1]} width={box[2] - box[0]} height={box[3] - box[1]} vectorEffect="non-scaling-stroke" />}
+            {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <rect key={p.id} className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect>; })}
           </svg>}
         </figure>}
         {(view === 'side' || view === 'inspection') && <figure>
-          <figcaption>Inspection · {result.filename}</figcaption>
-          {inspection?.image_url ? <img className="inspection-original" src={inspection.image_url} alt={`Inspection original for ${result.filename}`} /> : <p className="message notice">Inspection photo unavailable. Replace the photo and retry.</p>}
+          <figcaption>{view === 'side' && canOverlay ? 'Registered inspection' : 'Inspection'} · {result.filename}</figcaption>
+          {view === 'side' && canOverlay ? <svg className="comparison-canvas" role="img" aria-label={`Registered findings for ${result.filename}`} viewBox={`0 0 ${reference.width} ${reference.height}`}>
+            <foreignObject x="0" y="0" width={reference.width} height={reference.height}>
+              <div style={{width:'100%',height:'100%',overflow:'hidden'}}>
+                <img alt="Registered inspection" src={inspection.image_url} style={{width:inspection.width,height:inspection.height,maxWidth:'none',transform,transformOrigin:'0 0',display:'block'}} />
+              </div>
+            </foreignObject>
+            {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <rect key={p.id} className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect>; })}
+          </svg> : inspection?.image_url ? <img className="inspection-original" src={inspection.image_url} alt={`Inspection original for ${result.filename}`} /> : <p className="message notice">Inspection photo unavailable. Replace the photo and retry.</p>}
         </figure>}
         {view === 'difference' && <figure><figcaption>Structural difference heatmap</figcaption>
           <img className="inspection-original" src={result.difference_overlay_url} alt={`Difference heatmap for ${result.filename}`} />

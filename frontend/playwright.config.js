@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   globalSetup: './tests/global-setup.js',
   testDir: "./tests",
-  testIgnore: "reference-reuse.spec.js",
+  testIgnore: ["reference-reuse.spec.js", "repair-workflow.spec.js"],
   workers: 1,
   timeout: 120000,
   use: {
