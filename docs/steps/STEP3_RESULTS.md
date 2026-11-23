@@ -54,7 +54,7 @@ image size 640, batch 4, seed 42, deterministic=True, AdamW, lr0=0.001, lrf=0.01
 no flips, AMP off, workers=0, epoch limit 150 and patience 30. Early stopping
 completed 89 epochs in approximately 191 seconds; validation fitness selected
 epoch 59. No test image selected an epoch or threshold. Run settings, hashes
-and initial weight provenance are in `../configs/training.json`.
+and initial weight provenance are in `../../configs/training.json`.
 
 Checkpoint: `runs/landmarks/full/weights/best.pt` (local, not published).
 SHA-256: `3a8646d5b36b417764647751ef029a7af824321e750f0492b61e916124ec7b9e`.
@@ -63,7 +63,7 @@ created. Milestone 1 was pushed as `e1b5a536fabb09141fda97a03aa95022ea7c9b32`
 on `origin/docs/pcb-srs-sdd-dfd`.
 
 Validation-only search froze board confidence 0.95 and per-point confidence 0.99
-in `../configs/landmarks.json` before held-out evaluation. Policy: minimize
+in `../../configs/landmarks.json` before held-out evaluation. Policy: minimize
 inaccurate accepted images, maximize accurately accepted images, then conservative
 confidence ties. The diagnostic tolerance is 1% of image diagonal (about 19–21
 validation pixels), not a demonstrated alignment tolerance. **No threshold
