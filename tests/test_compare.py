@@ -148,6 +148,23 @@ class ComparisonTests(unittest.TestCase):
         self.assertEqual([part['status'] for part in result['components']], ['present', 'present'])
         self.assertEqual(result['outcome'], 'ok')
 
+    def test_single_shifted_component_uses_verified_registration_uncertainty(self):
+        inspection = self.reference.copy()
+        x1, y1, x2, y2 = self.regions['components'][0]['bbox_xyxy_px']
+        inspection[y1:y2, x1:x2] = (25, 95, 55)
+        inspection[y1:y2, x1+8:x2+8] = self.reference[y1:y2, x1:x2]
+        alignment = dict(self.alignment, verification_status='verified', verification=dict(p90_error_px=.5))
+        regions = dict(self.regions, components=self.regions['components'][:1])
+        result = self.compare(aligned=inspection, regions=regions, alignment=alignment)
+        row = result['components'][0]
+        self.assertEqual(row['decision'], 'SHIFTED')
+        self.assertAlmostEqual(row['evidence']['normalized_displacement'], .2)
+        self.assertGreater(row['evidence']['displacement_tolerance_px'], .5)
+        # A larger residual registration error makes the same offset inconclusive.
+        alignment['verification']['p90_error_px'] = 9
+        result = self.compare(aligned=inspection, regions=regions, alignment=alignment)
+        self.assertNotEqual(result['components'][0]['decision'], 'SHIFTED')
+
     def test_constant_gradient_is_degenerate_despite_grayscale_texture(self):
         ramp = np.broadcast_to((np.arange(320) % 256)[None, :, None], self.reference.shape).astype(np.uint8)
         self.assertGreater(ramp[45:85, 60:100].std(), 2)

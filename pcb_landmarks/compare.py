@@ -241,12 +241,24 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                 row.update(status='uncertain',display_status=DISPLAY['uncertain'],reason='unreliable_alignment: overlay/coverage validation failed; ' + (row['reason'] or 'no_local_match'))
         else:
             matched = [row for row in result['components'] if row['status'] == 'present' and row.get('best_match_offset_px')]
-            if len(matched) >= 2:
-                global_offset = np.median(np.asarray([row['best_match_offset_px'] for row in matched]), axis=0)
+            if len(matched) >= 2 or alignment.get('verification_status') == 'verified':
+                global_offset = np.zeros(2)
+                if len(matched) >= 3:
+                    offsets = np.asarray([row['best_match_offset_px'] for row in matched])
+                    median = np.median(offsets, axis=0)
+                    if (np.linalg.norm(offsets-median, axis=1) <= 3).mean() >= .6:
+                        global_offset = median
                 for row in matched:
                     deviation = float(np.linalg.norm(np.asarray(row['best_match_offset_px']) - global_offset))
-                    row.setdefault('evidence', {})['offset_deviation_px'] = deviation
-                    if deviation >= config.get('misalignment_min_px', 2.5):
+                    x1, y1, x2, y2 = row['bbox_xyxy_px']
+                    size = min(x2-x1, y2-y1)
+                    residual = alignment.get('verification', {}).get('p90_error_px', 0)
+                    tolerance = max(config.get('misalignment_min_px', 2.5),
+                                    size*config.get('misalignment_dimension_fraction', .05), residual)
+                    row.setdefault('evidence', {}).update(offset_deviation_px=deviation,
+                        normalized_displacement=deviation/size, displacement_tolerance_px=float(tolerance),
+                        registration_residual_px=float(residual), consensus_offset_px=global_offset.tolist())
+                    if deviation > tolerance:
                         row.update(status='misaligned', display_status=DISPLAY['misaligned'],
                                    reason='individual_offset_differs_from_consensus_after_board_registration')
         states = {p['status'] for p in result['components']}
@@ -254,18 +266,33 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
         result['review_required'] = bool('uncertain' in states or defects)
         result['outcome'] = 'defect' if defects else 'review' if result['review_required'] else 'ok'
     if detection_evidence is not None:
-        from .component_detection import _box_iou
+        from .correspondence import assign_components
+        valid_parts = [p for p in parts if _box(p.get('bbox_xyxy_px'), width, height)]
+        reference_matches = assign_components(valid_parts, detection_evidence.get('reference', {}).get('components', []))
+        # Manual boxes remain authoritative; borrow a detector class only when
+        # its reference footprint substantially agrees with the corrected box.
+        detected_reference = {p.get('id'): p for p in detection_evidence.get('reference', {}).get('components', [])}
+        typed_parts = []
+        for part in valid_parts:
+            match = reference_matches.get(part['id'])
+            source = detected_reference.get(match['observed_id']) if match and match['iou'] >= .5 else None
+            typed_parts.append(dict(part, proposal_evidence=source.get('proposal_evidence', {})) if source else part)
+        inspection_matches = assign_components(typed_parts,
+            detection_evidence.get('inspection', {}).get('components', []), np.asarray(reference), aligned if not failed else None)
         for row in result['components']:
             if not row.get('bbox_xyxy_px'):
                 continue
-            evidence = {}
-            for side in ['reference', 'inspection']:
-                candidates = detection_evidence.get(side, {}).get('components', [])
-                best = max(candidates, key=lambda p: _box_iou(row['bbox_xyxy_px'],p['bbox_xyxy_px']), default=None)
-                evidence[side] = (dict(iou=_box_iou(row['bbox_xyxy_px'],best['bbox_xyxy_px']),
-                    bbox_xyxy_px=best['bbox_xyxy_px'], confidence=best.get('proposal_confidence')) if best else None)
+            evidence = dict(reference=reference_matches.get(row['id']), inspection=inspection_matches.get(row['id']))
             row['detector_evidence'] = evidence
             observed = evidence['inspection']
+            if observed is None and row['status'] in {'present', 'misaligned'} and inspection_matches:
+                from .component_detection import _box_iou
+                offset = row.get('best_match_offset_px')
+                if offset and np.linalg.norm(offset) > config.get('misalignment_min_px', 2.5):
+                    local_box = (np.asarray(row['bbox_xyxy_px']) + np.tile(offset, 2)).tolist()
+                    if any(_box_iou(local_box, match['bbox_xyxy_px']) >= .5 for match in inspection_matches.values()):
+                        row.update(status='uncertain', display_status=DISPLAY['uncertain'],
+                                   reason='ambiguous_correspondence: local appearance points to a component already assigned elsewhere')
             # A detection cannot establish presence by itself. Strong conflicting
             # evidence makes an absence decision reviewable rather than certain.
             if (row['status'] == 'missing' and observed and observed['iou'] >= .5
@@ -279,6 +306,11 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
     for row in result['components']:
         row['classification'] = dict(present='GOOD', missing='MISSING_COMPONENT',
                                      misaligned='MISALIGNED_COMPONENT').get(row['status'], 'NEEDS_REVIEW')
+        row['decision'] = ('ROTATED' if row['status'] == 'misaligned' and
+            abs(row.get('evidence', {}).get('rotation_deg', 0)) >= config.get('misalignment_rotation_min_deg', 8)
+            else dict(present='PRESENT', missing='MISSING', misaligned='SHIFTED').get(row['status'], 'NEEDS_REVIEW'))
+        row['expected_location'] = row.get('bbox_xyxy_px')
+        row['observed_location'] = (row.get('detector_evidence', {}).get('inspection') or {}).get('bbox_xyxy_px')
     states = {row['classification'] for row in result['components']}
     result['classifications'] = sorted(states)
     return result

@@ -27,6 +27,7 @@ from .infer import LandmarkDetector
 from .platform_store import AOIStore, ROLES
 from .simulator import LineSimulator
 from .component_detection import import_component_map, propose_components
+from .correspondence import transform_components
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -260,6 +261,7 @@ def create_app(storage=None):
     @app.post('/api/golden-config')
     def save_golden_config(request: GoldenConfigRequest,
                            authorization: str | None = Header(default=None)):
+        nonlocal live_reference
         user = authorize(authorization, {'administrator', 'supervisor'})
         _, reference_path = photo(request.reference_id)
         if not (reference_path/'reference.json').is_file():
@@ -273,13 +275,18 @@ def create_app(storage=None):
                 raise ValueError('Accept, edit, or remove every UNKNOWN component proposal before saving')
         except ValueError as error:
             raise HTTPException(422, str(error)) from error
-        store.save_golden(request.reference_id, config, user['username'])
+        with live_reference_lock:
+            store.save_golden(request.reference_id, config, user['username'])
+            live_reference = None
         return golden_config(authorization)
 
     @app.delete('/api/golden-config')
     def clear_golden_config(authorization: str | None = Header(default=None)):
+        nonlocal live_reference
         authorize(authorization, {'administrator', 'supervisor'})
-        store.clear_golden()
+        with live_reference_lock:
+            store.clear_golden()
+            live_reference = None
         return {'cleared': True}
 
     def detect(identifier):
@@ -626,7 +633,8 @@ def create_app(storage=None):
                 for side in ['reference','inspection']:
                     try:
                         detected = (reference_component_detections(request.reference_id, json.dumps(polygon)) if side == 'reference'
-                                    else propose_components(Image.fromarray(aligned), polygon)['components'])
+                                    else transform_components(propose_components(inspection_image)['components'],
+                                                              homography, ref_image.size))
                         detector_evidence[side] = dict(status='ok', components=detected)
                     except (ValueError, cv2.error) as error:
                         detector_evidence[side] = dict(status='unavailable', reason=str(error), components=[])
@@ -657,6 +665,10 @@ def create_app(storage=None):
             results.append(result)
         for result in results:
             compatibility = result.get('board_compatibility') or {}
+            result['alignment_state'] = ('DIFFERENT_BOARD' if compatibility.get('status') == 'DIFFERENT_BOARD'
+                else 'ALIGNED' if result['alignment'].get('verification_status') == 'verified'
+                else 'ALIGNMENT_FAILED' if result['alignment']['status'] == 'failure'
+                else 'NEEDS_REVIEW')
             result['classification'] = ('BOARD_MISMATCH' if compatibility.get('status') == 'DIFFERENT_BOARD'
                 else 'NEEDS_REVIEW' if not result['components_evaluated'] or result.get('outcome') == 'review'
                 else 'MISALIGNED_COMPONENT' if any(p['status'] == 'misaligned' for p in result['components'])
@@ -731,6 +743,22 @@ def create_app(storage=None):
     def simulation_status(authorization: str | None = Header(default=None)):
         authorize(authorization, ROLES)
         return simulator.state()
+
+    @app.post('/api/live/frame')
+    def camera_frame(image: UploadFile, reference_id: str = Form(),
+                     authorization: str | None = Header(default=None)):
+        authorize(authorization, ROLES)
+        golden = selected_live_reference()
+        if not golden or golden['reference_id'] != reference_id:
+            raise HTTPException(409, 'Golden reference changed; capture a new frame against the active reference')
+        uploaded = upload(image)
+        if uploaded['error']:
+            raise HTTPException(422, uploaded['error'])
+        batch = inspect(InspectionRequest(reference_id=golden['reference_id'],
+            components=golden['components'], mode='automatic', sharpen=golden.get('sharpen', False),
+            inspections=[PhotoPoints(photo_id=uploaded['id'])], simulated=False))
+        return dict(batch['photos'][0], golden_reference_id=golden['reference_id'],
+                    report_url=batch['report_url'])
 
     @app.post('/api/simulation/import')
     def simulation_import(images: list[UploadFile], queue_id: str | None = Form(default=None),

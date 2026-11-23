@@ -81,7 +81,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
               </div>
             </foreignObject>}
             <Landmarks points={referencePoints} width={reference.width} height={reference.height} verified={verified}/>
-            {box && <rect className={`finding-highlight ${part.status}`} x={box[0]} y={box[1]} width={box[2] - box[0]} height={box[3] - box[1]} vectorEffect="non-scaling-stroke" />}
+            {box && !defects.some(p => p.id === part.id) && <rect className={`finding-highlight ${part.status}`} x={box[0]} y={box[1]} width={box[2] - box[0]} height={box[3] - box[1]} vectorEffect="non-scaling-stroke" />}
             {defects.map(p => { const b = findingBox(p.bbox_xyxy_px, reference.width, reference.height); return b && <rect key={p.id} className={`finding-highlight ${p.status}`} x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} vectorEffect="non-scaling-stroke"><title>{p.id}: {p.display_status}</title></rect>; })}
           </svg>}
         </figure>}
@@ -114,11 +114,16 @@ export default function Comparison({ result, reference, inspection, index, mode,
           <p>{p.reason?.replace(/^explicit_review: /, '').replaceAll('_', ' ')}</p>
           <details><summary>Measurement details</summary>
             <dl>
+              <dt>Component ID</dt><dd>{p.id}</dd>
+              <dt>Decision</dt><dd>{p.decision || p.display_status || p.status}</dd>
+              <dt>Detection confidence</dt><dd>{p.detector_evidence?.inspection?.confidence == null ? '—' : p.detector_evidence.inspection.confidence.toFixed(3)}</dd>
               <dt>Similarity</dt><dd>{p.score == null ? '—' : p.score.toFixed(6)}</dd>
               <dt>Best offset (px)</dt><dd>{p.best_match_offset_px?.join(', ') || '—'}</dd>
               <dt>Rotation after registration</dt><dd>{p.evidence?.rotation_deg == null ? '—' : `${p.evidence.rotation_deg.toFixed(1)}°`}</dd>
               <dt>Displacement magnitude</dt><dd>{p.evidence?.displacement_magnitude_px == null ? '—' : `${p.evidence.displacement_magnitude_px.toFixed(2)} px`}</dd>
               <dt>Expected box</dt><dd>{p.bbox_xyxy_px?.join(', ') || '—'}</dd>
+              <dt>Observed box</dt><dd>{p.observed_location?.join(', ') || '—'}</dd>
+              <dt>Shift tolerance</dt><dd>{p.evidence?.displacement_tolerance_px == null ? '—' : `${p.evidence.displacement_tolerance_px.toFixed(2)} px`}</dd>
               <dt>Coverage</dt><dd>{p.overlap == null ? '—' : `${(p.overlap * 100).toFixed(2)}%`}</dd>
               <dt>Edge energy ratio</dt><dd>{p.evidence?.edge_energy_ratio == null ? '—' : p.evidence.edge_energy_ratio.toFixed(4)}</dd>
               <dt>LAB difference</dt><dd>{p.evidence?.mean_lab_delta == null ? '—' : p.evidence.mean_lab_delta.toFixed(4)}</dd>

@@ -17,6 +17,9 @@ class ComponentDetectionTests(unittest.TestCase):
         self.assertEqual(len({part['id'] for part in result['components']}), result['candidate_count'])
         for part in result['components']:
             x1, y1, x2, y2 = part['bbox_xyxy_px']
+            self.assertEqual(part['center_xy_px'], [(x1+x2)/2, (y1+y2)/2])
+            self.assertEqual(part['width_px'], x2-x1)
+            self.assertEqual(part['height_px'], y2-y1)
             self.assertTrue(0 <= x1 < x2 <= image.width and 0 <= y1 < y2 <= image.height)
             self.assertEqual(part['candidate_status'], 'UNKNOWN')
 

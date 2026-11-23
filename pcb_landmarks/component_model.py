@@ -13,6 +13,7 @@ from .parsa_tiling import tile_inference
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = threading.Lock()
+os.environ['YOLO_OFFLINE'] = 'true'
 
 
 @lru_cache(maxsize=1)
@@ -48,6 +49,8 @@ def detect_components(rgb, polygon, maximum=1000):
         raise ValueError('No confident components detected; correct components manually or retake the golden image.')
     found.sort(key=lambda p: (p[0][1], p[0][0]))
     return [dict(id=f'AUTO-{i:03d}', name=f'Component {i:03d}', bbox_xyxy_px=box,
+                 center_xy_px=[(box[0]+box[2])/2, (box[1]+box[3])/2],
+                 width_px=box[2]-box[0], height_px=box[3]-box[1],
                  candidate_status='UNKNOWN', proposal_confidence=score,
                  proposal_evidence=dict(source='parsa_yolo26', class_id=cls,
                     class_name=model.names[cls], checkpoint_sha256=config['checkpoint_sha256']))
