@@ -2,6 +2,8 @@
   "missing_max": 0.25,
   "present_min": 0.5,
   "missing_edge_ratio_max": 0.45,
+  "missing_body_ratio_max": 0.55,
+  "missing_substrate_ratio_min": 0.35,
   "missing_color_delta_min": 0.03,
   "misalignment_min_px": 2.5,
   "misalignment_dimension_fraction": 0.05,

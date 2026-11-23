@@ -5,7 +5,7 @@ import { jsonBody, platformApi } from "../platformApi.js";
 
 export default function LiveInspection({ user }) {
   const [line, setLine] = useState({ status: "stopped", processed: 0, passed: 0, alarms: 0, errors: 0 });
-  const [reviews, setReviews] = useState([]), [directory, setDirectory] = useState("PCB_Dataset_Pilot/images/test");
+  const [reviews, setReviews] = useState([]), [directory, setDirectory] = useState("");
   const [history, setHistory] = useState([]), [imported, setImported] = useState(null);
   const [interval, setIntervalValue] = useState(user.preferences.inspection_interval ?? 3), [error, setError] = useState("");
   const [deciding, setDeciding] = useState(null);
@@ -134,26 +134,28 @@ export default function LiveInspection({ user }) {
         <button className="primary" onClick={startCamera} disabled={camera || startingCamera || active || uploadingGolden || !golden}>{startingCamera ? 'Opening camera…' : 'Start camera'}</button>
         <button onClick={stopCamera} disabled={!camera && !startingCamera}>Stop camera</button>
       </div>
-      {camera && <video ref={video} muted playsInline aria-label="Live camera preview" style={{width:'100%', maxHeight:360, objectFit:'contain'}}/>}
+      {camera && <video ref={video} muted playsInline aria-label="Live camera preview" className="operator-image"/>}
       {cameraResult && <div><p>{cameraResult.outcome} · {cameraResult.reason || 'Inspection complete'}</p>
-        {cameraResult.component_overlay_url && <img src={cameraResult.component_overlay_url} alt="Camera inspection result" style={{width:'100%', maxHeight:480, objectFit:'contain'}}/>}
+        {cameraResult.component_overlay_url && <img src={cameraResult.component_overlay_url} alt="Camera inspection result" className="operator-image"/>}
         <p>{cameraResult.components?.map(part => `${part.id}: ${part.decision || part.display_status}`).join(' · ')}</p>
       </div>}
     </article>
     <div className="line-console">
-      <article className="platform-panel line-controls"><div className="panel-heading"><div><h2>Line control</h2><p>Images load sequentially from a configurable folder.</p></div><span className={`line-state ${line.status}`}>{line.status}</span></div>
+      <article className="platform-panel line-controls"><div className="panel-heading"><div><h2>Line control</h2><p>Import images of the same PCB layout and side as the golden reference.</p></div><span className={`line-state ${line.status}`}>{line.status}</span></div>
         <div className="import-row"><label className="import-button">Import images<input aria-label="Import inspection images" type="file" accept="image/jpeg,image/png" multiple onChange={importFiles} disabled={active}/></label>
           <label className="import-button">Import folder<input aria-label="Import inspection folder" type="file" accept="image/jpeg,image/png" multiple webkitdirectory="" onChange={importFiles} disabled={active}/></label></div>
         {imported && <div className="import-summary"><p>{imported.accepted} accepted, {imported.skipped.length} skipped. {imported.accepted} images ready in imported dataset.</p>
           {!!imported.skipped.length && <details><summary>Skipped files and reasons</summary><ul>{imported.skipped.map((item, index) => <li key={`${item.filename}-${index}`}>{item.filename}: {item.reason}</li>)}</ul></details>}</div>}
-        <label>Dataset directory<input value={directory} onChange={e => setDirectory(e.target.value)} disabled={active}/></label>
+        <label>Dataset directory<input value={directory} placeholder="Import same-layout images or enter their folder" onChange={e => setDirectory(e.target.value)} disabled={active}/></label>
         <label>Inspection interval <span>{interval}s</span><input type="range" min="0.5" max="15" step="0.5" value={interval} onChange={e => setIntervalValue(e.target.value)} disabled={active}/></label>
-        <div className="control-row"><button className="primary" onClick={start} disabled={active || camera || startingCamera || uploadingGolden || !golden}>Start simulation</button>
+        <div className="control-row"><button className="primary" onClick={start} disabled={active || camera || startingCamera || uploadingGolden || !golden || !directory.trim()}>Start simulation</button>
           <button onClick={() => control(line.status === "paused" ? "resume" : "pause")} disabled={!active || line.status === "stopping"}>{line.status === "paused" ? "Resume" : "Pause"}</button>
           <button onClick={() => control("stop")} disabled={!active || line.status === "stopping"}>Stop</button></div>
       </article>
-      <article className="platform-panel line-visual"><div className="scanner">{line.last_result?.current_image_url ? <img src={line.last_result.current_image_url} alt="Current PCB"/> : <div className="scanner-board">▦</div>}<i/></div>
-        <div><span>Current PCB</span><strong>{line.current || "Line idle"}</strong><p>{line.last_result?.reason || "Waiting for next inspection image."}</p></div></article>
+      <article className="platform-panel line-visual"><div className="scanner">{line.last_result?.current_image_url ? <img src={line.last_result.component_overlay_url || line.last_result.current_image_url} alt="Current PCB"/> : <div className="scanner-board">▦</div>}<i/></div>
+        <div><span>Current PCB</span><strong>{line.current || "Line idle"}</strong><p>{line.last_result?.reason || (line.last_result ? `${line.last_result.outcome} · ${line.last_result.components?.filter(p => ['missing','misaligned'].includes(p.status)).length || 0} suspected defects` : "Waiting for next inspection image.")}</p>
+          {line.last_result?.component_overlay_url && <a href={line.last_result.component_overlay_url} target="_blank" rel="noreferrer">Open full-size inspection</a>}
+        </div></article>
     </div>
     <section className="live-counters">{[["Processed",line.processed],["Passed",line.passed],["Alarms",line.alarms],["Errors",line.errors]].map(([label,value]) => <article key={label}><span>{label}</span><strong>{value}</strong></article>)}</section>
     <article className="platform-panel review-panel"><div className="panel-heading"><div><h2>Operator review queue</h2><p>Algorithm alarms require one auditable decision.</p></div><span>{reviews.length} pending</span></div>

@@ -20,6 +20,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .align import _points, align_images, blend_overlay
 from .registration import (automatic_reference, board_polygon, surface_mask, reference_features,
                            register_inspection, match_surfaces, verify_alignment)
+from .registration import refine_manual_registration
 from .compare import _validate_regions, annotated_overlay, compare_regions, load_config
 from .compatibility import check_compatibility, identify_board
 from .data import open_image, read_image
@@ -352,10 +353,8 @@ def create_app(storage=None):
         record, path = photo(identifier)
         if (path/'reference.json').is_file():
             existing = json.loads((path/'reference.json').read_text())
-            if existing.get('source') != 'automatic_board_corners':
-                return existing
-            upgraded = automatic_reference(read_image(path/'image.png'))
-            if upgraded['landmark_kind'] != 'mounting_holes':
+            automatic_sources = {'automatic_board_corners', 'opencv_mounting_centers', 'yolo_landmarks'}
+            if existing.get('source') not in automatic_sources or existing.get('geometry_version', 0) >= 2:
                 return existing
         try:
             if record['error']:
@@ -369,12 +368,16 @@ def create_app(storage=None):
                     validated = _points(points, np.asarray(image), 'automatic YOLO reference')
                     polygon = np.float32(proposal['board_polygon'])
                     if (cv2.contourArea(validated.astype(np.float32)) >= .2*cv2.contourArea(polygon)
-                            and all(cv2.pointPolygonTest(polygon, tuple(map(float, p)), False) >= 0 for p in validated)):
+                            and all(cv2.pointPolygonTest(polygon, tuple(map(float, p)), False) >= 0 for p in validated)
+                            and (proposal['landmark_kind'] != 'mounting_holes' or
+                                 max(min(np.linalg.norm(np.asarray(p)-q) for q in proposal['points'])
+                                     for p in points) <= max(4, .005*np.hypot(*np.asarray(image).shape[:2])))):
                         proposal.update(points=points, source='yolo_landmarks', landmark_kind='mounting_holes')
                 except ValueError:
                     pass  # Validated geometry remains the independent fallback.
             saved = save_reference(identifier, ReferenceSetup(**proposal))
             saved.update(source=proposal['source'], landmark_kind=proposal['landmark_kind'],
+                         geometry_version=2,
                          model_detection={k:detection.get(k) for k in ['status','reason','model_inference_ran','raw_board_predictions','verification_status','mounting_verification']})
             temporary = path/'reference.tmp'
             temporary.write_text(json.dumps(saved, allow_nan=False), encoding='utf-8')
@@ -496,8 +499,28 @@ def create_app(storage=None):
             component_map.file.close()
 
     @app.post('/api/landmarks/{identifier}')
-    def landmarks(identifier: str):
-        return detect(identifier)
+    def landmarks(identifier: str, reference_id: str | None = None):
+        detection = detect(identifier)
+        if not reference_id or reference_id == identifier:
+            return detection
+        _, reference_path = photo(reference_id)
+        record, current_path = photo(identifier)
+        try:
+            if record['error']:
+                raise ValueError(record['error'])
+            saved = automatic_reference_setup(reference_id)
+            reference = read_image(reference_path/'image.png')
+            current = read_image(current_path/'image.png')
+            features = cached_reference(reference_id, json.dumps(saved['board_polygon']))
+            _, _, _, registration = register_inspection(reference, current, saved['points'], features, detection)
+            names = json.loads((ROOT/'configs/landmarks.json').read_text())['landmark_order']
+            return dict(status='ok', reason=None, source=registration['source'],
+                landmark_kind=registration.get('landmark_kind', 'model_detected'),
+                verification_status='verified', verification=registration['verification'],
+                landmarks=[dict(name=name, x=x, y=y, confidence=None) for name, (x,y) in
+                           zip(names, registration['inspection_points'])], model_detection=detection)
+        except (ValueError, cv2.error, HTTPException) as error:
+            return dict(status='failure', reason=str(error), landmarks=[], model_detection=detection)
 
     @app.post('/api/inspections')
     def inspect(request: InspectionRequest):
@@ -550,7 +573,9 @@ def create_app(storage=None):
                                                  reason='Board compatibility must pass before component scoring.'))
                     results.append(result)
                     continue
-                if request.mode == 'automatic' and (not saved_reference or saved_reference.get('source') == 'automatic_board_corners') and ref_image is not None:
+                if request.mode == 'automatic' and (not saved_reference or
+                    (saved_reference.get('source') in {'automatic_board_corners', 'opencv_mounting_centers', 'yolo_landmarks'}
+                     and saved_reference.get('geometry_version', 0) < 2)) and ref_image is not None:
                     try:
                         saved_reference = automatic_reference_setup(request.reference_id)
                     except HTTPException as error:
@@ -580,6 +605,15 @@ def create_app(storage=None):
                         rp = [[p['x'], p['y']] for p in reference_detection['landmarks']]
                         ip = [[p['x'], p['y']] for p in detection['landmarks']]
                     aligned, homography, mask = align_images(ref_image, inspection_image, rp, ip)
+                    if request.mode == 'manual':
+                        try:
+                            polygon = saved_reference['board_polygon'] if saved_reference else board_polygon(ref_image)
+                            refined = refine_manual_registration(ref_image, inspection_image, rp, ip,
+                                cached_reference(request.reference_id, json.dumps(polygon)), homography)
+                            if refined is not None:
+                                aligned, homography, mask, registration = refined
+                        except (ValueError, cv2.error):
+                            pass  # Keep manual geometry; normal identity/quality gates still apply.
                 alignment = dict(status='ok', reference_wh=list(ref_image.size),
                                  homography_inspection_to_reference=homography.tolist(),
                                  valid_overlap_fraction=float((mask > 0).mean()),

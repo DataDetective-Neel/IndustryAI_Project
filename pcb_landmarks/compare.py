@@ -141,8 +141,21 @@ def _local_match(reference, aligned, mask, box, sharpen, search_radius=None, con
     color_delta = float(np.abs(cv2.cvtColor(template, cv2.COLOR_RGB2LAB).astype(np.float32) -
                                cv2.cvtColor(matched, cv2.COLOR_RGB2LAB).astype(np.float32)).mean()/255)
     offset = [bx-x1, by-y1]
+    # A missing body can leave sharply defined solder pads. Measure the loss of
+    # its neutral surface into the colored substrate independently of pad edges.
+    padding = max(3, round(min(x2-x1, y2-y1)*.2))
+    neighborhood = reference[max(0,y1-padding):min(height,y2+padding), max(0,x1-padding):min(width,x2+padding)]
+    board_saturation = float(np.percentile(cv2.cvtColor(neighborhood, cv2.COLOR_RGB2HSV)[:,:,1], 80))
+    ref_saturation = cv2.cvtColor(template, cv2.COLOR_RGB2HSV)[:,:,1]
+    current_saturation = cv2.cvtColor(aligned[y1:y2,x1:x2], cv2.COLOR_RGB2HSV)[:,:,1]
+    body = ref_saturation < .5*board_saturation
+    body_ratio = replacement = None
+    if board_saturation >= 100 and body.mean() >= .6:
+        body_ratio = float((current_saturation[body] < .5*board_saturation).mean())
+        replacement = float((current_saturation[body] > .7*board_saturation).mean())
     return dict(score=score, reason=reason, best_match_offset_px=offset, search_radius_px=radius,
                 evidence=dict(edge_energy_ratio=edge_ratio, mean_lab_delta=color_delta,
+                              remaining_body_ratio=body_ratio, substrate_replacement_ratio=replacement,
                               reference_edge_energy=ref_energy, inspection_edge_energy=current_energy,
                               rotation_deg=best_angle, rotation_score_gain=float(rotation_gain),
                               displacement_px=offset,
@@ -190,7 +203,7 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                   review_required=failed, reference_wh_px=[width, height],
                   coordinate_system='decoded_reference_pixels', thresholds_provisional=True,
                   config=dict(config), sharpening_enabled=sharpen,
-                  absence_policy='Missing requires low correlation, lost edge energy, and appearance change; thresholds are provisional',
+                  absence_policy='Missing requires low correlation, lost edges or corroborated body loss into substrate, and appearance change; thresholds are provisional',
                   method=dict(feature='Sobel magnitude ksize=3, trim 1px border', correlation='TM_CCOEFF_NORMED',
                               search='bounded local gradient template match, <=24px translation and -30..30 degree rotation hypotheses', min_coverage=1.0, min_crop_side_px=5, min_raw_gray_std=2, min_gradient_std=1,
                               unsharp=dict(amount=.5, sigma=1, kernel=[7, 7])), components=[], overlay=None)
@@ -221,9 +234,13 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                         row.update(status='present', reason='convincing_bounded_local_match')
                     elif (row['score'] <= config['missing_max'] and
                           row.get('evidence', {}).get('edge_energy_ratio') is not None and
-                          row['evidence']['edge_energy_ratio'] <= config.get('missing_edge_ratio_max', .45) and
+                          (row['evidence']['edge_energy_ratio'] <= config.get('missing_edge_ratio_max', .45) or
+                           (row['evidence'].get('remaining_body_ratio') is not None and
+                            alignment.get('verification', {}).get('p90_error_px', float('inf')) <= max(1., .02*min(x2-x1,y2-y1)) and
+                            row['evidence']['remaining_body_ratio'] <= config.get('missing_body_ratio_max', .55) and
+                            row['evidence']['substrate_replacement_ratio'] >= config.get('missing_substrate_ratio_min', .35))) and
                           row['evidence']['mean_lab_delta'] >= config.get('missing_color_delta_min', .03)):
-                        row.update(status='missing', reason='corroborated_absence: low structural match, lost edge energy, and changed appearance')
+                        row.update(status='missing', reason='corroborated_absence: low structural match, lost edges or component body, and changed appearance')
                     else:
                         row['reason'] = 'ambiguous_appearance: low similarity alone cannot establish absence'
         row['display_status'] = DISPLAY[row['status']]
@@ -254,7 +271,8 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                     size = min(x2-x1, y2-y1)
                     residual = alignment.get('verification', {}).get('p90_error_px', 0)
                     tolerance = max(config.get('misalignment_min_px', 2.5),
-                                    size*config.get('misalignment_dimension_fraction', .05), residual)
+                                    size*config.get('misalignment_dimension_fraction', .05),
+                                    2*residual+1 if residual else 0)
                     row.setdefault('evidence', {}).update(offset_deviation_px=deviation,
                         normalized_displacement=deviation/size, displacement_tolerance_px=float(tolerance),
                         registration_residual_px=float(residual), consensus_offset_px=global_offset.tolist())

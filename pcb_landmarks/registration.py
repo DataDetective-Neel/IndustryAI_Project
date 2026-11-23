@@ -71,6 +71,29 @@ def mounting_centers(image, polygon):
         point = np.array([x,y])/scale
         if all(np.linalg.norm(point-other) > .4*max(w,h)/scale for other in holes):
             holes.append(point)
+    # Threshold blobs can join a hole to adjacent connector/silkscreen pixels.
+    # Closed circular edges recover that geometry without using component boxes.
+    gray = cv2.cvtColor(small, cv2.COLOR_RGB2GRAY)
+    circles = cv2.HoughCircles(cv2.GaussianBlur(gray, (5,5), 1), cv2.HOUGH_GRADIENT_ALT,
+        1., max(10, .025*side), param1=200, param2=.9,
+        minRadius=max(5, round(.012*side)), maxRadius=max(6, round(.03*side)))
+    for x, y, radius in ([] if circles is None else circles[0]):
+        if cv2.pointPolygonTest(np.float32(polygon)*scale, (float(x), float(y)), False) < 0:
+            continue
+        def sample(factor):
+            xs = np.clip(np.rint(x+factor*radius*np.cos(angles)).astype(int), 0, small.shape[1]-1)
+            ys = np.clip(np.rint(y+factor*radius*np.sin(angles)).astype(int), 0, small.shape[0]-1)
+            return hsv[ys, xs, 1]
+        left, top = max(0, int(x-radius)), max(0, int(y-radius))
+        right, bottom = min(gray.shape[1], int(x+radius)+1), min(gray.shape[0], int(y+radius)+1)
+        yy, xx = np.mgrid[top:bottom, left:right]
+        interior = gray[top:bottom, left:right][(xx-x)**2+(yy-y)**2 < (.65*radius)**2]
+        if ((sample(.55) < 80).mean() < .9 or (sample(1.25) > 80).mean() < .6
+                or not interior.size or interior.std() > 45):
+            continue
+        point = np.array([x,y])/scale
+        if all(np.linalg.norm(point-other) > radius/scale for other in holes):
+            holes.append(point)
     return holes
 
 
@@ -164,7 +187,7 @@ def match_surfaces(features, inspection):
             seen_a.add(x)
             seen_b.add(y)
     if len(matches) < 35:
-        raise ValueError('Insufficient unique reciprocal on-board matches; manual alignment required.')
+        raise ValueError('Insufficient unique reciprocal on-board matches; manual alignment required. Check both images show the same PCB layout and board side.')
     return (np.float64([features['xy'][m.queryIdx] for m in matches]),
             np.float64([other['xy'][m.trainIdx] for m in matches]), other)
 
@@ -220,9 +243,9 @@ def verify_alignment(reference, inspection, features, matches, homography, align
                 occupied_cells=len(cells), board_overlap=float(overlap), stable_regions=scores)
 
 
-def register_inspection(reference, inspection, points, features, detection):
+def register_inspection(reference, inspection, points, features, detection, matches=None):
     rp = _points(points, np.asarray(reference), 'confirmed reference')
-    matches = match_surfaces(features, inspection)
+    matches = match_surfaces(features, inspection) if matches is None else matches
     attempts = []
     if detection['status'] == 'ok':
         ip = np.float64([[p['x'], p['y']] for p in detection['landmarks']])
@@ -263,3 +286,22 @@ def register_inspection(reference, inspection, points, features, detection):
     evidence = verify_alignment(reference, inspection, features, matches, matrix, aligned, valid)
     return aligned, matrix, valid, dict(source='reference_registration', inspection_points=ip.tolist(),
                                         landmark_kind='projected', verification=evidence, attempts=attempts)
+
+
+def refine_manual_registration(reference, inspection, reference_points, inspection_points, features, matrix):
+    """Refine small click errors only when independent board evidence improves."""
+    matches = match_surfaces(features, inspection)
+    before = np.linalg.norm(cv2.perspectiveTransform(matches[1][None], matrix)[0]-matches[0], axis=1)
+    if np.median(before) <= .75:
+        return None
+    candidate = register_inspection(reference, inspection, reference_points, features,
+        dict(status='failure', reason='Refining manual click residuals'), matches=matches)
+    aligned, refined, valid, details = candidate
+    correction = np.linalg.norm(np.asarray(details['inspection_points'])-inspection_points, axis=1).max()
+    if (correction > max(3., .015*np.hypot(*np.asarray(inspection).shape[:2])) or
+            details['verification']['p90_error_px'] >= .5*np.median(before)):
+        return None
+    details.update(source='manual_landmarks_refined', landmark_kind='manual_refined',
+        manual_inspection_points=np.asarray(inspection_points).tolist(),
+        manual_median_error_px=float(np.median(before)), max_click_correction_px=float(correction))
+    return aligned, refined, valid, details

@@ -42,7 +42,7 @@ export default function Comparison({ result, reference, inspection, index, mode,
     <details className="registration-diagnostics"><summary>Registration diagnostics</summary>
       <pre>{JSON.stringify({ alignment: result.alignment, landmarks: result.landmark_diagnostics }, null, 2)}</pre>
     </details>
-    {result.alignment?.source && <p className="alignment-summary">Landmarks: {result.alignment.source === 'reference_registration' ? 'Registration-derived' : result.alignment.source === 'manual_landmarks' ? 'Manual corrections' : 'Model-detected'} · {verified ? 'verified correspondence' : 'tentative correspondence'}</p>}
+    {result.alignment?.source && <p className="alignment-summary">Landmarks: {result.alignment.source === 'reference_registration' ? 'Registration-derived' : result.alignment.source.startsWith('manual_landmarks') ? 'Manual corrections' : 'Model-detected'} · {verified ? 'verified correspondence' : 'tentative correspondence'}</p>}
     <p className="alignment-summary">Board identity: {result.board_compatibility?.status || 'Not evaluated'} · Component inspection: {result.component_inspection?.status || (result.components_evaluated ? 'completed' : 'not attempted')}</p>
     {result.reason && <p className="result-reason">{result.reason}</p>}
     {result.board_compatibility && <details>

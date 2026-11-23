@@ -51,6 +51,7 @@ function App() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const drag = useRef(null);
+  const rawLandmarkRequests = useRef(new Map());
   const photos = [reference, ...inspections].filter(Boolean);
   const photo = photos.find((p) => p.id === selected) || reference;
   const previewInspection = inspections.find((p) => p.id === selected) || inspections[0];
@@ -103,12 +104,24 @@ function App() {
       photoIds.split(",").filter((id) => mode === "automatic" || id === reference?.id).map(async (id) => {
         let detection;
         try {
-          detection = await api(`/api/landmarks/${id}`, { method: "POST" });
+          const useReference = mode === 'automatic' && reference?.confirmed && id !== reference.id;
+          if (useReference) {
+            detection = await api(`/api/landmarks/${id}?reference_id=${reference.id}`, { method: 'POST' });
+          } else {
+            if (!rawLandmarkRequests.current.has(id))
+              rawLandmarkRequests.current.set(id, api(`/api/landmarks/${id}`, {method:'POST'}).catch(error => {
+                rawLandmarkRequests.current.delete(id); throw error;
+              }));
+            detection = await rawLandmarkRequests.current.get(id);
+          }
         } catch (e) {
           detection = { status: "failure", reason: e.message, landmarks: [] };
         }
         if (!cancelled) {
-          changePhoto(id, { detection });
+          const registered = detection.status === 'ok' && detection.verification && id !== reference?.id
+            ? detection.landmarks.map(p => [p.x, p.y]) : null;
+          changePhoto(id, { detection, registered_points: registered,
+            projected: registered && detection.landmark_kind === 'projected' ? registered : null });
           setReference((p) => p?.id === id && !p.points?.length && detection.status === "ok"
             ? { ...p, points: detection.landmarks.map((v) => [v.x, v.y]) } : p);
         }
@@ -119,7 +132,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode, photoIds]);
+  }, [mode, photoIds, reference?.confirmed, JSON.stringify(reference?.points)]);
 
   async function upload(event, isReference, replaceId = null) {
     const files = [...event.target.files];

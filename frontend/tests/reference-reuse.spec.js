@@ -26,10 +26,12 @@ for name,image in [('reference',a),('same',a),('tilted',cv2.warpPerspective(a,H,
 test('mark reference once after YOLO failure, reuse across views, and reset on replacement', async ({page}) => {
   await page.goto('/#lab');
   const refDetection=page.waitForResponse(r=>r.url().includes('/api/landmarks/') && r.request().method()==='POST');
+  const proposals=page.waitForResponse(r=>r.url().includes('/component-proposals') && r.request().method()==='POST');
   await page.getByLabel('Reference photo', {exact:true}).setInputFiles(path.join(output,'reference.png'));
   const detected=await (await refDetection).json();
   expect(detected.status).toBe('failure');
   expect(detected.reason).toContain('checkpoint_unavailable');
+  await proposals;
   await expect(page.getByLabel('upper_left_mount x', {exact:true})).toBeEditable();
   const names=['upper_left_mount','upper_right_mount','lower_right_mount','lower_left_mount'];
   const points=[[160,130],[440,130],[440,350],[160,350]];
