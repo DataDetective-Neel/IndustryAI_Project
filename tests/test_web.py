@@ -190,7 +190,9 @@ class WebTests(unittest.TestCase):
         self.assertEqual(login.status_code, 200, login.text)
         headers = {'Authorization': 'Bearer ' + login.json()['token']}
         self.assertEqual(client.get('/api/dashboard').status_code, 401)
-        self.assertEqual(client.get('/api/dashboard', headers=headers).json()['metrics']['total'], 0)
+        dashboard = client.get('/api/dashboard', headers=headers).json()
+        self.assertEqual(dashboard['metrics']['total'], 0)
+        self.assertEqual(dashboard['line']['status'], 'stopped')
         created = client.post('/api/users', headers=headers, json={
             'username': 'operator', 'display_name': 'Line Operator', 'role': 'operator',
             'password': 'operator-password'})

@@ -56,6 +56,7 @@ class InspectionRequest(BaseModel):
     mode: Literal['manual', 'automatic']
     sharpen: StrictBool = False
     synthetic: StrictBool = False
+    simulated: StrictBool = False
 
 
 class LoginRequest(BaseModel):
@@ -217,7 +218,9 @@ def create_app(storage=None):
     @app.get('/api/dashboard')
     def dashboard(authorization: str | None = Header(default=None)):
         authorize(authorization, ROLES)
-        return store.dashboard()
+        data = store.dashboard()
+        data['line'] = simulator.state()
+        return data
 
     @app.get('/api/reviews')
     def reviews(authorization: str | None = Header(default=None)):
@@ -469,6 +472,7 @@ def create_app(storage=None):
         for index, item in enumerate(request.inspections):
             name = item.photo_id
             result = dict(photo_id=item.photo_id, filename=name, outcome='review', review_required=True,
+                          simulated=bool(request.simulated or request.synthetic),
                           alignment=dict(status='failure', reason=None), components=[],
                           components_evaluated=False, board_compatibility=None,
                           alignment_overlay_url=None, component_overlay_url=None)
@@ -554,6 +558,7 @@ def create_app(storage=None):
             results.append(result)
         batch = dict(batch_id=batch_id, reference_id=request.reference_id, mode=request.mode,
                      synthetic=request.synthetic, sharpening_enabled=request.sharpen,
+                     simulated=request.simulated,
                      annotations=request.model_dump(),
                      thresholds_provisional=True, comparison_config=config, photos=results,
                      report_url=f'/api/batches/{batch_id}/report')
@@ -572,7 +577,7 @@ def create_app(storage=None):
         batch = inspect(InspectionRequest(reference_id=golden['reference_id'], reference_points=[],
                                           inspections=[PhotoPoints(photo_id=uploaded['id'])],
                                           components=golden['components'], mode='automatic',
-                                          sharpen=golden.get('sharpen', False), synthetic=False))
+                                          sharpen=golden.get('sharpen', False), synthetic=False, simulated=True))
         result = batch['photos'][0]
         result['current_image_url'] = uploaded['image_url']
         return result

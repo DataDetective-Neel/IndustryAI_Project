@@ -38,7 +38,7 @@ export default function LiveInspection({ user }) {
   async function control(action) { try { setError(""); setLine(await platformApi(`/api/simulation/${action}`, { method: "POST" })); } catch (e) { setError(e.message); } }
   async function decide(id, decision) { if (deciding) return; setDeciding(id); try { await platformApi(`/api/reviews/${encodeURIComponent(id)}/decision`, jsonBody({ decision, note: "Decision recorded in live console" })); await refresh(); } catch (e) { setError(e.message); } finally { setDeciding(null); } }
   const active = ["running", "paused", "stopping"].includes(line.status);
-  return <section className="platform-page"><PageHeader title="Live inspection" description="Simulated line input through the production inspection engine." live={line.status === "running"}/>
+  return <section className="platform-page"><PageHeader title="Live inspection" description="Simulated line input through the production inspection engine." live={line.status === "running"} status={line.status}/>
     {error && <div className="platform-alert">{error}</div>}
     <div className="line-console">
       <article className="platform-panel line-controls"><div className="panel-heading"><div><h2>Line control</h2><p>Images load sequentially from a configurable folder.</p></div><span className={`line-state ${line.status}`}>{line.status}</span></div>

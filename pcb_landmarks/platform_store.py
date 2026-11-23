@@ -7,6 +7,7 @@ import json
 import os
 import secrets
 import sqlite3
+from collections import Counter
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -223,32 +224,46 @@ class AOIStore:
                 SUM(CASE WHEN review_required=0 THEN 1 ELSE 0 END) passed,
                 SUM(CASE WHEN final_decision='confirmed_reject' THEN 1 ELSE 0 END) rejected,
                 SUM(CASE WHEN review_required=1 AND final_decision IS NULL THEN 1 ELSE 0 END) pending,
-                SUM(CASE WHEN defect_type='missing' THEN 1 ELSE 0 END) missing,
-                SUM(CASE WHEN defect_type='misaligned' THEN 1 ELSE 0 END) misaligned,
                 SUM(CASE WHEN final_decision='false_alarm' THEN 1 ELSE 0 END) false_alarms
                 FROM inspections""").fetchone()
             values = {key: int(counts[key] or 0) for key in counts.keys()}
+            evidence_rows = list(db.execute("SELECT algorithm_outcome,evidence_json FROM inspections"))
+            distribution = Counter()
+            for row in evidence_rows:
+                evidence = json.loads(row['evidence_json'])
+                defect_types = {component.get('status') for component in evidence.get('components', [])
+                                if component.get('status') in {'missing', 'misaligned'}}
+                if defect_types:
+                    distribution.update(defect_types)
+                else:
+                    distribution[row['algorithm_outcome']] += 1
+            values['missing'] = distribution['missing']
+            values['misaligned'] = distribution['misaligned']
             decisions = values["rejected"] + values["false_alarms"]
             values["first_pass_yield"] = round(100 * values["passed"] / values["total"], 1) if values["total"] else None
             values["false_alarm_rate"] = round(100 * values["false_alarms"] / decisions, 1) if decisions else None
+            cutoff = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(timespec='seconds')
             values["throughput_per_hour"] = db.execute(
-                "SELECT COUNT(*) FROM inspections WHERE created_at >= datetime('now','-1 hour')").fetchone()[0]
+                "SELECT COUNT(*) FROM inspections WHERE created_at >= ?", (cutoff,)).fetchone()[0]
             recent = [dict(row) for row in db.execute("""SELECT id,filename,algorithm_outcome,defect_type,
-                review_required,final_decision,created_at FROM inspections ORDER BY created_at DESC LIMIT 12""")]
+                review_required,final_decision,evidence_json,created_at FROM inspections ORDER BY created_at DESC LIMIT 12""")]
             alarms = [dict(row) for row in db.execute("""SELECT i.id,i.filename,i.defect_type,i.final_decision,
-                d.actor,d.note,COALESCE(d.created_at,i.created_at) created_at FROM inspections i
+                i.evidence_json,d.actor,d.note,COALESCE(d.created_at,i.created_at) created_at FROM inspections i
                 LEFT JOIN decisions d ON d.inspection_id=i.id WHERE i.review_required=1
                 ORDER BY created_at DESC LIMIT 12""")]
+            for row in [*recent, *alarms]:
+                evidence = json.loads(row.pop('evidence_json'))
+                row['simulated'] = bool(evidence.get('simulated'))
+                row['current_image_url'] = evidence.get('current_image_url')
             daily = {row["day"]: int(row["count"]) for row in db.execute(
                 "SELECT substr(created_at,1,10) day, COUNT(*) count FROM inspections GROUP BY day")}
             today = datetime.now(timezone.utc).date()
             trend = [{"date": str(day), "count": daily.get(str(day), 0)}
                      for day in (today - timedelta(days=offset) for offset in range(6, -1, -1))]
-            distribution = [dict(row) for row in db.execute("""SELECT COALESCE(defect_type, algorithm_outcome) name,
-                COUNT(*) count FROM inspections GROUP BY COALESCE(defect_type, algorithm_outcome)
-                ORDER BY count DESC""")]
             return {"metrics": values, "recent_inspections": recent, "recent_alarms": alarms,
-                    "production_trend": trend, "defect_distribution": distribution,
+                    "production_trend": trend,
+                    "defect_distribution": [{"name": name, "count": count}
+                                            for name, count in distribution.most_common()],
                     "sample_data": values["total"] == 0}
 
     def pending(self):

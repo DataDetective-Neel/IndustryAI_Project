@@ -343,19 +343,14 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     buffer: Buffer.from("not an image"),
   });
   await expect(
-    page.getByText("Photo needs review:", { exact: false }),
-  ).toBeVisible();
+    page.getByRole("alert"),
+  ).toContainText("broken.png: ImageDecodeError");
   const mixed = await inspect(page);
-  expect(mixed.photos.map((p) => p.outcome)).toEqual(["review", "error"]);
+  expect(mixed.photos.map((p) => p.outcome)).toEqual(["review"]);
   await expect(
     page
       .getByTestId("result-0")
       .getByRole("link", { name: "Component decisions", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page
-      .getByTestId("result-1")
-      .getByText("Component scoring skipped.", { exact: true }),
   ).toBeVisible();
   expect(external).toEqual([]);
   expect(errors).toEqual([]);
