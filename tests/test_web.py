@@ -241,17 +241,26 @@ class WebTests(unittest.TestCase):
         headers = {'Authorization': 'Bearer ' + token}
         stream = io.BytesIO()
         Image.fromarray(self.reference).save(stream, format='PNG')
-        files = [('images', ('first.png', stream.getvalue(), 'image/png')),
-                 ('images', ('second.png', stream.getvalue(), 'image/png'))]
-        response = client.post('/api/simulation/import', headers=headers, files=files)
+        content = stream.getvalue()
+        files = [('images', (f'image-{index:02d}.png', content, 'image/png')) for index in range(15)]
+        form = [('relative_paths', (None, f'nested/set-a/image-{index:02d}.png')) for index in range(15)]
+        response = client.post('/api/simulation/import', headers=headers, files=[*files, *form])
         self.assertEqual(response.status_code, 200, response.text)
         imported = response.json()
-        self.assertEqual(imported['count'], 2)
+        self.assertEqual(imported['accepted_count'], 15)
         self.assertTrue(Path(imported['dataset_directory']).is_dir())
-        self.assertEqual(len(list(Path(imported['dataset_directory']).glob('*.png'))), 2)
-        invalid = client.post('/api/simulation/import', headers=headers,
-                              files=[('images', ('bad.png', b'broken', 'image/png'))])
-        self.assertEqual(invalid.status_code, 422)
+        second = client.post('/api/simulation/import', headers=headers, files=[
+            ('images', ('image-15.png', content, 'image/png')),
+            ('images', ('bad.png', b'broken', 'image/png')),
+            ('queue_id', (None, imported['queue_id'])),
+            ('relative_paths', (None, 'nested/set-b/image-15.png')),
+            ('relative_paths', (None, 'nested/set-b/bad.png')),
+        ])
+        self.assertEqual(second.status_code, 200, second.text)
+        result = second.json()
+        self.assertEqual((result['accepted_count'], result['skipped_count'], result['total_count']), (1, 1, 16))
+        self.assertIn('ImageDecodeError', result['skipped'][0]['reason'])
+        self.assertEqual(len(list(Path(result['dataset_directory']).rglob('*.png'))), 16)
 
     def test_real_inspection_alarms_persist_both_operator_decisions(self):
         folder = tempfile.TemporaryDirectory()

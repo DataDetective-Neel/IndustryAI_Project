@@ -24,25 +24,26 @@ class LineSimulator:
         with self._lock:
             return dict(self._state)
 
-    def start(self, directory, interval):
+    def start(self, directory, interval, process_image=None, metadata=None):
         root = Path(directory).expanduser().resolve()
         if not root.is_dir():
             raise ValueError("Simulation directory does not exist")
-        images = sorted(path for path in root.iterdir() if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png"})
+        images = sorted(path for path in root.rglob("*") if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png"})
         if not images:
             raise ValueError("Simulation directory contains no JPEG or PNG images")
         with self._lock:
             if self._thread and self._thread.is_alive():
                 raise RuntimeError("Simulation is already active")
             self._state = {**self._empty_state(), "status": "running", "directory": str(root),
-                           "interval": float(interval), "queued": len(images)}
+                           "interval": float(interval), "queued": len(images), **(metadata or {})}
             self._stop.clear()
             self._wake.set()
-            self._thread = threading.Thread(target=self._run, args=(images,), daemon=True, name="pcb-line-simulator")
+            processor = process_image or self.process_image
+            self._thread = threading.Thread(target=self._run, args=(images, processor), daemon=True, name="pcb-line-simulator")
             self._thread.start()
         return self.state()
 
-    def _run(self, images):
+    def _run(self, images, processor):
         for path in images:
             while not self._wake.wait(0.2):
                 if self._stop.is_set():
@@ -52,7 +53,7 @@ class LineSimulator:
             with self._lock:
                 self._state["current"] = path.name
             try:
-                result = self.process_image(path)
+                result = processor(path)
                 alarm = bool(result.get("review_required", result.get("outcome") in {"review", "error"}))
                 with self._lock:
                     self._state["processed"] += 1
@@ -66,7 +67,7 @@ class LineSimulator:
             deadline = time.monotonic() + self.state()["interval"]
             while time.monotonic() < deadline and not self._stop.is_set():
                 time.sleep(min(0.1, deadline - time.monotonic()))
-        self._finish("completed")
+        self._finish("stopped" if self._stop.is_set() else "completed")
 
     def _finish(self, status):
         with self._lock:

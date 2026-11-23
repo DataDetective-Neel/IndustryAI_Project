@@ -10,7 +10,7 @@ from typing import Literal
 
 import numpy as np
 import cv2
-from fastapi import FastAPI, Header, HTTPException, UploadFile
+from fastapi import FastAPI, Form, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
@@ -475,6 +475,7 @@ def create_app(storage=None):
             try:
                 current, current_path = photo(item.photo_id)
                 result['filename'] = current['filename']
+                result['current_image_url'] = current['image_url']
                 if reference['error'] or current['error']:
                     result['outcome'] = 'error'
                     raise ValueError(reference['error'] or current['error'])
@@ -560,8 +561,8 @@ def create_app(storage=None):
         store.record_batch(batch)
         return batch
 
-    def simulate_image(path):
-        golden = store.golden()
+    def simulate_image(path, golden=None):
+        golden = golden or store.golden()
         if not golden:
             raise ValueError('Save a golden configuration before starting simulation')
         _, reference_path = photo(golden['reference_id'])
@@ -584,31 +585,67 @@ def create_app(storage=None):
         return simulator.state()
 
     @app.post('/api/simulation/import')
-    def simulation_import(images: list[UploadFile], authorization: str | None = Header(default=None)):
+    def simulation_import(images: list[UploadFile], queue_id: str | None = Form(default=None),
+                          relative_paths: list[str] = Form(default=[]),
+                          authorization: str | None = Header(default=None)):
         authorize(authorization, ROLES)
         if not 1 <= len(images) <= MAX_PHOTOS:
-            raise HTTPException(422, f'Choose between 1 and {MAX_PHOTOS} images')
-        import_path = storage/'imports'/uuid.uuid4().hex
-        import_path.mkdir(parents=True)
-        imported = []
+            raise HTTPException(422, f'Upload chunks must contain between 1 and {MAX_PHOTOS} images')
+        if relative_paths and len(relative_paths) != len(images):
+            raise HTTPException(422, 'relative_paths must match the uploaded image count')
+        if queue_id:
+            if not re.fullmatch(r'[0-9a-f]{32}', queue_id):
+                raise HTTPException(422, 'Invalid import queue id')
+            import_path = storage/'imports'/queue_id
+            if not import_path.is_dir():
+                raise HTTPException(404, 'Import queue does not exist')
+        else:
+            queue_id = uuid.uuid4().hex
+            import_path = storage/'imports'/queue_id
+            import_path.mkdir(parents=True)
+        existing = len(list(import_path.rglob('*.png')))
+        if existing + len(images) > 1000:
+            raise HTTPException(422, 'An import queue can contain at most 1000 images')
+        imported, skipped = [], []
         for index, image in enumerate(images):
             record = upload(image)
             if record['error']:
-                raise HTTPException(422, f"{record['filename']}: {record['error']}")
+                skipped.append({'filename': record['filename'], 'reason': record['error']})
+                continue
             _, source = photo(record['id'])
-            clean = re.sub(r'[^A-Za-z0-9_.-]+', '-', Path(record['filename']).stem)[:80] or 'image'
-            target = import_path/f'{index:03d}-{clean}.png'
+            raw_relative = relative_paths[index] if relative_paths else record['filename']
+            parts = raw_relative.replace('\\', '/').split('/')
+            if not parts or any(part in {'', '.', '..'} for part in parts):
+                skipped.append({'filename': record['filename'], 'reason': 'Invalid nested-folder relative path'})
+                continue
+            clean_parts = [re.sub(r'[^A-Za-z0-9_.-]+', '-', part)[:80] or 'item' for part in parts]
+            relative = Path(*clean_parts[:-1])/(Path(clean_parts[-1]).stem + '.png')
+            target = import_path/relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            suffix = 1
+            while target.exists():
+                target = target.with_name(f'{target.stem}-{suffix}.png')
+                suffix += 1
             read_image(source/'image.png').save(target)
-            imported.append({'filename': record['filename'], 'stored_name': target.name})
-        return {'dataset_directory': str(import_path.resolve()), 'count': len(imported), 'files': imported}
+            imported.append({'filename': record['filename'], 'relative_path': target.relative_to(import_path).as_posix()})
+        total = len(list(import_path.rglob('*.png')))
+        return {'queue_id': queue_id, 'dataset_directory': str(import_path.resolve()), 'count': total,
+                'total_count': total, 'accepted_count': len(imported), 'skipped_count': len(skipped),
+                'accepted': imported, 'skipped': skipped}
 
     @app.post('/api/simulation/start')
     def simulation_start(request: SimulationStart, authorization: str | None = Header(default=None)):
         authorize(authorization, {'administrator', 'supervisor', 'operator'})
-        if not store.golden():
+        golden = store.golden()
+        if not golden:
             raise HTTPException(422, 'Save a golden configuration before starting simulation')
         try:
-            return simulator.start(request.dataset_directory, request.interval)
+            return simulator.start(
+                request.dataset_directory, request.interval,
+                process_image=lambda path, pinned=golden: simulate_image(path, pinned),
+                metadata={'golden_reference_id': golden['reference_id'],
+                          'golden_updated_at': golden['updated_at'], 'simulated': True},
+            )
         except ValueError as error:
             raise HTTPException(422, str(error)) from error
         except RuntimeError as error:

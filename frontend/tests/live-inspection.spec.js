@@ -39,7 +39,28 @@ test('imports multiple images and runs them through live inspection', async ({ p
   await expect(page.getByText('2 images ready in imported dataset.')).toBeVisible();
   await page.getByLabel(/Inspection interval/).fill('0.5');
   await page.getByRole('button', { name: 'Start simulation' }).click();
+  await expect(page.locator('.line-state')).toHaveText('running');
+  await page.getByRole('button', { name: 'Pause' }).click();
+  await expect(page.locator('.line-state')).toHaveText('paused');
+  await page.getByRole('button', { name: 'Resume' }).click();
+  await expect(page.locator('.line-state')).toHaveText('running');
+  await page.getByRole('button', { name: 'Stop' }).click();
+  await expect(page.locator('.line-state')).toHaveText('stopped', { timeout: 120000 });
+  await page.getByRole('button', { name: 'Start simulation' }).click();
   await expect(page.locator('.line-state')).toHaveText('completed', { timeout: 120000 });
   await expect(page.locator('.live-counters article').filter({ hasText: 'Processed' })).toContainText('2');
   await expect.poll(() => page.locator('.history-panel tbody tr').count()).toBeGreaterThanOrEqual(2);
+});
+
+test('chunks sixteen selected images into one live queue', async ({ page }) => {
+  await page.goto('/#live');
+  const buffer = await fs.readFile(path.resolve('..', 'PCB_Dataset_Pilot/images/val/ECCC5.jpg'));
+  await page.getByLabel('Import inspection images').setInputFiles(
+    Array.from({ length: 16 }, (_, index) => ({
+      name: `selected-${String(index).padStart(2, '0')}.jpg`,
+      mimeType: 'image/jpeg',
+      buffer,
+    })),
+  );
+  await expect(page.getByText(/16 accepted, 0 skipped/i)).toBeVisible({ timeout: 30000 });
 });
