@@ -80,8 +80,8 @@ def _score(reference, inspection, sharpen):
 
 def _local_match(reference, aligned, mask, box, sharpen):
     x1, y1, x2, y2 = box
-    # shortcut: planar one-board demo, keep search <=6px; review larger parallax.
-    radius = min(6, max(1, int(min(x2-x1, y2-y1)*.08)))
+    # Search within the expected footprint neighborhood, independently of board registration.
+    radius = min(24, max(2, int(min(x2-x1, y2-y1)*.3)))
     height, width = mask.shape
     left, top = max(0, x1-radius), max(0, y1-radius)
     right, bottom = min(width, x2+radius), min(height, y2+radius)
@@ -105,7 +105,9 @@ def _local_match(reference, aligned, mask, box, sharpen):
     zero_score, zero_location = locate(a)
     best_angle, maximum, (dx, dy) = 0.0, zero_score, zero_location
     center = ((a.shape[1]-1)/2, (a.shape[0]-1)/2)
-    for angle in (-20, -15, -10, -5, 5, 10, 15, 20):
+    for angle in range(-30, 31, 3):
+        if angle == 0:
+            continue
         rotated = cv2.warpAffine(a, cv2.getRotationMatrix2D(center, angle, 1),
                                  (a.shape[1], a.shape[0]), flags=cv2.INTER_LINEAR,
                                  borderMode=cv2.BORDER_REFLECT)
@@ -183,7 +185,7 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                   config=dict(config), sharpening_enabled=sharpen,
                   absence_policy='Missing requires low correlation, lost edge energy, and appearance change; thresholds are provisional',
                   method=dict(feature='Sobel magnitude ksize=3, trim 1px border', correlation='TM_CCOEFF_NORMED',
-                              search='bounded local gradient template match, <=6px translation and -20..20 degree rotation hypotheses', min_coverage=1.0, min_crop_side_px=5, min_raw_gray_std=2, min_gradient_std=1,
+                              search='bounded local gradient template match, <=24px translation and -30..30 degree rotation hypotheses', min_coverage=1.0, min_crop_side_px=5, min_raw_gray_std=2, min_gradient_std=1,
                               unsharp=dict(amount=.5, sigma=1, kernel=[7, 7])), components=[], overlay=None)
     for part in parts:
         box = part.get('bbox_xyxy_px')
@@ -243,6 +245,11 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
         defects = states & {'missing', 'misaligned'}
         result['review_required'] = bool('uncertain' in states or defects)
         result['outcome'] = 'defect' if defects else 'review' if result['review_required'] else 'ok'
+    for row in result['components']:
+        row['classification'] = dict(present='GOOD', missing='MISSING_COMPONENT',
+                                     misaligned='MISALIGNED_COMPONENT').get(row['status'], 'NEEDS_REVIEW')
+    states = {row['classification'] for row in result['components']}
+    result['classifications'] = sorted(states)
     return result
 
 
