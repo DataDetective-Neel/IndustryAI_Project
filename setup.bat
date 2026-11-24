@@ -32,6 +32,12 @@ if errorlevel 1 goto fail
 set "STEP=Install Python dependencies"
 ".venv\Scripts\python.exe" -m pip install -r requirements-web.txt
 if errorlevel 1 goto fail
+set "STEP=Validate packaged model weights"
+".venv\Scripts\python.exe" -c "import hashlib,json,os; from pathlib import Path; configs=[('configs/landmarks.json','PCB_CHECKPOINT'),('configs/component_model.json','PCB_COMPONENT_CHECKPOINT')]; [(print('Checking '+str(p)),p.is_file() or (_ for _ in ()).throw(ValueError('Missing model: '+str(p))),hashlib.sha256(p.read_bytes()).hexdigest()==c['checkpoint_sha256'] or (_ for _ in ()).throw(ValueError('Model SHA256 mismatch: '+str(p)))) for f,e in configs for c in [json.loads(Path(f).read_text())] for p in [Path(os.environ.get(e,c['checkpoint_path']))]]"
+if errorlevel 1 goto fail
+set "STEP=Create runtime directories"
+".venv\Scripts\python.exe" -c "from pathlib import Path; [Path(p).mkdir(parents=True,exist_ok=True) for p in ['runs/web/photos','runs/web/batches']]"
+if errorlevel 1 goto fail
 set "STEP=Open frontend directory"
 pushd frontend || goto fail
 set "STEP=Install frontend lockfile dependencies"

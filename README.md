@@ -1,230 +1,168 @@
-# Offline PCB inspection demo
+# IndustryAI — local PCB optical inspection
 
-Compare a known-good PCB photo with up to 15 same-layout inspection photos.
-The local React frontend and FastAPI backend share the alignment/comparison CLI
-functions. **Thresholds are provisional; real missing-part validation is pending.**
-Controlled synthetic erasures verify the multi-evidence `MISSING` workflow, but do
-not establish real-photo accuracy. Missing requires low structural correlation,
-lost edge energy, and changed appearance; every suspected defect requires review.
-See [November 21 evidence](docs/guides/DEMO_RELIABILITY.md) for the earlier conservative baseline.
+ForgeSight compares a known-good PCB photo with photos of the same board layout and side. Landmark geometry and verified image registration align each inspection before expected component regions are compared. This helps an operator investigate missing or displaced components without treating every image difference as a defect.
 
-Before component scoring, a [board compatibility check](docs/guides/BOARD_COMPATIBILITY.md)
-uses distributed connector, mounting-region and silkscreen features. Positively
-recognized mismatched layouts return `DIFFERENT_BOARD` and skip component decisions.
-Blur, cropping, unknown layouts and uncertain alignment remain `REVIEW`.
+This is a CPU-capable local engineering demonstration for students, evaluators and inspection operators. Thresholds are provisional. Controlled and selected real-photo regressions do not establish production accuracy or universal PCB compatibility.
 
-[Mounting-hole correction evidence](docs/guides/MOUNT_CALIBRATION.md) covers the pictured
-Pi and Mega2560 layouts, direct-versus-uploaded inference, and remaining REVIEW cases.
+## Implemented features
 
-## Windows prerequisites
+- Reference upload, automatic landmark proposals, manual four-point correction and confirmed reference reuse.
+- YOLO26 pose landmarks with existing mounting-hole verification; independently verified SIFT/RANSAC registration can provide a fallback.
+- Editable expected component regions, existing local component proposals and explicit component-map import.
+- Up to 15 inspection images per batch, with per-photo failure isolation, geometric/coverage checks and board compatibility checks.
+- Reference-region structural comparison, corroborated missing-part decisions and local shift/rotation evidence. Uncertain evidence remains Needs review.
+- Paired overlays, JSON reports, dashboard/review decisions, saved golden library and role-based platform controls.
+- Live browser camera frames and local image-queue simulation through the same pipeline. Physical camera/conveyor operation is not certified.
+- Offline inference after dependencies, frontend assets and weights are installed locally.
 
-- 64-bit CPython **3.10**, installed with the Windows `py` launcher (`py -3.10`).
-  The pinned Python environment is supported/tested on this minor version.
-- **Node.js 24 or newer and npm 10 or newer**, available on PATH. Reopen the
-  terminal after installation. Node/npm are needed for setup, not offline launch.
-- Disk space for Python/PyTorch dependencies and the frontend build. Initial
-  setup needs internet unless all dependencies are already locally available.
-  Cached packages alone do not guarantee that every required wheel is available.
+The repository already contains a ParsaVictor YOLO26 component locator alongside the landmark model. It proposes regions and contributes correspondence evidence; an unmatched detection alone does not establish absence. This submission preserves that existing feature and introduces no new detector. Manual region inspection remains available. Existing catalog/calibration assets target a limited group of boards; arbitrary-board generalization is unproven.
 
-## Setup once, launch repeatedly
+## Stack and requirements
 
-From PowerShell, including from another working directory:
+| Item | Actual configuration |
+| --- | --- |
+| Supported launch workflow | Windows, 64-bit CPython 3.10 with `py -3.10` |
+| Frontend | React 19, Vite 8; Node.js >=24, npm >=10 during setup/development |
+| Backend | FastAPI/Uvicorn; NumPy, Pillow, OpenCV; local SQLite platform store |
+| Models | PyTorch/Ultralytics YOLO26; local hash-checked pose and component checkpoints |
+| Tests | Python unittest, Node test runner, Playwright |
+| Inference hardware | Web inference uses CPU; GPU is not required. Training device is separately configurable. |
+| Network | Initial package/browser installation needs internet; normal built application uses local assets and loopback only. |
+| Resources | No validated minimum RAM, install-space or latency specification. Python/PyTorch installation needs additional disk space beyond repository assets. |
 
-```powershell
-& 'A:\IndustryAI_Project\setup.bat'
-& 'A:\IndustryAI_Project\launch.bat'
+Other operating systems may support manual commands, but `.bat` launch/setup and this validation target Windows. See [actual validation](docs/VALIDATION_REPORT.md) for environment and executed checks.
+
+## Quick start — Windows
+
+Clone the existing repository, then open a terminal in its root:
+
+```bat
+git clone https://github.com/DataDetective-Neel/IndustryAI_Project.git
+cd IndustryAI_Project
+setup.bat
 ```
 
-Scripts resolve their own directory, including paths with spaces. Setup creates
-or reuses `.venv`, validates its Python version, installs `requirements-web.txt`,
-runs `npm ci` against `frontend/package-lock.json`, then builds `frontend/dist`.
-It stops at the first failed step and returns exit 1; fix the printed problem
-and rerun it. A mismatched existing virtual environment must be moved aside and
-recreated with supported Python; setup does not silently delete environments.
+Setup resolves its own directory, checks Python/Node/npm, creates or reuses `.venv`, installs the pinned Python requirements and frontend lockfile, validates model hashes, creates runtime directories and builds the frontend. It stops on a critical error. Rerunning it is supported; it does not retrain models or delete an incompatible environment.
 
-Launch uses only `.venv` and the built frontend, serves on **127.0.0.1:8000**, and
-prints [the browser URL](http://127.0.0.1:8000/). It installs nothing and builds
-nothing. Missing dependencies/build outputs point you back to `setup.bat`.
-Keep the terminal open so server errors remain visible. **Stop with Ctrl+C**;
-if cmd asks `Terminate batch job (Y/N)?`, answer Y. No detached server is started.
-If another server owns port 8000, stop that server before launching this one.
-
-## First sign-in
-
-No password is embedded in the repository. Before the first launch, choose the
-administrator credentials in the same PowerShell window:
+Before the **first** launch, choose administrator credentials in PowerShell:
 
 ```powershell
 $env:PCB_ADMIN_USERNAME = 'admin'
-$env:PCB_ADMIN_PASSWORD = 'choose-at-least-10-characters'
-& 'A:\IndustryAI_Project\launch.bat'
-```
-
-Sign in with the values you set. The first administrator is created only when
-`PCB_ADMIN_PASSWORD` is present. Existing users remain in `runs/web/aoi.db`, so
-changing the environment later does not reset their password. Administrators can
-create operator and supervisor accounts from **User management**. Do not put a
-real password in `.env`, source control, screenshots, or support logs.
-
-After setup, disconnect Wi-Fi/Ethernet while retaining normal local loopback
-networking, then run `launch.bat`. No CDN, cloud service, Vite server or Node.js
-process is required for inspection. Photos, annotations and reports stay under
-ignored `runs/web/`. Refreshing the page resets the editor; completed report URLs
-and annotation snapshots remain on disk. There is no automatic retention cleanup.
-
-## Reuse a confirmed reference automatically
-
-YOLO proposes the reference landmarks as usual. Correct or mark its four ordered
-points and click **Confirm reference setup**. Board geometry remains internal;
-the outer PCB boundary is not drawn over previews or exported findings.
-Inspection photos then use verified YOLO candidates or offline reference feature
-registration before requesting manual clicks. Projected landmarks are labeled;
-component boxes remain in original reference pixels. Replacing the reference
-clears its setup and stale inspection points.
-
-See [reference registration and verification](docs/guides/reference-registration.md) for
-workflow details, tested designs, rejection cases and remaining limitations.
-
-## Component model and live camera
-
-The production locator is ParsaVictor YOLO26 `any_best.pt`, using local 1024 px
-tiles, overlap, global NMS, and cached weights. Install the existing local weights:
-
-```powershell
-New-Item -ItemType Directory -Force 'A:\IndustryAI_Project\models' | Out-Null
-Copy-Item 'A:\parsa\pcb-component-detection-yolo26\weights\any_best.pt' 'A:\IndustryAI_Project\models\pcb-components-yolo26s.pt'
-Get-FileHash 'A:\IndustryAI_Project\models\pcb-components-yolo26s.pt' -Algorithm SHA256
-```
-
-Expected SHA256: `1065cdb4a32d65799b6308dc267ec9c66a1a0d261293738417bff316697725ec`.
-Alternatively set `PCB_COMPONENT_CHECKPOINT` to that local file. Weights stay out
-of Git. The locator's generic component class does not establish resistor,
-capacitor, or IC type. No unsupported type is inferred. Keep the existing custom
-landmark checkpoint at the path in `configs/landmarks.json`. Parsa attribution is
-in `pcb_landmarks/PARSA_LICENSE.txt`; dependency licenses still apply.
-
-In **Live Inspection**, upload a PNG/JPEG golden reference, then choose **Start
-camera** and grant local browser permission. Frames retain native video dimensions
-and pass through `/api/live/frame` into the normal inspection pipeline. Only one
-frame request runs at a time; the selected interval starts after processing ends.
-Stop the camera before starting an image queue. Replacing the reference clears
-camera findings; later frames use the new inventory. Saving manual corrections
-from Inspection Lab also updates the active live reference. Results and review
-decisions stay in the existing local store. Camera permission requires localhost
-or another browser secure context. Physical camera quality still needs validation.
-
-Inspection reports retain legacy UI status fields and add `decision` values
-`PRESENT`, `MISSING`, `SHIFTED`, `ROTATED`, and `NEEDS_REVIEW`. One-to-one assignment
-uses proximity, class, size, IoU, and local appearance. Shift tolerance is the
-maximum of 2.5 px, 5% of the smaller component dimension, and twice measured p90
-registration error plus one pixel; these thresholds remain provisional. Rotation uses bounded
-image-template evidence, not axis-aligned box angles. Unmatched detection alone
-never establishes absence. See [stabilization results](docs/audits/FINAL_STABILIZATION.md)
-for validation scope and remaining limitations.
-
-The [operator feedback fixes](docs/audits/OPERATOR_FEEDBACK_FIXES.md) cover corrected
-mounting-hole selection, registration-derived landmarks on inspection upload,
-small manual-click refinement, larger live views, and exposed-pad verification.
-
-## Reproducible synthetic demo without dataset or weights
-
-Generate the original shareable fixture locally after setup; use a new output
-directory when repeating this command:
-
-```powershell
-Set-Location A:\IndustryAI_Project
-.\.venv\Scripts\python.exe tests/comparison_fixture.py --output runs/demo
-# Print each photo's four original-pixel landmarks, in dataset order:
-.\.venv\Scripts\python.exe -c "from pcb_landmarks.data import read_image; from pcb_landmarks.align import label_points; from pathlib import Path; [print(n, label_points(Path('runs/demo/input')/(n+'.txt'), read_image(Path('runs/demo/input')/(n+'.png')).size).tolist()) for n in ['reference','inspection']]"
+$env:PCB_ADMIN_PASSWORD = Read-Host 'Choose an administrator password (at least 10 characters)'
 .\launch.bat
 ```
 
-No `PCB_Dataset_Pilot` directory or checkpoint is needed for this Manual demo.
+For later launches, run:
 
-1. Upload `runs/demo/input/reference.png` as reference and
-   `runs/demo/input/inspection.png` as inspection. Check **Label this run as a
-   synthetic demonstration**, and leave **Manual** selected.
-2. For each photo, enter the printed x/y pairs into L0–L3, in the displayed order:
-   upper-left, upper-right, lower-right, lower-left **physical identities**.
-   Reference pairs are (35,30), (285,30), (285,210), (35,210). Points may also be
-   marked/corrected by clicking. Preview resizing does not change stored pixels.
-3. Select the reference, use **Add box** or draw rectangles, then enter these
-   names and integer half-open xyxy bounds in the region editor:
+```bat
+launch.bat
+```
 
-   | Name | x1 | y1 | x2 | y2 |
-   | --- | ---: | ---: | ---: | ---: |
-   | Retained chip | 60 | 45 | 100 | 85 |
-   | Controlled removal | 140 | 100 | 180 | 140 |
-   | Coverage control | 0 | 50 | 24 | 90 |
+Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/). Launch runs one foreground backend serving both API and built frontend; it needs no Vite or Node process. Keep its terminal open and stop with Ctrl+C (confirm Y if cmd asks). Occupied port 8000 stops launch without killing another process. Browser opening is manual.
 
-4. Leave sharpening off and choose **Inspect 1 photo**. Expect **Present** for
-   the retained chip, **Missing** for the controlled removal and **Needs review**
-   for the partially covered control. Inspect both overlays and the component
-   table. The synthetic banner must be visible. Review flags can explicitly
-   prevent scoring unreliable regions such as tall connectors with parallax.
+Accounts persist in ignored `runs/web/aoi.db`; setting a new environment password does not reset an existing account. Account Settings exposes user management to administrators. Do not commit actual passwords or runtime databases.
 
-Present >= 0.50 after bounded local search and alignment validation; other scores,
-low texture, bad crops, incomplete coverage and flagged regions need review.
-`missing_max` is only one gate. Edge-energy loss and appearance change must also
-agree. Low correlation can come from glare or misalignment. These pilot decisions
-do not certify a board or establish real-photo defect accuracy.
+## Manual installation
 
-## One-board submission demo
-
-Upload `PCB_Dataset_Pilot/images/val/ECCC5.jpg` as the known-good reference.
-Eight named component boxes load from `configs/components-ECCC5.json` only when
-its decoded raster matches exactly. Mark the four mounting holes on both images
-in Manual mode. Automatic mode exposes rejected raw keypoints for correction;
-these are tentative and must be checked against the physical mounting holes.
-
-Reproduce the real-photo and generated perspective/crop/erasure cases through
-FastAPI's real upload, landmark and inspection endpoints:
+From the cloned repository root on Windows:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pcb_landmarks.demo_check
-Set-Location frontend
+py -3.10 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-web.txt
+Push-Location frontend
+npm ci
+npm run build
+Pop-Location
+# Set first-run administrator credentials as above, then:
+.\.venv\Scripts\python.exe -m uvicorn pcb_landmarks.web:app --host 127.0.0.1 --port 8000
+```
+
+The two execution checkpoints are included under `models/`:
+
+| File | SHA-256 |
+| --- | --- |
+| `pcb-mounting-holes-yolo26n-pose.pt` | `a3035f835ff92d57b452f7c43edf566cf83e50b9752623b00e044e4ee6d773a3` |
+| `pcb-components-yolo26s.pt` | `1065cdb4a32d65799b6308dc267ec9c66a1a0d261293738417bff316697725ec` |
+
+They total approximately 26.3 MB (decimal); neither requires Git LFS. `configs/landmarks.json` and `configs/component_model.json` define paths and hashes. `PCB_CHECKPOINT` and `PCB_COMPONENT_CHECKPOINT` can point to equivalent local files; configured hashes must still match. There is no automatic download. Landmark schema metadata in `PCB_Dataset_Pilot/dataset.yaml` must remain available. Parsa attribution is preserved in [PARSA_LICENSE.txt](pcb_landmarks/PARSA_LICENSE.txt); dependencies have their own licenses.
+
+For frontend development only, run `npm run dev` inside `frontend` while the backend runs on 8000. Vite uses [127.0.0.1:5173](http://127.0.0.1:5173/) and proxies `/api` to the backend. Production uses only port 8000.
+
+## Operator workflow
+
+1. Sign in and open **Inspection Lab**. Upload a sharp, complete golden PCB PNG/JPEG.
+2. Review proposed reference points. Correct four consistent board-relative landmarks and reference geometry as needed, then **Confirm reference setup**. Manual corrections do not train or update model weights.
+3. Review component proposals; accept, edit, remove or draw expected rectangles. Regions use original image pixels and apply only to their reference. Resolve unknown proposals before saving golden configuration.
+4. Upload 1–15 inspection photos of the same layout and side. Use Automatic registration or explicitly correct Manual correspondences. Physical landmark identities must remain consistent through rotation.
+5. Inspect the batch. Compatibility and verified alignment gate comparison; unreliable geometry produces review/failure rather than fabricated component defects.
+6. Review Present, Missing, Misaligned and Needs review evidence, plus different-board rejection and per-photo errors. The default issues filter hides Present rows; select **All** to see every component.
+7. Save a golden configuration/library entry for reuse. Live Inspection can use camera frames or imported local photos; stop camera capture before starting an image queue. Review decisions and completed reports persist locally.
+
+Start with tracked examples under `PCB_Dataset_Pilot/images/val/`. `ECCC5.jpg` has a legacy exact-image region preset; it is a demonstration aid, not universal board coordinates. Existing known-board calibration and catalog limits are documented in the SDD.
+
+For a controlled synthetic pair, run `.\.venv\Scripts\python.exe tests/comparison_fixture.py --output runs/demo` into a new directory and inspect the generated input/labels. Mark synthetic runs as demonstrations. [Step 5](docs/steps/STEP5.md) explains the comparison fixture and coordinate workflow.
+
+## Repository map
+
+```text
+README.md, AI_COLLAB.md, RESEARCH.md, ARCHITECTURE.md
+setup.bat, launch.bat, requirements*.txt
+frontend/                 React UI, lockfile, browser/unit tests, DESIGN.md
+pcb_landmarks/            API, geometry, registration, comparison, models, training
+configs/                  Frozen thresholds, schema and calibration assets
+models/                   Required local execution checkpoints
+PCB_Dataset_Pilot/        Original landmark dataset, labels and provenance
+tests/                    Python regressions and controlled fixture generators
+docs/specs/               SRS, SDD and DFD (Markdown)
+docs/architecture/        Archify editable source, HTML and static export
+docs/ai_history/          Genuine available collaboration history and evidence gaps
+docs/VALIDATION_REPORT.md Actual executed validation and remaining limits
+```
+
+Generated runtime photos/reports/database live under ignored `runs/`; `.venv`, `frontend/node_modules` and `frontend/dist` are local setup outputs. Historical guides and audits remain evidence, with the current specifications taking precedence over old plans.
+
+## Testing
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+Push-Location frontend
+npm test
+npm run build
+# First browser test installation requires internet:
+npx playwright install chromium
 npm run test:browser
+npm run test:reference
+Pop-Location
 ```
 
-The browser demo test uses the fixtures generated by `demo_check`. Saved matrices,
-per-image raw diagnostics, reports, overlays and browser screenshots are under
-`runs/demo-evidence`. The perspective and erasure photos are explicitly synthetic.
-Local search is limited to at most six pixels around each expected box; larger
-parallax or appearance changes require review. Zero/invalid overlay evidence with
-no convincing local matches cannot yield PRESENT or MISSING.
+Stop app servers before browser tests so the test-owned servers can bind ports 8000/5173. Browser fixtures exercise real and controlled synthetic cases; some repair tests need separately documented external fixtures and are not portable acceptance evidence. See [validation report](docs/VALIDATION_REPORT.md) for exact commands, initial failures, repairs and final results.
 
-## Automatic mode: optional local checkpoint
+For a basic manual check, configure a complete reference, inspect that identical image, confirm reliable regions are Present, then try a different board and a corrupt image. Review overlays and explicit error/review results. This checks workflow, not defect accuracy.
 
-Manual mode works without weights. Automatic uses the checkpoint path, hash and
-settings in `configs/landmarks.json`; it never downloads a model or silently
-substitutes Manual points. Current checkpoint: `models/pcb-mounting-holes-yolo26n-pose.pt`.
-The tuned profile targets the Raspberry Pi board shown in MCCB5, with mandatory
-OpenCV verification of visible gold mounting rims and a known-board orientation
-pattern stored in `configs/mounting-holes-M.png`. See [fine-tuning evidence](docs/guides/LANDMARK_FINE_TUNING.md).
-For another local path, set it before launching in the same PowerShell terminal:
+## Troubleshooting
 
-```powershell
-$env:PCB_CHECKPOINT = 'A:\Local Models\best.pt'
-& 'A:\IndustryAI_Project\launch.bat'
-```
+| Symptom | Action |
+| --- | --- |
+| Python/Node/npm missing or wrong version | Install the required versions, reopen terminal and rerun setup. |
+| Missing imports, assets or packages | Run `setup.bat`; inspect the first failed step. Do not remove lockfiles to bypass failures. |
+| Missing/invalid checkpoint | Restore the tracked model file, check hash/config and any override variable. Direct backend/manual inspection can operate with limited model availability, but launch validates packaged assets. |
+| Backend connection failure | Keep backend terminal open; check [health](http://127.0.0.1:8000/api/health). A health response reports availability, not successful model inference. |
+| Occupied port | Close the existing server yourself or use manual developer startup on a chosen port; do not terminate unrelated processes. |
+| Landmark or alignment failure | Correct reference points/outline, ensure same layout/side, or select Manual. Retake blurry, cropped, reflective or extreme-angle photos. |
+| Corrupt/unsupported image | Use valid JPEG/PNG, <=12 MiB and <=20 million pixels; normalize EXIF orientation before upload. |
+| Cannot sign in after changing environment | Existing accounts persist. Use the configured account; changing bootstrap credentials does not reset its password. |
+| Camera unavailable | Use localhost, grant browser permission, or upload images. Physical camera validation remains separate. |
 
-That file must match the frozen checkpoint hash/schema. Automatic schema loading
-also uses the repository's small `PCB_Dataset_Pilot/dataset.yaml` metadata file;
-dataset photographs are not needed. With no checkpoint, the app displays
-`checkpoint_unavailable` and offers **Switch to Manual**. The tuned confidence
-gates are board >0.75 and keypoints >=0.85, followed by mandatory unique visible
-rim verification. Failed visual verification or alignment skips component scoring
-for that photo and preserves successful siblings. The earlier BeagleBone saved
-regions remain available for the Manual benchmark; they are not applied to the Raspberry Pi.
+## Limits and evidence
 
-## Verification and limitations
+Lighting, glare, shadows, parallax, repeated textures and severe perspective can invalidate local comparisons. Calibration/catalog recognition covers limited boards. Unknown layouts require a suitable reference and reliable independent registration; unseen-layout accuracy remains unmeasured. Missing components require multiple agreeing image cues. Review is not an automatic defect. No electrical defects, hidden solder-joint faults or production certification are claimed.
 
-See [Step 7 actual verification](docs/steps/STEP7.md), [web workflow](docs/steps/STEP6.md),
-[alignment](docs/steps/STEP4.md) and [comparison](docs/steps/STEP5.md).
+Runtime data has no automatic retention policy. Platform role checks do not make every low-level asset/lab endpoint a hardened network service; retain loopback binding. Full original ChatGPT history and some historical research evidence are still pending, explicitly indexed below.
 
-Clean-copy setup, rerun, a spaces/outside-directory invocation, production
-synthetic inspection under process-level external-network blocking, missing-weight
-Manual mode, failure exits and launcher shutdown were verified on Windows.
-**Physical adapter-off testing and a pristine Windows-machine installation remain
-pending.** The test machine already had Python/Node and package/browser caches.
-Real missing-part accuracy and full production-quality acceptance remain pending.
+## Documentation
+
+- [AI collaboration decisions](AI_COLLAB.md) and [available original chat history](docs/ai_history/README.md)
+- [Research and source selection](RESEARCH.md)
+- [Architecture and Archify diagram](ARCHITECTURE.md)
+- [SRS](docs/specs/SRS.md), [SDD](docs/specs/SDD.md), [DFD](docs/specs/DFD.md)
+- [Validation report](docs/VALIDATION_REPORT.md) and [supporting documentation index](docs/README.md)

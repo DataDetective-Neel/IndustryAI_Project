@@ -4,11 +4,13 @@ Specifications, per-step implementation records, subsystem write-ups and audit e
 offline PCB inspection demo. Start with the [project README](../README.md) for
 setup and launch; the documents below cover requirements, design and measured results.
 
-## `specs/` — baseline requirements and design
+## `specs/` — submission requirements and implemented design
 
-- [SRS.md](specs/SRS.md) — software requirements specification, terms, result rules and acceptance cases.
-- [SDD.md](specs/SDD.md) — software design document: pipeline, contracts, open decisions.
-- [DFD.md](specs/DFD.md) — data flow diagrams for the inspection pipeline.
+- [SRS.md](specs/SRS.md) — retained requirement IDs and acceptance goals, actual result vocabulary, and source/test traceability with partial/planned status.
+- [SDD.md](specs/SDD.md) — current modules, local file/SQLite storage, reference registration, comparison rules, platform/API contracts and known limits.
+- [DFD.md](specs/DFD.md) — current reference, batch, camera/queue, inspection and review data flows.
+
+The specifications were revised from source on 24 November 2026. They distinguish implemented behavior from unfulfilled baseline obligations. This documentation revision does not claim a new application test run or broad real-defect accuracy. Runtime behavior is defined by the current source; historical records below retain their original fixture/checkpoint/date scope. In particular, Step 3 failed readiness and later mounting-hole tuning concern different configurations.
 
 ## `steps/` — implementation record, step by step
 
@@ -41,6 +43,8 @@ Dated records from the AOI recovery and repair work, newest last.
 - [TARGETED_REPAIR_RESULTS.md](audits/TARGETED_REPAIR_RESULTS.md) — targeted AOI changes, 23 November 2026.
 - [OPERATOR_FEEDBACK_FIXES.md](audits/OPERATOR_FEEDBACK_FIXES.md) — operator feedback fixes, 23 November 2026.
 - [FINAL_STABILIZATION.md](audits/FINAL_STABILIZATION.md) — backend stabilization, 23 November 2026.
+
+For the actual result contract (including `defect`, `DIFFERENT_BOARD`, component misalignment and blocked scoring), see [SRS Section 3](specs/SRS.md#3-terms-and-result-rules). For every FR/NFR implementation and existing test pointer, see [SRS traceability](specs/SRS.md#41-source-audited-traceability). Baseline acceptance cases remain planned obligations unless a scoped record explicitly demonstrates them.
 
 ## Evidence and fixtures
 

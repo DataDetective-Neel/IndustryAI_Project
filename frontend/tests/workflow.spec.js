@@ -311,10 +311,11 @@ test("real manual workflow matches CLI; edit/remove, resize, automatic rejection
     expect(p.status).toBe(cli.components[i].status);
     expect(p.score).toBe(cli.components[i].score);
   });
+  await page.getByTestId("result-0").getByRole("button", {name: "All", exact: true}).click();
   await expect(
     page
       .getByTestId("result-0")
-      .locator(".findings-panel .status").filter({ hasText: /^Present$/ }),
+      .locator(".findings-panel .status.present"),
   ).toHaveCount(manual.photos[0].components.filter((p) => p.status === "present").length);
   await page.screenshot({
     path: absolute("runs/web-verification/real-manual.png"),

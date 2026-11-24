@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const fixture = path.resolve('..', 'PCB_Dataset_Pilot/images/val/ECCC5.jpg');
 
-test('drag release and access navigation do not raise page errors', async ({ page }) => {
+test('drag release and account navigation do not raise page errors', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
 
@@ -19,8 +19,8 @@ test('drag release and access navigation do not raise page errors', async ({ pag
   await expect(page.getByLabel('Component name', { exact: true })).toBeVisible();
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    await page.getByRole('button', { name: 'Access Management' }).click();
-    await expect(page.getByRole('heading', { name: 'Access management' })).toBeVisible();
+    await page.getByRole('button', { name: 'Account Settings' }).click();
+    await expect(page.getByRole('heading', { name: 'Account settings' })).toBeVisible();
     await page.getByRole('button', { name: 'Dashboard' }).click();
     await expect(page.getByRole('heading', { name: 'Production overview' })).toBeVisible();
   }

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "212dc4ba-1c87-47d4-b4ab-27e274803685",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "A:\\IndustryAI_Project\\docs\\architecture\\candidate.json",
+  "output": "A:\\IndustryAI_Project\\docs\\architecture\\inspection-architecture.html",
+  "specification": {
+    "sha256": "8c7d38eaa9653e5d24b658a45f0525d546c8f179f2fed23782ec9ca82fe1a655",
+    "bytes": 10785
+  },
+  "artifact": {
+    "sha256": "1ee665c3c19ce82cf14d8d2c2fa90d80898956647f383db3da2a44e1d4741a6c",
+    "bytes": 956041
+  }
+}

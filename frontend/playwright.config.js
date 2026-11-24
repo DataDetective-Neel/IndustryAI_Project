@@ -1,4 +1,6 @@
 import { defineConfig } from "@playwright/test";
+// Each invocation owns fresh test data; existing application records remain untouched.
+const storage = `runs/playwright-auth-${Date.now()}-${process.pid}`;
 export default defineConfig({
   globalSetup: './tests/global-setup.js',
   testDir: "./tests",
@@ -18,18 +20,18 @@ export default defineConfig({
         ".venv\\Scripts\\python.exe -m uvicorn pcb_landmarks.web:app --host 127.0.0.1 --port 8000",
       cwd: "..",
       url: "http://127.0.0.1:8000/api/health",
-      reuseExistingServer: true,
+      reuseExistingServer: false,
       timeout: 60000,
       env: {
         PCB_ADMIN_USERNAME: "admin",
         PCB_ADMIN_PASSWORD: "playwright-test-password",
-        PCB_WEB_STORAGE: "runs/playwright-auth-v5",
+        PCB_WEB_STORAGE: storage,
       },
     },
     {
       command: "npm run dev",
       url: "http://127.0.0.1:5173",
-      reuseExistingServer: true,
+      reuseExistingServer: false,
     },
   ],
 });

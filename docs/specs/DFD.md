@@ -2,162 +2,132 @@
 
 - **Project:** Offline PCB Component Inspection — Task B, “Which Part Is Missing?”
 - **Author:** Indraneel Chatterjee
-- **Version:** 1.0 — 20 November 2026
-- **Status:** Proposed data flows, not an implemented system.
+- **Version:** 2.0 — 24 November 2026
+- **Status:** Current source-audited flows; performance/acceptance remains provisional. No runtime changes or new test execution.
 
 Related documents: [Software Requirements Specification](SRS.md) · [Software Design Document](SDD.md).
 
-Implementation update: [Step 3](../steps/STEP3.md) implements offline landmark training,
-evaluation and a local detector entry point; [measured accuracy](../steps/STEP3_RESULTS.md)
-failed readiness. [Step 4](../steps/STEP4.md) implements the four-point warp, validity mask
-and review overlay from reviewed Step 2 labels. The complete application flows
-and automated quality/acceptance gates below remain proposed. [Step 5](../steps/STEP5.md)
-implements the region crop/correlation, optional sharpening and annotated local
-report slice, with per-region coverage/review gates and provisional thresholds.
-[Step 6](../steps/STEP6.md) connects that slice to a local React/FastAPI workflow. Operator
-Manual coordinates can explicitly replace automatic detection for this pilot;
-complete global quality/persistence/packaging acceptance remains pending.
-
 ## 1. Notation and shared contract
 
-These are logical DFDs expressed with Mermaid flowchart shapes. Rectangles represent **external entities**; rounded nodes represent **processes**; cylinders represent **data stores**. Every arrow names the data transferred, including settings that select preprocessing. Numbers identify processes, not execution timing. Mermaid rendering follows [GitHub's fenced diagram support](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and the [Mermaid flowchart syntax](https://mermaid.js.org/syntax/flowchart.html).
+Mermaid rectangles are external entities, rounded nodes are processes and cylinders are local stores. Arrows name transferred data; process numbers do not prescribe timing. Online installation/training/building occurs outside the runtime boundary. Runtime uses local assets/models and has no cloud inference dependency.
 
-The only runtime human actor is the operator. Training and online packaging occur before this runtime boundary; packaged local model weights and calibrated configuration are internal read-only inputs, not a cloud service. No external network entity participates in inspection.
+The operator confirms a reference's four ordered points and separate PCB outline, reviews/edits component rectangles and selects a golden configuration. Reference geometry is file-backed; golden components/configuration and platform records are in SQLite. The lab batch API accepts **1–15 photos**, one reference ID, component annotations, mode and sharpening flag. Imported queue chunks also accept 1–15 images; camera frames use the selected reference. Software line simulation and synthetic edits are labeled separately from real defect evidence.
 
-All levels use the same contract:
-
-- One known-good reference image, four confirmed ordered landmarks, and at least one named component rectangle form a saved setup.
-- A batch contains **one to three inspection photos**, one reference setup ID, and one captured sharpening enabled/disabled setting. Each accepted photo yields its own result, including failures.
-- Landmarks and rectangles use the full-resolution, decoded orientation-normalized reference's original pixel frame. Rectangle bounds are integer half-open `[x1,y1,x2,y2]`; zoom affects display only. Alignment warps inspection pixels into that frame, never the stored rectangles.
-- Sharpening is optional and symmetric on the pair of grayscale crops, after alignment/extraction and before comparison; bypass goes directly to comparison without changing coordinates or crop sizes. Parameters and the eventual default are TBD pending paired validation.
-- `error` means processing failed; `retake` means layout/alignment/global quality is unsuitable. After gates pass, any confirmed missing part yields `missing` (preserving uncertain parts and `review_required`); otherwise uncertainty yields `review`; otherwise all saved parts present yields green `ok`. Failed gates have no valid part verdicts and no OK. See [SRS result rules](SRS.md#3-terms-and-result-rules).
-
-Proposed stores: **D1** reference images and JSON annotations; **D2** local trained weights plus model/schema manifest; **D3** result metadata and local overlay/crop files; **D4** calibrated configuration. File/JSON storage, paths, retention and numeric settings are proposals; no database or persisted assets exist yet. Draft reference staging is internal to reference setup and omitted as a separate logical store.
+Coordinates are decoded original reference pixels, with integer half-open rectangles. Non-normalized EXIF orientation is rejected. The inspection warp maps into the reference grid; local comparison can search bounded translations/rotation hypotheses without moving saved rectangles. Optional symmetric sharpening defaults off. Actual outcomes are `ok`, `defect`, `review`, `error`, `DIFFERENT_BOARD`; component states include `misaligned` and `not_evaluated`. See [SRS result contract](SRS.md#3-terms-and-result-rules).
 
 ## 2. Level 0 — context
 
-The system receives operator-supplied images, confirmed setup data and inspection/review selections, and returns setup feedback and per-photo inspection evidence. It never claims OK for an unusable image or an unmarked board.
-
 ```mermaid
 flowchart LR
-    O["Operator"]
-    S("0. Offline PCB Component Inspection")
-
-    O -->|"reference image"| S
-    O -->|"landmark confirmation and named component rectangles"| S
-    O -->|"one to three inspection photos, reference ID, sharpening setting"| S
-    O -->|"photo and component review selections"| S
-    S -->|"detected landmarks, setup validation, saved reference ID"| O
-    S -->|"per-photo inspection results, overlay, paired crops, corrective actions"| O
+    O["Operator using local browser"]
+    C["Browser camera"]
+    S("0. Offline PCB inspection application")
+    O -->|"reference, outline, points, rectangles and golden selection"| S
+    O -->|"batch images, imported queue and mode/sharpening"| S
+    O -->|"login, review decisions and line controls"| S
+    C -->|"captured image frames for selected golden reference"| S
+    S -->|"setup feedback, proposals and saved configurations"| O
+    S -->|"per-photo findings, evidence, dashboard and review queue"| O
 ```
 
 ## 3. Level 1 — system decomposition
 
-**P1** validates/stages a reference, detects its landmarks, accepts operator confirmation and edited annotations, and writes a complete immutable setup to D1. **P2** validates batch framing/count/options and captures the chosen setup and configuration. **P3** processes each accepted photo independently. **P4** exposes stored results and the selected overlay/crops. D2 and D4 are supplied locally during pre-demo packaging; runtime reads do not download them.
+`web.py` orchestrates these flows. Platform operations apply their route-specific authentication/role checks; the local inspection lab is not described as a fully authenticated production API.
 
 ```mermaid
 flowchart TB
-    O["Operator"]
-    P1("1.0 Reference setup and annotation validation")
-    P2("2.0 Batch intake and snapshot")
-    P3("3.0 Inspect each photo independently")
-    P4("4.0 Result reporting and evidence review")
-    D1[("D1 Reference image and annotation store - proposed files and JSON")]
-    D2[("D2 Local PCB landmark weights and schema - packaged")]
-    D3[("D3 Result and evidence store - proposed files and JSON")]
-    D4[("D4 Calibrated configuration - proposed local file")]
-
-    O -->|"reference image"| P1
-    O -->|"landmark confirmation and named component rectangles"| P1
-    D2 -->|"trained local weights and landmark identity schema"| P1
-    D4 -->|"reference image and geometry validation limits"| P1
-    P1 -->|"detected landmarks, setup validation, saved reference ID"| O
-    P1 -->|"reference image, ordered landmark coordinates, named component rectangles"| D1
-    O -->|"one to three inspection photos, reference ID, sharpening setting"| P2
-    D1 -->|"immutable selected reference setup"| P2
-    D4 -->|"limits and versioned preprocessing, quality and score parameters"| P2
-    P2 -->|"one photo with ID, frozen reference setup and effective configuration"| P3
-    D2 -->|"trained local weights and landmark identity schema"| P3
-    P3 -->|"per-photo inspection result and available evidence"| D3
-    P3 -->|"per-photo inspection result and available evidence"| P4
-    P2 -->|"batch validation errors and corrective actions"| P4
-    O -->|"photo and component review selections"| P4
-    D3 -->|"stored per-photo inspection results, overlay and paired crops"| P4
-    P4 -->|"per-photo inspection results, overlay, paired crops, corrective actions"| O
+    O["Operator / local browser camera"]
+    P1("1.0 Upload and reference setup")
+    P2("2.0 Batch / camera / queue intake")
+    P3("3.0 Inspect each photo")
+    P4("4.0 Results, platform and review")
+    D1[("D1 UUID photo files and reference geometry JSON")]
+    D2[("D2 Local weights, schema, catalog and provisional config")]
+    D3[("D3 Batch JSON and evidence images")]
+    D4[("D4 SQLite golden library, users, inspection summaries and decisions")]
+    O -->|"reference, confirmed points/outline, named components"| P1
+    D2 -->|"pose/component models and schema"| P1
+    P1 -->|"decoded image, metadata and atomic geometry JSON"| D1
+    P1 -->|"approved golden components and configuration"| D4
+    P1 -->|"validation feedback, proposals and saved reference"| O
+    O -->|"inspection images/frames, options and queue controls"| P2
+    D1 -->|"reference pixels and confirmed geometry"| P2
+    D4 -->|"selected approved reference/components"| P2
+    D2 -->|"effective comparison configuration"| P2
+    P2 -->|"one photo, captured reference/components and options"| P3
+    D2 -->|"local model and supported-layout evidence"| P3
+    P3 -->|"report and available alignment/component/difference images"| D3
+    P3 -->|"inspection summary and review flags"| D4
+    P3 -->|"per-photo result including failures"| P4
+    P2 -->|"request errors or queue state"| P4
+    O -->|"login, evidence selections and explicit review decision"| P4
+    D3 -->|"saved reports and evidence"| P4
+    D4 -->|"dashboard, golden library, roles and reviews"| P4
+    P4 -->|"operator decision / account changes"| D4
+    P4 -->|"results, paired crops, status and summaries"| O
 ```
 
-No data moves directly between the operator and a store. D1 is read through P2 and included in the immutable work item sent to P3; P3 does not silently re-read a changed active setup. The model is a landmark detector, while crop comparison classifies apparent component presence. Reference confirmations and image validation errors are refinements of the same Level 0 boundary flows.
+D1/D3 default to `runs/web/photos` and `runs/web/batches`; D4 is `runs/web/aoi.db`. `PCB_WEB_STORAGE` changes that root. D2 contains checked-in configuration and prepared local assets; not every configuration is calibrated. Reference setup JSON is atomically replaced, SQLite changes are transactional, and batch reports/images are separate writes. These are implemented stores, not a proposed file-only database design.
 
 ## 4. Level 2 — decomposition of P3 inspection
 
-The boundary is one photo plus its frozen reference/configuration from P2, local weights/schema from D2, and the per-photo result/evidence sent to both D3 and P4. P2 remains responsible for batch count and snapshot capture; this diagram does not introduce a new operator upload path.
-
 ```mermaid
 flowchart TB
-    P2("2.0 Batch intake - outside P3")
-    D2[("D2 Local PCB landmark weights and schema - packaged")]
-
-    subgraph INSPECT["3.0 Inspect each photo independently - proposed"]
-        V("3.1 Photo validation and reference unpacking")
-        L("3.2 Ordered landmark detection")
-        A("3.3 Four-point alignment and quality checks")
-        C("3.4 Paired crop extraction and grayscale conversion")
-        U("3.5 Optional image sharpening")
-        M("3.6 Gradient or edge correlation and classification")
-        R("3.7 Per-photo result assembly and evidence")
-
-        V -->|"valid decoded inspection image and immutable reference setup"| L
-        V -->|"effective landmark, geometry and quality limits"| A
-        V -->|"effective thresholds and comparator configuration"| M
-        V -->|"captured sharpening setting, unsharp parameters and local quality limits"| C
-        V -->|"photo ID, reference setup and configuration provenance"| R
-        V -->|"invalid image error or unsuitable-photo retake reason"| R
-        L -->|"inspection image, ordered landmark coordinates, confidence and reference setup"| A
-        L -->|"unreliable or missing landmark retake reason"| R
-        A -->|"valid aligned image, reference image, named component rectangles and coverage mask"| C
-        A -->|"alignment and pre-sharpen quality report, available aligned overlay pixels"| R
-        A -->|"failed alignment, layout, coverage or severe blur retake reason"| R
-        C -->|"grayscale crops and local quality metadata - sharpening disabled"| M
-        C -->|"grayscale crops, local quality metadata and unsharp parameters - sharpening enabled"| U
-        U -->|"symmetrically sharpened crops and local quality metadata"| M
-        C -->|"unchanged reference rectangles and original paired crops for evidence"| R
-        M -->|"component scores, present or missing or uncertain states, reasons"| R
-        L -->|"per-photo runtime error details if detection fails"| R
-        A -->|"per-photo runtime error details if alignment fails"| R
-        C -->|"per-photo runtime error details if extraction fails"| R
-        U -->|"per-photo runtime error details if sharpening fails"| R
-        M -->|"per-photo runtime error details if comparison fails"| R
+    P2("2.0 Intake outside P3")
+    D2[("D2 Local models, layout catalog and config")]
+    subgraph INSPECT["3.0 Per-photo inspection"]
+        V("3.1 Decode record and initial layout evidence")
+        L("3.2 Pose/manual landmarks and reference registration")
+        A("3.3 Warp, independent verification and compatibility")
+        C("3.4 Region coverage and raw texture checks")
+        U("3.5 Optional symmetric unsharp mask")
+        M("3.6 Bounded Sobel matching and defect rules")
+        D("3.7 Component proposals and unique correspondence")
+        R("3.8 Result assembly")
+        V -->|"usable pixels and same/unknown catalog evidence"| L
+        V -->|"decode error or positively different design"| R
+        L -->|"pose/manual candidate or reciprocal SIFT fallback transform"| A
+        L -->|"unusable landmark/feature evidence"| R
+        A -->|"verified same-design aligned pixels, reference and mask"| C
+        A -->|"unverified alignment or compatibility review"| R
+        A -->|"reference/inspection detections transformed into reference grid"| D
+        C -->|"raw grayscale crop pair, sharpening disabled"| M
+        C -->|"grayscale pair, sharpening enabled"| U
+        U -->|"symmetrically sharpened pair, unchanged stored boxes"| M
+        C -->|"coverage, invalid/low-texture or explicit review evidence"| M
+        D -->|"one-to-one assignments, conflicts and unavailable-detector evidence"| M
+        M -->|"present/missing/misaligned/uncertain rows and measurements"| R
+        A -->|"alignment state, overlays and verification provenance"| R
+        V -->|"photo identity and captured options"| R
     end
-
-    P2 -->|"one photo with ID, frozen reference setup and effective configuration"| V
-    D2 -->|"trained local weights and landmark identity schema"| L
-    D3[("D3 Result and evidence store - proposed files and JSON")]
-    P4("4.0 Result reporting - outside P3")
-    R -->|"per-photo inspection result and available evidence"| D3
-    R -->|"per-photo inspection result and available evidence"| P4
+    P2 -->|"one photo plus reference geometry/components and options"| V
+    D2 -->|"pose model, thresholds and catalog"| V
+    D2 -->|"pose inference settings"| L
+    D2 -->|"existing component detector assets"| D
+    D3[("D3 Report and available evidence")]
+    D4[("D4 SQLite inspection/review summary")]
+    P4("4.0 Result review outside P3")
+    R -->|"per-photo report, overlay URLs and evidence"| D3
+    R -->|"persisted inspection summary"| D4
+    R -->|"per-photo result including errors"| P4
 ```
 
 ### 4.1 Process notes
 
-- **3.1 Validation:** validate file content/decoding, limits and gross quality, unpack the captured reference image/landmarks/rectangles and configuration, and preserve identity for any failure result. Error and retake routes are alternatives to the normal path, not simultaneous successful inspections.
-- **3.2 Landmarks:** load/reuse the packaged PCB-specific model and return four semantic landmark identities in the schema's fixed order, in inspection-image pixel coordinates. Do not infer identity by sorting screen positions. Landmark detection is also used internally during reference setup in Level 1 P1.
-- **3.3 Alignment/quality:** use inspection-to-reference `getPerspectiveTransform` and `warpPerspective`, validate confidence, geometry, marked-region coverage and original image quality, and check independent stable board features where available. An exact four-point fit is not independent alignment evidence. The reference image and rectangles pass through unchanged. Unverified alignment or severe blur yields retake before comparison.
-- **3.4 Crops:** slice both images at the saved reference-coordinate rectangles, convert to grayscale, and preserve the original evidence and local quality metadata. Route each crop pair through exactly one preprocessing path according to the captured batch option.
-- **3.5 Optional sharpening:** apply the same mild unsharp parameters to both grayscale crops, retaining shape and reference coordinates. The disabled arrow from 3.4 to 3.6 is the explicit bypass. Sharpening cannot change the pre-sharpen quality decision.
-- **3.6 Comparison:** derive edges/gradients from its incoming pair on either path; apply normalized correlation and calibrated thresholds. Local poor quality or uninformative/nonfinite scores become uncertain. Exact thresholds and representation are TBD.
-- **3.7 Assembly:** apply [SRS outcome precedence](SRS.md#3-terms-and-result-rules), retain missing findings alongside uncertainty, and return names, rectangles, reasons, provenance and available evidence. Failure results have no valid component verdicts. A runtime failure in any stage is caught by the per-photo orchestrator; result assembly/reporting handles a minimal error result if full evidence generation fails. Other batch photos continue.
+- **3.1:** Corrupt uploads retain explicit photo errors. Supported catalog mismatch blocks scoring. Unknown catalog identity does not automatically imply wrong layout; active-reference verification may still succeed.
+- **3.2–3.3:** Automatic mode can verify pose candidates against distributed on-board reciprocal SIFT matches, then fall back to reference-feature homography estimation when pose inference fails. Every third correspondence is withheld from fitting in the fallback path. Manual geometry can be refined when independent evidence improves it. The accepted warp has reference-grid pixels and full bilinear-support mask. Independent reprojection, coverage and stable-edge checks qualify registration; four fitted points alone are insufficient evidence.
+- **3.4–3.5:** Full region coverage and raw texture checks precede verdicts. Enabled sharpening uses amount 0.5, Gaussian kernel 7×7, sigma 1 on both grayscale inputs; disabled goes directly to matching. Sharpening does not rescue low-texture crops or change stored rectangles.
+- **3.6–3.7:** Bounded translation and −30° to +30° rotation hypotheses supplement Sobel normalized correlation. Low similarity requires corroborating absence evidence before `missing`; displacement/rotation can become `misaligned`. Existing detector assignments are corroborating/conflict evidence, not automatic presence or ground truth. Invalid/ambiguous/local unreliable regions remain reviewable.
+- **3.8:** Any missing/misaligned part produces `defect` with review required, preserving uncertain rows. Uncertainty produces `review`; all present can yield `ok`. Different-board/error/blocked paths have no valid presence verdicts. Per-photo handling allows other batch photos to continue; malformed shared requests may fail before that loop. Operator decisions are stored separately from machine findings.
 
-### 4.2 Boundary balancing and cross-document checks
+### 4.2 Boundary balancing and limits
 
-| Parent flow | Child flows / preservation |
+| Parent flow | Child preservation |
 | --- | --- |
-| Level 0 operator → system: reference and confirmed setup data | Level 1 operator → P1; P1 → D1 stores the complete validated setup |
-| Level 0 system → operator: setup feedback | Level 1 P1 → operator, including detection, rejection and saved reference ID |
-| Level 0 operator → system: batch files, reference ID, sharpening setting | Level 1 operator → P2; P2 → P3 carries one work item per input plus the captured reference/configuration |
-| Level 0 operator → system: review selections | Level 1 operator → P4; selected evidence is read from D3 |
-| Level 0 system → operator: results/evidence/corrective actions | Level 1 P4 → operator; P2 validation failures and P3 per-photo results both reach P4 |
-| Level 1 P2 → P3: photo, frozen setup/configuration | Level 2 P2 → 3.1; the setup includes reference image, ordered landmarks, named rectangles and original dimensions |
-| Level 1 D2 → P3: weights/schema | Level 2 D2 → 3.2; D4 configuration already arrives through P2, not a new boundary input |
-| Level 1 P3 → D3 and P4: result/evidence | Level 2 3.7 → D3 and P4, including error/retake results and nullable evidence |
+| Operator setup and feedback | P1 receives reference geometry/components; D1 and D4 persist their separate portions; feedback returns to operator |
+| Batch/camera/queue input | P2 provides a per-photo reference/options snapshot to 3.1 |
+| Local model/configuration | D2 supplies schema/catalog/thresholds and existing detectors; no cloud entity is added |
+| P3 result and evidence | 3.8 writes D3, persists the summary to D4 and returns the result to P4 |
+| Review and account changes | P4 reads stored records and persists explicit authorized platform changes |
 
-Upload counts, coordinate semantics, optional-sharpening behavior, outcome rules and offline operation are defined in the [SRS](SRS.md) and detailed in the [SDD](SDD.md). Model training, threshold tuning and sharpening ablation occur before deployment and do not add runtime external entities. Diagram validation does not establish model accuracy or application acceptance.
+The diagrams describe source behavior, not a guarantee of broad-layout recognition, calibrated blur detection, real missing-part accuracy, complete model version provenance or production security. [SRS traceability](SRS.md#41-source-audited-traceability) names existing tests without claiming a fresh run. Historical evidence is indexed in [docs/README](../README.md).

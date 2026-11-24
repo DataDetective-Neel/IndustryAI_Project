@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Offline PCB inspection: reference to review",
+    "output": "docs/architecture/inspection-architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/DataDetective-Neel/IndustryAI_Project.git",
+      "revision": "3c3de5425be6803e4765bbb8b91b0776893f3a30",
+      "provider": "github"
+    }
+  },
+  "layout": {
+    "mode": "auto"
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "frontend",
+      "label": "Local React UI",
+      "sublabel": "Upload, annotate, review",
+      "sources": [
+        {
+          "path": "frontend/src/main.jsx",
+          "line": 137,
+          "end_line": 198
+        },
+        {
+          "path": "frontend/src/main.jsx",
+          "line": 374,
+          "end_line": 394
+        }
+      ],
+      "explanation": "The inspection lab uploads images, reviews reference geometry and component proposals, and submits reference ID, named expected regions, mode and sharpening to the local API. The platform also offers golden library, camera/queue and review workflows."
+    },
+    {
+      "id": "intake",
+      "type": "backend",
+      "label": "FastAPI intake",
+      "sublabel": "Photos + expected regions",
+      "sources": [
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 407,
+          "end_line": 435
+        },
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 530,
+          "end_line": 550
+        }
+      ],
+      "explanation": "Validates local uploads and captures the reference image, saved geometry, named component rectangles, mode and provisional comparison config. Each photo is handled independently. Edges between pipeline modules show logical in-process data handoffs, not separate network services."
+    },
+    {
+      "id": "reference",
+      "type": "database",
+      "label": "Reference files",
+      "sublabel": "UUID image + geometry JSON",
+      "sources": [
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 321,
+          "end_line": 351
+        },
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 407,
+          "end_line": 435
+        }
+      ],
+      "explanation": "FastAPI reads and writes local image.png/photo.json and confirmed reference points plus separate PCB outline in reference.json. Atomic JSON replacement covers reference geometry; expected component annotations are supplied by the request or saved golden configuration."
+    },
+    {
+      "id": "landmarks",
+      "type": "backend",
+      "label": "Landmarks + warp",
+      "sublabel": "Automatic / manual / fallback",
+      "sources": [
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 588,
+          "end_line": 628
+        },
+        {
+          "path": "pcb_landmarks/registration.py",
+          "line": 246,
+          "end_line": 288
+        },
+        {
+          "path": "pcb_landmarks/align.py",
+          "line": 46,
+          "end_line": 95
+        }
+      ],
+      "explanation": "Automatic saved-reference mode checks pose landmark candidates against reciprocal on-board SIFT evidence; failed pose candidates can fall back to RANSAC reference registration with held-out matches. Manual landmarks use the same geometric warp, optionally refined. Returns inspection pixels and validity mask in reference coordinates."
+    },
+    {
+      "id": "gate",
+      "type": "security",
+      "label": "Compatibility gate",
+      "sublabel": "Require SAME_DESIGN",
+      "sources": [
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 567,
+          "end_line": 577
+        },
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 639,
+          "end_line": 664
+        },
+        {
+          "path": "pcb_landmarks/registration.py",
+          "line": 195,
+          "end_line": 243
+        }
+      ],
+      "explanation": "Known different-design evidence blocks inspection early. After warping, compatibility and independent board verification must establish SAME_DESIGN before component scoring. Unverified identity/alignment produces review or mismatch, with no valid component verdict. Distributed matches, held-out reprojection, PCB coverage and stable edges verify reference registration."
+    },
+    {
+      "id": "detector",
+      "type": "backend",
+      "label": "Component evidence",
+      "sublabel": "Local Parsa, if available",
+      "sources": [
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 664,
+          "end_line": 677
+        },
+        {
+          "path": "pcb_landmarks/component_detection.py",
+          "line": 56,
+          "end_line": 72
+        },
+        {
+          "path": "pcb_landmarks/component_model.py",
+          "line": 20,
+          "end_line": 56
+        }
+      ],
+      "explanation": "After compatibility passes, the API attempts the existing ParsaVictor YOLO26 locator on reference and inspection images. Local checkpoint existence and SHA256 are checked; handled ValueError/OpenCV failures become unavailable evidence and region comparison continues. This is an existing optional checkpoint, not a new detector or a prerequisite for manual expected regions."
+    },
+    {
+      "id": "compare",
+      "type": "backend",
+      "label": "Expected-region compare",
+      "sublabel": "Sobel + bounded local match",
+      "sources": [
+        {
+          "path": "pcb_landmarks/compare.py",
+          "line": 206,
+          "end_line": 250
+        },
+        {
+          "path": "pcb_landmarks/compare.py",
+          "line": 291,
+          "end_line": 358
+        }
+      ],
+      "explanation": "Consumes operator-defined reference-grid rectangles, aligned pixels, mask and available detector correspondence. Optional symmetric sharpening defaults off. Provisional structural/absence evidence classifies present, missing, misaligned or uncertain; low similarity alone does not prove absence. Detector assignment corroborates or conflicts; it does not prove presence alone."
+    },
+    {
+      "id": "reports",
+      "type": "backend",
+      "label": "API results + evidence",
+      "sublabel": "Defect / review / good",
+      "sources": [
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 679,
+          "end_line": 718
+        },
+        {
+          "path": "pcb_landmarks/compare.py",
+          "line": 344,
+          "end_line": 358
+        }
+      ],
+      "explanation": "FastAPI assembles per-photo ok/defect/review/error/DIFFERENT_BOARD results, retains all rows and reasons, writes report JSON and available aligned/component/difference overlays, and records summaries through AOIStore. Missing/misaligned findings remain reviewable. The frontend receives this result and evidence URLs."
+    },
+    {
+      "id": "evidence",
+      "type": "database",
+      "label": "Local evidence files",
+      "sublabel": "Batch JSON + PNG overlays",
+      "sources": [
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 631,
+          "end_line": 638
+        },
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 679,
+          "end_line": 684
+        },
+        {
+          "path": "pcb_landmarks/web.py",
+          "line": 711,
+          "end_line": 718
+        }
+      ],
+      "explanation": "Default path: runs/web/batches/<uuid> with report.json and available per-photo alignment.png, components.png and difference.png. Files are written by the API orchestration, not by a standalone storage service."
+    },
+    {
+      "id": "platform",
+      "type": "database",
+      "label": "SQLite platform store",
+      "sublabel": "Golden, summaries, reviews",
+      "sources": [
+        {
+          "path": "pcb_landmarks/platform_store.py",
+          "line": 43,
+          "end_line": 101
+        },
+        {
+          "path": "pcb_landmarks/platform_store.py",
+          "line": 215,
+          "end_line": 243
+        }
+      ],
+      "explanation": "AOIStore transactionally persists users, sessions, golden configuration/library, inspection summaries and explicit confirmed_reject/false_alarm decisions in runs/web/aoi.db. Operator decisions remain separate from machine evidence."
+    }
+  ],
+  "connections": [
+    {
+      "id": "link-1",
+      "from": "browser",
+      "to": "intake",
+      "label": "Local HTTP"
+    },
+    {
+      "id": "link-2",
+      "from": "intake",
+      "to": "reference",
+      "label": "Read / save"
+    },
+    {
+      "id": "link-3",
+      "from": "intake",
+      "to": "landmarks",
+      "label": "Per-photo work"
+    },
+    {
+      "id": "link-4",
+      "from": "landmarks",
+      "to": "gate",
+      "label": "Warp + evidence"
+    },
+    {
+      "id": "link-5",
+      "from": "gate",
+      "to": "compare",
+      "label": "SAME_DESIGN only"
+    },
+    {
+      "id": "link-6",
+      "from": "gate",
+      "to": "detector",
+      "label": "After verification"
+    },
+    {
+      "id": "link-7",
+      "from": "detector",
+      "to": "compare",
+      "label": "Evidence or unavailable"
+    },
+    {
+      "id": "link-8",
+      "from": "compare",
+      "to": "reports",
+      "label": "Findings + reasons"
+    },
+    {
+      "id": "link-9",
+      "from": "gate",
+      "to": "reports",
+      "label": "Blocked / mismatch"
+    },
+    {
+      "id": "link-10",
+      "from": "reports",
+      "to": "evidence",
+      "label": "Write JSON / PNG"
+    },
+    {
+      "id": "link-11",
+      "from": "reports",
+      "to": "platform",
+      "label": "AOIStore summary"
+    },
+    {
+      "id": "link-12",
+      "from": "reports",
+      "to": "browser",
+      "label": "API JSON + URLs"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Local runtime",
+      "items": [
+        "React/Vite assets and FastAPI run locally; module arrows are in-process data handoffs.",
+        "Intake carries reference pixels, geometry, expected rectangles and captured options through the inspection work item."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Acceptance boundary",
+      "items": [
+        "Automatic, manual and reference-feature fallback paths still require compatibility before scoring.",
+        "Existing Parsa component inference is attempted when verified; handled unavailability does not create fake detections.",
+        "Thresholds are provisional; synthetic edits and narrow model validation do not establish real defect accuracy."
+      ]
+    }
+  ]
+}

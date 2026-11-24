@@ -1,0 +1,4 @@
+# Preserve original transcript spacing and generated Archify provenance bytes.
+docs/ai_history/codex/*.md text eol=lf -whitespace
+docs/architecture/*.html text eol=lf -whitespace
+docs/architecture/*.svg text eol=lf -whitespace

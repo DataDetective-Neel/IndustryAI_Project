@@ -24,7 +24,9 @@ class LiveGoldenTests(unittest.TestCase):
             client = TestClient(create_app(Path(directory)/'storage'))
             login = client.post('/api/auth/login', json=dict(username='live-test',password='local-live-test-password'))
             headers = {'Authorization':f"Bearer {login.json()['token']}"}
-            self.assertEqual(client.get('/api/simulation/reference',headers=headers).status_code,404)
+            empty = client.get('/api/simulation/reference',headers=headers)
+            self.assertEqual(empty.status_code,200)
+            self.assertIsNone(empty.json())
             def golden(data, name):
                 return client.post('/api/simulation/reference',headers=headers,
                                    files={'image':(name,data,'image/png' if name.endswith('.png') else 'image/jpeg')})

@@ -3,34 +3,26 @@
 - **Project:** Offline PCB Component Inspection
 - **Author:** Indraneel Chatterjee
 - **Assignment:** Task B, “Which Part Is Missing?”
-- **Version:** 1.0 — 20 November 2026
-- **Status:** Design baseline; Steps 3–6 record partial implementation and measured results. Full application acceptance remains pending.
+- **Version:** 2.0 — 24 November 2026
+- **Status:** Submission requirements baseline with source-audited implementation status. Historical acceptance records are linked separately; this revision does not claim a new test run.
 
 Related documents: [Software Design Document](SDD.md) · [Data Flow Diagrams](DFD.md).
 
-Implementation update: [Step 3 commands](../steps/STEP3.md) and [measured results](../steps/STEP3_RESULTS.md)
-record the executed landmark training/evaluation. Its four-point accuracy failed
-readiness. [Step 4](../steps/STEP4.md) implements alignment and review overlays from reviewed
-Step 2 labels. [Step 5](../steps/STEP5.md) implements provisional component-region scoring,
-local Needs review coverage/parallax handling and optional symmetric sharpening;
-failed alignment skips classification. The wider application requirements below
-remain the design baseline, including pending global quality/acceptance policy.
-[Step 6](../steps/STEP6.md) implements the local React/FastAPI upload-to-results workflow,
-including requested Manual landmark correction and explicit Automatic failure handling.
+The numbered requirements retain the intended assignment obligations. Section 4.1 maps them to the current source and identifies partial or planned work. Runtime contracts in Section 3 describe the implementation rather than the earlier proposed API. Historical Step 3 accuracy results apply to that checkpoint and dataset, not automatically to the currently configured mounting-hole model.
 
 ## 1. Purpose and source basis
 
 Specify a local tool that compares a photograph of a PCB with a known-good photograph of the **same PCB layout**, checks operator-marked components, and highlights expected locations of components that appear to be missing. The intended user is a factory inspection operator; this is an internship take-home demonstration, not a claim of production inspection performance.
 
-The project requirements supplied for this documentation task are the requirements baseline. They describe a fixed factory camera and leave the PCB type open. No official assignment brief was present in the repository, and no verifiable public copy was located during preparation. Assignment compliance beyond the supplied requirements remains pending verification against that brief. No third-party assignment copy is cited as authoritative. Public technical sources support the proposed mechanisms, not measured project results; see [SDD sources](SDD.md#10-public-technical-sources).
+The project requirements supplied for this documentation task are the requirements baseline. They describe a fixed factory camera and leave the PCB type open. No official assignment brief was present in the repository, and no verifiable public copy was located during preparation. Assignment compliance beyond the supplied requirements remains pending verification against that brief. No third-party assignment copy is cited as authoritative. Public technical sources support the proposed mechanisms, not measured project results; see [SDD sources](SDD.md#10-technical-source-of-truth).
 
 ## 2. Scope, actor, and workflow
 
-The operator uploads one sharp, complete reference image, confirms four detected landmarks, draws and names component rectangles, and saves the setup. The operator then uploads **one to three inspection photos per batch**, reviews independent per-photo results, and selects parts to compare reference and inspection crops side by side. A failed photo must not remove successful results from the batch.
+The implemented React application provides a dashboard, golden library, live inspection, account settings, access management and an inspection lab. The operator uploads a reference, reviews its four landmarks and PCB outline, edits named component rectangles or reviews component proposals, and saves a golden configuration. The lab accepts **one to fifteen inspection photos per API batch**. The original one-to-three requirement remains the baseline in FR-05; larger batches are an implemented extension. Each photo retains its own result. Live inspection can process imported image queues or browser camera frames against a selected golden reference.
 
-For example, a reference may contain rectangles named `C12` and `J1 connector`. If only C12 is absent, the C12 rectangle is highlighted as missing and J1 remains present. If both are confidently present and the photo passes inspection gates, the interface displays green `OK`.
+For example, a reference may contain rectangles named `C12` and `J1 connector`. If only C12 is absent, the C12 rectangle is highlighted as missing and J1 remains present. If both are confidently present and the photo passes inspection gates, the inspection report can classify the photo as `GOOD` with outcome `ok`; this remains a provisional visual comparison.
 
-In scope: still-photo upload, reference annotation and persistence, landmark detection, planar alignment, image quality checks, optional sharpening, crop comparison, and local evidence display. Out of scope: live camera acquisition, conveyor or PLC integration, electrical testing, solder quality inspection, automatic component naming, arbitrary layout matching, cloud inference, and production certification. A Siamese comparison model is a future experiment, not the initial solution.
+In scope: still-photo upload, reference annotation and persistence, landmark detection, planar alignment, image quality checks, optional sharpening, crop comparison, and local evidence display. Browser camera frame submission and a software line simulator are implemented extensions. Out of scope: physical conveyor or PLC integration, electrical testing, solder quality inspection, verified automatic component naming, arbitrary layout recognition, cloud inference, and production certification. A Siamese comparison model is a future experiment, not the initial solution.
 
 ### 2.1 Assumptions and constraints
 
@@ -38,30 +30,32 @@ In scope: still-photo upload, reference annotation and persistence, landmark det
 - The board is approximately planar. Four repeatable landmarks are spread across it, have fixed identities, and remain visible when inspected parts are missing. Tall components, glare, occlusion, and large viewpoint changes can invalidate comparison even after a planar warp.
 - The reference is known to be complete and sharp; software quality checks cannot establish that it contains every required physical component.
 - The demo runs on a Windows laptop with Python installed. Dependency installation and preparation may use the internet once. Inspection and restart must work with Wi-Fi off, using local weights and a prebuilt frontend.
-- Proposed stack: React and Vite, FastAPI, Python, YOLO26n Pose fine-tuned for four PCB landmarks, and OpenCV. Streamlit is a possible frontend alternative, not a second required implementation.
-- Supported demo inputs are proposed as JPEG and PNG. Upload byte limits, decoded image dimensions, minimum crop size, supported Python/package versions, dataset sizes, numerical thresholds, latency, and accuracy are **TBD** until implementation or measurement.
+- Implemented stack: React/Vite, FastAPI, Python, OpenCV, local YOLO26n pose inference, local component detection, file/JSON evidence and SQLite platform persistence.
+- Implemented upload limits: JPEG/PNG, 12 MiB per photo, decoded dimensions at least 2×2 and at most 20 million pixels; inspection batches contain 1–15 photos and 1–1000 component entries. Valid comparison rectangles have integer sides of at least 5 pixels. EXIF orientation must already be normalized; it is rejected rather than silently rotated. Hardware performance and real defect accuracy still require bounded measurement.
 
 ## 3. Terms and result rules
 
 **Reference coordinates:** original decoded, orientation-normalized reference-image pixels, with origin at top left, x to the right, and y downward. Stored rectangles are integer, half-open bounds `[x1, y1, x2, y2]`; crops use rows `y1:y2` and columns `x1:x2`. Browser zoom never changes these stored coordinates.
 
-**Component states:** `present`, `missing`, or `uncertain` after valid comparison. `not_evaluated` records that inspection did not reach classification; it is not a fourth classifier outcome.
+**Implemented component states:** `present`, `missing`, `misaligned`, `uncertain`, and `not_evaluated`. `misaligned` covers a shifted or rotated part after board registration; `not_evaluated` means scoring was blocked. These extend the original three-state comparison baseline.
 
-**Per-photo outcomes** follow this precedence, shared with the [SDD result contract](SDD.md#65-result-assembly-and-evidence):
+**Implemented per-photo report contract** (`web.py` and `compare.py`):
 
-| Condition | Outcome | Required display |
+| Condition | Outcome / classification | Evidence rule |
 | --- | --- | --- |
-| File cannot be processed or a runtime error prevents inspection | `error` | Reason and corrective action; no OK or fabricated findings |
-| Detectable layout mismatch, unreliable alignment, incomplete required coverage, or severe blur | `retake` | Retake/re-upload reason; affected inspection has no valid component verdicts |
-| Gates pass and one or more components are missing | `missing` | All confirmed missing names and rectangles; also list uncertain parts and set `review_required` if any |
-| Gates pass, no missing components, and one or more uncertain components | `review` | Ambiguous parts and crop evidence; no OK |
-| Gates pass and every saved component is confidently present | `ok` | Green `OK` plus text; `review_required=false` |
+| Decode/processing error | `error`; unevaluated photos classify `NEEDS_REVIEW` | Reason retained; no valid verdict |
+| Positive evidence of another design | `DIFFERENT_BOARD` / `BOARD_MISMATCH` | Component inspection blocked |
+| Unverified identity/alignment or ambiguous comparison | `review` / `NEEDS_REVIEW` | No automatic acceptance; available evidence retained |
+| At least one missing or misaligned component | `defect` / `MISSING_COMPONENT` or `MISALIGNED_COMPONENT` | All component rows retained; `review_required=true` |
+| All marked components present | `ok` / `GOOD` | Subject to implemented compatibility, alignment and comparison gates |
 
-The saved setup must contain at least one component: an empty set must never produce an OK by default. An uncertain part must not hide a confirmed missing finding on the same usable photo. If a global quality gate fails, even a promising difference is not a confirmed missing finding.
+The original `retake` and `missing` photo outcome names are **planned baseline vocabulary**, not current serialized values. Retake advice is carried in review reasons. Missing and misaligned rows coexist with uncertainty; photo classification prioritizes misalignment when both defect types occur. An empty component set is rejected. Operator review decisions (`confirmed_reject` or `false_alarm`) are persisted separately and do not relabel model evidence.
+
+Full-board recognition, general severe-blur rejection and calibrated production quality acceptance are partial. Reference-based registration verifies distributed on-board features; the catalog recognizes only supported layouts. Similarity values are not calibrated probabilities.
 
 ## 4. Functional requirements
 
-Each “shall” is a proposed acceptance obligation, not a statement of existing implementation.
+Each “shall” is a retained acceptance obligation, not proof of completion. Implemented deviations and evidence pointers follow in Section 4.1.
 
 | ID | Requirement |
 | --- | --- |
@@ -84,13 +78,37 @@ Each “shall” is a proposed acceptance obligation, not a statement of existin
 | FR-17 | Alignment gates and comparison thresholds shall be tuned on labeled development photos. Evaluation shall include a layout held out from both model training and threshold tuning, and a paired sharpening-on/off comparison on the same labeled photos. Missed parts, false alarms, reviews, and retakes shall be reported separately. |
 | FR-18 | A proposed `setup.bat` shall create a project-local `.venv` and install `requirements.txt` while online. The demo package shall include prebuilt Vite assets and trained local weights, and FastAPI shall serve the interface and API on localhost. |
 
+### 4.1 Source-audited traceability
+
+Test names below identify existing coverage to inspect or execute; they are **not a claim that tests were run for this revision**. Paths are repository-relative.
+
+| IDs | Implementation and current status | Existing test pointers |
+| --- | --- | --- |
+| FR-01, FR-06 | Partial: `web.upload`, JPEG/PNG decode/limits/orientation; `compatibility.identify_board` and reference verification. No general certified reference completeness/blur gate. | `tests/test_web.py::test_upload_orientation_and_size_boundaries`; `tests/test_board_compatibility.py::test_blur_crop_unknown_layout_and_bad_alignment_are_review` |
+| FR-02, FR-07 | Implemented pilot: `infer.LandmarkDetector`, confirmed `reference.json`, `registration.register_inspection`, independent distributed verification, manual correction. Detection failure can fall back to reference registration. Universal four-point accuracy remains unverified. | `tests/test_reference_reuse.py::test_valid_yolo_candidate_is_independently_verified`, `test_failed_yolo_reuses_reference_for_multiple_views_and_perspective`; `tests/test_align.py` |
+| FR-03 | Partial: frontend draw/move/numeric resize/name/delete and `compare._validate_regions`/`_box`; backend uniqueness/minimum dimensions. Invalid comparison boxes become review; not every request rejects them before saving. Board containment is not a universal annotation guarantee. | `frontend/tests/workflow.spec.js`; `tests/test_compare.py::test_invalid_boxes_review_and_invalid_metadata_rejects` |
+| FR-04 | Implemented split persistence: atomic reference landmarks/outline JSON replacement; golden configuration/components in SQLite. A single atomic image-plus-annotation package is not the storage model. | `tests/test_reference_reuse.py::test_reference_validation_and_changed_setup`; `tests/test_web.py::test_approved_golden_configuration_persists_annotations` |
+| FR-05, FR-14 | Implemented extension: 1–15 images; request captures components/mode/sharpening and per-photo errors are isolated. | `tests/test_web.py::test_fifteen_inspections_keep_all_results_and_overlays`, `test_failed_photo_does_not_suppress_valid_sibling` |
+| FR-08 | Partial: raw low-texture checks, coverage, independent registration and review fallback; no universally calibrated global severe-blur/quality policy. | `tests/test_compare.py::test_uninformative_crops_cannot_be_rescued_by_sharpening`; `tests/test_demo_safety.py::test_zero_overlay_and_no_matches_requires_review` |
+| FR-09, FR-10 | Implemented: reference-grid evidence crops; comparison searches bounded neighboring pixels/rotation hypotheses. Symmetric optional unsharp mask, default off, retains stored rectangles. | `tests/test_compare.py::test_sharpening_changes_scores_but_not_fixture_decisions_or_inputs`, `test_all_present_with_symmetric_sharpening` |
+| FR-11, FR-12 | Partial baseline / extended pilot: Sobel NCC plus bounded local matching, corroborated absence, displacement/rotation and detector correspondence. Actual outcome vocabulary is Section 3. Thresholds remain provisional. | `tests/test_demo_safety.py::test_low_similarity_alone_never_means_missing`; `tests/test_compare.py::test_local_rotation_after_board_registration_is_misaligned_with_evidence`; `tests/test_correspondence.py` |
+| FR-13 | Implemented evidence: reports, aligned/component/difference overlays and selected paired crops in `Comparison.jsx`; platform review queue and decisions. | `tests/test_web.py::test_pipeline_matches_cli_functions_and_saves_assets`; `frontend/tests/repair-workflow.spec.js` |
+| FR-15, FR-18 | Implemented local preparation/launch paths and local assets/weights. Full target-machine offline restart acceptance remains an evidence obligation. | `pcb_landmarks/verify_offline.py`; [Step 7 record](../steps/STEP7.md) |
+| FR-16 | Local trained pose checkpoint configured in `configs/landmarks.json`; mounting-hole schema and limited tuning provenance recorded. Historical Step 3 failure is retained in its own record. | `tests/test_infer.py`; `tests/test_calibrated_mounts.py`; [fine-tuning record](../guides/LANDMARK_FINE_TUNING.md) |
+| FR-17 | Partial/planned: configuration and synthetic/regression fixtures exist; verified real defect accuracy, broad unseen-layout evaluation and controlled sharpening ablation remain incomplete. | `tests/test_evaluate.py`; `tests/test_compare.py::test_sharpening_changes_scores_but_not_fixture_decisions_or_inputs`; [Step 3 results](../steps/STEP3_RESULTS.md) |
+| NFR-01, NFR-02 | Local CPU architecture and prebuilt frontend; complete hardware/offline acceptance requires the recorded environment and network-isolated run. | `pcb_landmarks/verify_offline.py`; [Step 7](../steps/STEP7.md) |
+| NFR-03 | Implemented UUID storage, strict booleans, resource/ID/origin checks; platform roles are enforced on platform routes. Local lab endpoints are not a comprehensive authenticated service boundary. | `tests/test_web.py::test_batch_limits_ids_booleans_and_origin`, `test_annotation_limits_and_nonfinite_metadata_are_rejected`, `test_authenticated_platform_routes_enforce_roles` |
+| NFR-04, NFR-07 | Text statuses, original-pixel editing and explainable review evidence implemented; measured defect/review/retake performance remains partial. | `frontend/src/coordinates.test.js`; `frontend/tests/operator-feedback.spec.js`; `tests/test_compare.py` |
+| NFR-05 | Partial: atomic reference JSON and transactional SQLite; report captures annotations/config/sharpening. Not every artifact is transactional and per-run complete model/configuration version provenance is not guaranteed. | `tests/test_platform_store.py::test_golden_configuration_round_trip`; `tests/test_reference_reuse.py::test_features_cached_per_reference_and_recomputed_on_replacement` |
+| NFR-06 | Planned target-laptop performance acceptance; historical timings are scoped to their recorded runs. | [audit records](../README.md#audits--repair-recovery-and-acceptance-records) |
+
 ## 5. Nonfunctional requirements
 
 | ID | Requirement and verification |
 | --- | --- |
 | NFR-01 | Image data, annotations, inference, and evidence shall remain on the laptop during use; no external network service shall be required. Verify offline restart and absence of external asset/model requests. |
-| NFR-02 | The packaged demo shall run on the target Windows laptop using a local Python environment and CPU inference without requiring a GPU or Node.js at demo runtime. Exact OS/Python/package versions and hardware shall be recorded when tested; presently TBD. |
-| NFR-03 | The backend shall enforce input/count/decoded-size limits, reject invalid coordinates and unknown IDs, and use server-generated local paths. Filenames shall not permit path traversal or overwrite arbitrary files. Numeric resource limits are TBD, to be fixed and tested before demo acceptance. |
+| NFR-02 | The packaged demo shall run on the target Windows laptop using a local Python environment and CPU inference without requiring a GPU or Node.js at demo runtime. Exact OS/Python/package versions and hardware shall be recorded for each target-machine acceptance run. |
+| NFR-03 | The backend shall enforce input/count/decoded-size limits, reject invalid coordinates and unknown IDs, and use server-generated local paths. Filenames shall not permit path traversal or overwrite arbitrary files. Current numeric limits are listed in Section 2.1; comprehensive adversarial acceptance remains pending. |
 | NFR-04 | The interface shall label controls and show text alongside status colors. Zoom and editing shall retain rectangle positions. Processing and per-photo failures shall be visible without clearing completed results. Verify by workflow inspection and coordinate round trip. |
 | NFR-05 | Reference saves shall be atomic, and batch results shall record the setup identity, model/configuration versions, and sharpening setting sufficient to reproduce a run. Failed writes and process restart shall not corrupt the last saved setup. |
 | NFR-06 | Measure startup, per-photo and three-photo batch latency, and peak memory on the target laptop. Latency/memory budgets and observed values are TBD; no real-time or accuracy guarantee is asserted before measurement. |
@@ -115,10 +133,10 @@ These are **planned tests**, not executed tests. Use labeled images and a frozen
 | AC-11 | Upload a wrong-layout image, unsupported file type, oversized/decode-limit fixture, and an invalid reference setup. | Explicit rejection or retake, no OK; a bad reference never replaces the active valid setup. Same-layout responsibility and recognition limits are visible. | FR-01, FR-02, FR-06, NFR-03 |
 | AC-12 | Prepare training labels, fine-tune, package, and evaluate on the held-out layout; run paired sharpening ablation on the same labeled photos. | Verify ordered four-keypoint schema and local PCB weights; report counts, splits, missed parts, false alarms, reviews, retakes, timing and both settings. Choose the default from measured errors. No test-layout data tunes weights or thresholds. | FR-16, FR-17, NFR-06, NFR-07 |
 | AC-13 | Interrupt a reference save; change the active setup or UI sharpening setting during a batch; restart. | Prior valid setup survives a failed save; in-flight results retain their captured setup/configuration; persisted setup remains readable after restart. | FR-04, FR-05, NFR-05 |
-| AC-14 | Remove/corrupt local model weights, force one per-photo processing error, and inspect status text and selected-part evidence. | Startup/readiness reports missing model; processing errors never yield OK; other photos complete where possible. Names, reasons, text statuses, overlay availability and paired crops are clear. | FR-12, FR-13, FR-14, FR-15, NFR-04, NFR-07 |
+| AC-14 | Remove/corrupt local model weights, force one per-photo processing error, and inspect status text and selected-part evidence. | Health exposes checkpoint availability; missing pose weights may use verified classical reference registration. Processing errors never yield OK; other photos complete where possible. Names, reasons, text statuses, overlay availability and paired crops are clear. | FR-12, FR-13, FR-14, FR-15, NFR-04, NFR-07 |
 | AC-15 | Submit filenames containing path traversal, unknown reference IDs, malformed coordinates, and invalid option values. | Backend rejects invalid requests and writes no file outside its data directory; failures preserve valid data. | FR-03, FR-06, NFR-03, NFR-05 |
 | AC-16 | Compare a flat/low-texture crop pair or a pair with local glare/occlusion after otherwise successful global gates. | Uninformative/nonfinite correlation or local unreliability yields `uncertain` with a reason and evidence; never automatic OK or confirmed absence. | FR-08, FR-11, FR-12, NFR-07 |
 
 ## 7. Open items and completion evidence
 
-The [SDD open decisions](SDD.md#9-open-decisions-and-known-limits) track the absent official brief, data collection and landmark identities, calibration, quality checks, sharpening default, limits, versions, persistence policy, latency, and accuracy. An acceptance report must later record fixture IDs, labels, versions, threshold values, observations, and pass/fail for AC-01 through AC-16. Writing these documents does not complete application acceptance.
+The [SDD known limits](SDD.md#9-open-decisions-and-known-limits) records remaining calibration, quality, packaging and performance obligations. AC-01–AC-16 above retain the original acceptance goals; their `missing`/`retake` vocabulary and 1–3 batch limits must be reconciled with the actual Section 3 contract before execution. Existing tests and historical audit documents provide scoped evidence, not a blanket pass of these acceptance cases. No runtime, UI, model or detector behavior was changed for this documentation revision.
