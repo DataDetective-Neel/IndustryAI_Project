@@ -150,12 +150,17 @@ def _local_match(reference, aligned, mask, box, sharpen, search_radius=None, con
     current_saturation = cv2.cvtColor(aligned[y1:y2,x1:x2], cv2.COLOR_RGB2HSV)[:,:,1]
     body = ref_saturation < .5*board_saturation
     body_ratio = replacement = None
+    rule_body_ratio = rule_replacement = None
+    if board_saturation >= 100 and body.mean() >= .2:
+        rule_body_ratio = float((current_saturation[body] < .5*board_saturation).mean())
+        rule_replacement = float((current_saturation[body] > .7*board_saturation).mean())
     if board_saturation >= 100 and body.mean() >= .6:
         body_ratio = float((current_saturation[body] < .5*board_saturation).mean())
         replacement = float((current_saturation[body] > .7*board_saturation).mean())
     return dict(score=score, reason=reason, best_match_offset_px=offset, search_radius_px=radius,
                 evidence=dict(edge_energy_ratio=edge_ratio, mean_lab_delta=color_delta,
                               remaining_body_ratio=body_ratio, substrate_replacement_ratio=replacement,
+                              absence_body_remaining=rule_body_ratio, absence_substrate_replacement=rule_replacement,
                               reference_edge_energy=ref_energy, inspection_edge_energy=current_energy,
                               rotation_deg=best_angle, rotation_score_gain=float(rotation_gain),
                               displacement_px=offset,
@@ -311,6 +316,25 @@ def compare_regions(reference, aligned, mask, regions, config, alignment, sharpe
                     if any(_box_iou(local_box, match['bbox_xyxy_px']) >= .5 for match in inspection_matches.values()):
                         row.update(status='uncertain', display_status=DISPLAY['uncertain'],
                                    reason='ambiguous_correspondence: local appearance points to a component already assigned elsewhere')
+            # Exposed solder pads retain strong edges, so edge loss alone misses
+            # removed bodies. Require independent body/substrate and color evidence,
+            # verified registration, no nearby convincing match, and detector absence.
+            measurements = row.get('evidence', {})
+            if (row['status'] == 'uncertain'
+                    and result.get('alignment_validation', {}).get('reliable')
+                    and alignment.get('verification_status') == 'verified'
+                    and row.get('overlap') == 1
+                    and not next((p.get('review_reason') for p in parts if p['id'] == row['id']), None)
+                    and observed is None and evidence['reference'] is not None
+                    and row.get('score') is not None and row['score'] <= config['missing_max']
+                    and measurements.get('rejected_wide_search_score', row['score']) is not None
+                    and measurements.get('rejected_wide_search_score', row['score']) < config['present_min']
+                    and measurements.get('absence_body_remaining') is not None
+                    and measurements['absence_body_remaining'] <= .65
+                    and measurements['absence_substrate_replacement'] >= .25
+                    and measurements.get('mean_lab_delta', 0) >= .08):
+                row.update(status='missing', display_status=DISPLAY['missing'],
+                           reason='rule_based_absence: body replaced by substrate, changed color, no detected or nearby matching component')
             # A detection cannot establish presence by itself. Strong conflicting
             # evidence makes an absence decision reviewable rather than certain.
             if (row['status'] == 'missing' and observed and observed['iou'] >= .5
