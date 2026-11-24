@@ -1,0 +1,14 @@
+{
+  "split": "dev",
+  "image_ids": [
+    "good_001",
+    "good_002",
+    "missing_001",
+    "missing_002",
+    "misaligned_001",
+    "misaligned_002",
+    "multiple_defects_001",
+    "multiple_defects_002"
+  ],
+  "count": 8
+}

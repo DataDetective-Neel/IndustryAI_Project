@@ -1,0 +1,740 @@
+{
+  "metadata": {
+    "reference_image_id": "golden_reference.png",
+    "pcb_type": "ELEGOO MEGA 2560 R3",
+    "image_dimensions": {
+      "width": 969,
+      "height": 1024,
+      "channels": 3
+    },
+    "pixel_format": "BGR/RGB 8-bit",
+    "color_profile": "sRGB",
+    "pcb_bounding_box": [
+      158,
+      68,
+      642,
+      942
+    ],
+    "substrate_color": "Blue solder mask with white silkscreen",
+    "component_count": 34,
+    "removable_component_count": 22,
+    "misalignable_component_count": 22,
+    "generated_timestamp": "2026-11-22T15:10:00Z"
+  },
+  "components": [
+    {
+      "id": "U1",
+      "category": "integrated_circuit",
+      "sub_type": "QFP-100",
+      "description": "ATMEGA2560 16U-TW main microcontroller IC",
+      "bbox": [
+        390,
+        442,
+        230,
+        230
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "TQFP-100",
+      "center": [
+        505,
+        557
+      ],
+      "area": 52900
+    },
+    {
+      "id": "U2",
+      "category": "integrated_circuit",
+      "sub_type": "QFN-32",
+      "description": "ATmega16U2 USB-to-serial interface IC",
+      "bbox": [
+        558,
+        236,
+        72,
+        72
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "QFN-32",
+      "center": [
+        594,
+        272
+      ],
+      "area": 5184
+    },
+    {
+      "id": "U3",
+      "category": "integrated_circuit",
+      "sub_type": "SOT-223",
+      "description": "AMS1117 linear voltage regulator",
+      "bbox": [
+        338,
+        122,
+        84,
+        82
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SOT-223",
+      "center": [
+        380,
+        163
+      ],
+      "area": 6888
+    },
+    {
+      "id": "U4",
+      "category": "integrated_circuit",
+      "sub_type": "SOIC-8",
+      "description": "LM358 dual operational amplifier IC",
+      "bbox": [
+        398,
+        222,
+        54,
+        70
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SOIC-8",
+      "center": [
+        425,
+        257
+      ],
+      "area": 3780
+    },
+    {
+      "id": "Y1",
+      "category": "crystal_oscillator",
+      "sub_type": "HC-49SMD",
+      "description": "16.000 MHz metal can crystal oscillator",
+      "bbox": [
+        462,
+        192,
+        60,
+        128
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "HC-49SMD",
+      "center": [
+        492,
+        256
+      ],
+      "area": 7680
+    },
+    {
+      "id": "C1",
+      "category": "capacitor_electrolytic",
+      "sub_type": "SMD_CAN",
+      "description": "Aluminum electrolytic SMD capacitor (marked CS 47 25V, upper)",
+      "bbox": [
+        236,
+        202,
+        82,
+        75
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_CAN_6.3mm",
+      "center": [
+        277,
+        239
+      ],
+      "area": 6150
+    },
+    {
+      "id": "C2",
+      "category": "capacitor_electrolytic",
+      "sub_type": "SMD_CAN",
+      "description": "Aluminum electrolytic SMD capacitor (marked CS 47 25V, lower)",
+      "bbox": [
+        236,
+        278,
+        82,
+        78
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_CAN_6.3mm",
+      "center": [
+        277,
+        317
+      ],
+      "area": 6396
+    },
+    {
+      "id": "SW1",
+      "category": "tactile_switch",
+      "sub_type": "SMD_TACTILE",
+      "description": "Momentary reset pushbutton switch with red circular actuator",
+      "bbox": [
+        456,
+        768,
+        92,
+        66
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "TACT_6x6_SMD",
+      "center": [
+        502,
+        801
+      ],
+      "area": 6072
+    },
+    {
+      "id": "D1",
+      "category": "diode",
+      "sub_type": "SMA/DO-214AC",
+      "description": "SMD polarity protection/Schottky diode",
+      "bbox": [
+        174,
+        250,
+        44,
+        70
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "DO-214AC",
+      "center": [
+        196,
+        285
+      ],
+      "area": 3080
+    },
+    {
+      "id": "F1",
+      "category": "polyfuse",
+      "sub_type": "SMD_1812",
+      "description": "Gold/green SMD resettable PPTC polyfuse",
+      "bbox": [
+        454,
+        95,
+        82,
+        42
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_1812",
+      "center": [
+        495,
+        116
+      ],
+      "area": 3444
+    },
+    {
+      "id": "J1",
+      "category": "connector",
+      "sub_type": "DC_BARREL_JACK",
+      "description": "DC 2.1mm power barrel jack receptacle",
+      "bbox": [
+        212,
+        16,
+        106,
+        186
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "TH_DC_JACK",
+      "center": [
+        265,
+        109
+      ],
+      "area": 19716
+    },
+    {
+      "id": "J2",
+      "category": "connector",
+      "sub_type": "USB_TYPE_B",
+      "description": "USB Type-B through-hole shielded socket",
+      "bbox": [
+        572,
+        10,
+        142,
+        172
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "TH_USB_B",
+      "center": [
+        643,
+        96
+      ],
+      "area": 24424
+    },
+    {
+      "id": "J3",
+      "category": "pin_header",
+      "sub_type": "MALE_HEADER_2x3",
+      "description": "2x3 pin AVR-ISP programming header for ATmega2560",
+      "bbox": [
+        460,
+        672,
+        94,
+        64
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_2x3_2.54mm",
+      "center": [
+        507,
+        704
+      ],
+      "area": 6016
+    },
+    {
+      "id": "J4",
+      "category": "pin_header",
+      "sub_type": "MALE_HEADER_2x3",
+      "description": "2x3 pin ICSP header for ATmega16U2 DFU programming",
+      "bbox": [
+        696,
+        222,
+        44,
+        82
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_2x3_2.54mm",
+      "center": [
+        718,
+        263
+      ],
+      "area": 3608
+    },
+    {
+      "id": "J5",
+      "category": "test_points",
+      "sub_type": "PADS_2x2",
+      "description": "JP5 2x2 circular solder pads / test points",
+      "bbox": [
+        636,
+        242,
+        58,
+        60
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "PADS_2x2",
+      "center": [
+        665,
+        272
+      ],
+      "area": 3480
+    },
+    {
+      "id": "LED_ON",
+      "category": "led",
+      "sub_type": "SMD_0805",
+      "description": "Green SMD Power indicator LED (labeled ON)",
+      "bbox": [
+        602,
+        768,
+        28,
+        48
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        616,
+        792
+      ],
+      "area": 1344
+    },
+    {
+      "id": "LED_L",
+      "category": "led",
+      "sub_type": "SMD_0805",
+      "description": "Yellow SMD digital pin 13 user LED (labeled L)",
+      "bbox": [
+        666,
+        314,
+        24,
+        50
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        678,
+        339
+      ],
+      "area": 1200
+    },
+    {
+      "id": "LED_TX",
+      "category": "led",
+      "sub_type": "SMD_0805",
+      "description": "Yellow SMD serial transmit LED (labeled TX)",
+      "bbox": [
+        570,
+        326,
+        24,
+        44
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        582,
+        348
+      ],
+      "area": 1056
+    },
+    {
+      "id": "LED_RX",
+      "category": "led",
+      "sub_type": "SMD_0805",
+      "description": "Yellow SMD serial receive LED (labeled RX)",
+      "bbox": [
+        598,
+        326,
+        24,
+        44
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        610,
+        348
+      ],
+      "area": 1056
+    },
+    {
+      "id": "C3",
+      "category": "capacitor_ceramic",
+      "sub_type": "SMD_0805",
+      "description": "SMD ceramic multilayer capacitor C3 near power section",
+      "bbox": [
+        296,
+        394,
+        22,
+        46
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        307,
+        417
+      ],
+      "area": 1012
+    },
+    {
+      "id": "C4",
+      "category": "capacitor_ceramic",
+      "sub_type": "SMD_0805",
+      "description": "SMD ceramic multilayer capacitor C4 near power section",
+      "bbox": [
+        332,
+        394,
+        22,
+        46
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        343,
+        417
+      ],
+      "area": 1012
+    },
+    {
+      "id": "C5",
+      "category": "capacitor_ceramic",
+      "sub_type": "SMD_0805",
+      "description": "SMD ceramic multilayer capacitor C5",
+      "bbox": [
+        296,
+        440,
+        22,
+        46
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        307,
+        463
+      ],
+      "area": 1012
+    },
+    {
+      "id": "C6",
+      "category": "capacitor_ceramic",
+      "sub_type": "SMD_0805",
+      "description": "SMD ceramic multilayer capacitor C6",
+      "bbox": [
+        332,
+        440,
+        22,
+        46
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        343,
+        463
+      ],
+      "area": 1012
+    },
+    {
+      "id": "C7",
+      "category": "capacitor_ceramic",
+      "sub_type": "SMD_0603",
+      "description": "SMD decoupling ceramic capacitor C7 near MCU pins",
+      "bbox": [
+        630,
+        616,
+        20,
+        34
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0603",
+      "center": [
+        640,
+        633
+      ],
+      "area": 680
+    },
+    {
+      "id": "RN1",
+      "category": "resistor_network",
+      "sub_type": "SMD_CONVEX_4x",
+      "description": "4x SMD convex resistor network RN1",
+      "bbox": [
+        624,
+        328,
+        38,
+        34
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "RES_NET_1206_4X",
+      "center": [
+        643,
+        345
+      ],
+      "area": 1292
+    },
+    {
+      "id": "RN2",
+      "category": "resistor_network",
+      "sub_type": "SMD_CONVEX_4x",
+      "description": "4x SMD convex resistor network RN2",
+      "bbox": [
+        538,
+        328,
+        30,
+        30
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "RES_NET_1206_4X",
+      "center": [
+        553,
+        343
+      ],
+      "area": 900
+    },
+    {
+      "id": "R1",
+      "category": "resistor",
+      "sub_type": "SMD_0805",
+      "description": "SMD current limiting resistor R1 near Power LED",
+      "bbox": [
+        594,
+        820,
+        42,
+        26
+      ],
+      "identification_certainty": "confirmed",
+      "removable": true,
+      "misalignable": true,
+      "footprint": "SMD_0805",
+      "center": [
+        615,
+        833
+      ],
+      "area": 1092
+    },
+    {
+      "id": "J_PWR",
+      "category": "female_header",
+      "sub_type": "FEMALE_HEADER_1x8",
+      "description": "1x8 power female socket header (IOREF, RESET, 3.3V, 5V, GND, GND, Vin)",
+      "bbox": [
+        172,
+        334,
+        42,
+        196
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_FEMALE_1x8_2.54mm",
+      "center": [
+        193,
+        432
+      ],
+      "area": 8232
+    },
+    {
+      "id": "J_ANALOG1",
+      "category": "female_header",
+      "sub_type": "FEMALE_HEADER_1x8",
+      "description": "1x8 analog input female header (A0-A7)",
+      "bbox": [
+        172,
+        548,
+        42,
+        182
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_FEMALE_1x8_2.54mm",
+      "center": [
+        193,
+        639
+      ],
+      "area": 7644
+    },
+    {
+      "id": "J_ANALOG2",
+      "category": "female_header",
+      "sub_type": "FEMALE_HEADER_1x8",
+      "description": "1x8 analog input female header (A8-A15)",
+      "bbox": [
+        172,
+        738,
+        42,
+        196
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_FEMALE_1x8_2.54mm",
+      "center": [
+        193,
+        836
+      ],
+      "area": 8232
+    },
+    {
+      "id": "J_DIGITAL_HIGH",
+      "category": "female_header",
+      "sub_type": "FEMALE_HEADER_1x10",
+      "description": "1x10 digital I/O female header (pins 8-13, GND, AREF, SDA, SCL)",
+      "bbox": [
+        770,
+        226,
+        42,
+        238
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_FEMALE_1x10_2.54mm",
+      "center": [
+        791,
+        345
+      ],
+      "area": 9996
+    },
+    {
+      "id": "J_DIGITAL_MID",
+      "category": "female_header",
+      "sub_type": "FEMALE_HEADER_1x8",
+      "description": "1x8 digital I/O female header (pins 2-7)",
+      "bbox": [
+        770,
+        504,
+        42,
+        192
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_FEMALE_1x8_2.54mm",
+      "center": [
+        791,
+        600
+      ],
+      "area": 8064
+    },
+    {
+      "id": "J_COMM",
+      "category": "female_header",
+      "sub_type": "FEMALE_HEADER_1x8",
+      "description": "1x8 communication female header (TX0/RX0 to SCL/SDA)",
+      "bbox": [
+        770,
+        708,
+        42,
+        198
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_FEMALE_1x8_2.54mm",
+      "center": [
+        791,
+        807
+      ],
+      "area": 8316
+    },
+    {
+      "id": "J_DIGITAL_BOTTOM",
+      "category": "female_header",
+      "sub_type": "FEMALE_HEADER_2x18",
+      "description": "2x18 double row digital pins 22-53 female header",
+      "bbox": [
+        228,
+        928,
+        546,
+        64
+      ],
+      "identification_certainty": "confirmed",
+      "removable": false,
+      "misalignable": false,
+      "footprint": "HDR_FEMALE_2x18_2.54mm",
+      "center": [
+        501,
+        960
+      ],
+      "area": 34944
+    }
+  ]
+}

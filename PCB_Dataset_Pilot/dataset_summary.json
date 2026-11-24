@@ -1,0 +1,3384 @@
+{
+  "dataset_summary": {
+    "total_images": 180,
+    "categories": {
+      "GOOD": 90,
+      "MISSING_COMPONENT": 35,
+      "MISALIGNED_COMPONENT": 35,
+      "MULTIPLE_DEFECTS": 20
+    },
+    "overall_status": "ALL_CHECKS_PASSED",
+    "registration_validation": {
+      "average_inlier_ratio": 0.962,
+      "average_reprojection_error_px": 0.91,
+      "average_aligned_ssim": 0.9477
+    },
+    "pixel_level_preservation": {
+      "average_unaffected_pixel_correlation": 0.9847,
+      "minimum_unaffected_pixel_correlation": 0.8024,
+      "pixel_level_validation_status": "VERIFIED"
+    },
+    "validation_details": [
+      {
+        "image_id": "good_001",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.972,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9484,
+        "unaffected_pixel_correlation_avg": 0.9861,
+        "unaffected_pixel_correlation_min": 0.9448,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_002",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9522,
+        "unaffected_pixel_correlation_avg": 0.9846,
+        "unaffected_pixel_correlation_min": 0.9071,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_003",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.966,
+        "reg_reprojection_error_px": 0.84,
+        "aligned_ssim_with_golden": 0.95,
+        "unaffected_pixel_correlation_avg": 0.9869,
+        "unaffected_pixel_correlation_min": 0.9508,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_004",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9556,
+        "unaffected_pixel_correlation_avg": 0.9857,
+        "unaffected_pixel_correlation_min": 0.9444,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_005",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9564,
+        "unaffected_pixel_correlation_avg": 0.9851,
+        "unaffected_pixel_correlation_min": 0.8957,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_006",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9563,
+        "unaffected_pixel_correlation_avg": 0.9856,
+        "unaffected_pixel_correlation_min": 0.9141,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_007",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9551,
+        "unaffected_pixel_correlation_avg": 0.9876,
+        "unaffected_pixel_correlation_min": 0.9319,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_008",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9549,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.91,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_009",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.966,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9473,
+        "unaffected_pixel_correlation_avg": 0.9856,
+        "unaffected_pixel_correlation_min": 0.9397,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_010",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.951,
+        "unaffected_pixel_correlation_avg": 0.984,
+        "unaffected_pixel_correlation_min": 0.8962,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_011",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9533,
+        "unaffected_pixel_correlation_avg": 0.986,
+        "unaffected_pixel_correlation_min": 0.9267,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_012",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9536,
+        "unaffected_pixel_correlation_avg": 0.9857,
+        "unaffected_pixel_correlation_min": 0.9346,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_013",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9579,
+        "unaffected_pixel_correlation_avg": 0.9882,
+        "unaffected_pixel_correlation_min": 0.9595,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_014",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.973,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9511,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.8901,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_015",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.966,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9539,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9356,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_016",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.97,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9514,
+        "unaffected_pixel_correlation_avg": 0.9849,
+        "unaffected_pixel_correlation_min": 0.9239,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_017",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9493,
+        "unaffected_pixel_correlation_avg": 0.9846,
+        "unaffected_pixel_correlation_min": 0.9157,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_018",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9451,
+        "unaffected_pixel_correlation_avg": 0.986,
+        "unaffected_pixel_correlation_min": 0.9477,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_019",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9494,
+        "unaffected_pixel_correlation_avg": 0.986,
+        "unaffected_pixel_correlation_min": 0.9642,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_020",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9435,
+        "unaffected_pixel_correlation_avg": 0.9861,
+        "unaffected_pixel_correlation_min": 0.932,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_021",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9498,
+        "unaffected_pixel_correlation_avg": 0.9871,
+        "unaffected_pixel_correlation_min": 0.9325,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_022",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9374,
+        "unaffected_pixel_correlation_avg": 0.9866,
+        "unaffected_pixel_correlation_min": 0.9573,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_023",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.939,
+        "unaffected_pixel_correlation_avg": 0.9852,
+        "unaffected_pixel_correlation_min": 0.9412,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_024",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9558,
+        "unaffected_pixel_correlation_avg": 0.985,
+        "unaffected_pixel_correlation_min": 0.943,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_025",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9576,
+        "unaffected_pixel_correlation_avg": 0.9852,
+        "unaffected_pixel_correlation_min": 0.9304,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_026",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9511,
+        "unaffected_pixel_correlation_avg": 0.9865,
+        "unaffected_pixel_correlation_min": 0.9669,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_027",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9446,
+        "unaffected_pixel_correlation_avg": 0.9852,
+        "unaffected_pixel_correlation_min": 0.9173,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_028",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9507,
+        "unaffected_pixel_correlation_avg": 0.9833,
+        "unaffected_pixel_correlation_min": 0.8846,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_029",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9525,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9332,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_030",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.957,
+        "reg_reprojection_error_px": 0.97,
+        "aligned_ssim_with_golden": 0.9523,
+        "unaffected_pixel_correlation_avg": 0.9881,
+        "unaffected_pixel_correlation_min": 0.9552,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_031",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.959,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9493,
+        "unaffected_pixel_correlation_avg": 0.9861,
+        "unaffected_pixel_correlation_min": 0.9451,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_032",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.84,
+        "aligned_ssim_with_golden": 0.9608,
+        "unaffected_pixel_correlation_avg": 0.984,
+        "unaffected_pixel_correlation_min": 0.9237,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_033",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.973,
+        "reg_reprojection_error_px": 0.83,
+        "aligned_ssim_with_golden": 0.9537,
+        "unaffected_pixel_correlation_avg": 0.9817,
+        "unaffected_pixel_correlation_min": 0.9002,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_034",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.97,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9499,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.9269,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_035",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.973,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.947,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9254,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_036",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9571,
+        "unaffected_pixel_correlation_avg": 0.986,
+        "unaffected_pixel_correlation_min": 0.9694,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_037",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9528,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.941,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_038",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9481,
+        "unaffected_pixel_correlation_avg": 0.9857,
+        "unaffected_pixel_correlation_min": 0.9603,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_039",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.97,
+        "aligned_ssim_with_golden": 0.938,
+        "unaffected_pixel_correlation_avg": 0.9875,
+        "unaffected_pixel_correlation_min": 0.9689,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_040",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9526,
+        "unaffected_pixel_correlation_avg": 0.9858,
+        "unaffected_pixel_correlation_min": 0.9388,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_041",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9484,
+        "unaffected_pixel_correlation_avg": 0.9852,
+        "unaffected_pixel_correlation_min": 0.9161,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_042",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.951,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9435,
+        "unaffected_pixel_correlation_avg": 0.9871,
+        "unaffected_pixel_correlation_min": 0.9311,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_043",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.95,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.946,
+        "unaffected_pixel_correlation_avg": 0.9829,
+        "unaffected_pixel_correlation_min": 0.9116,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_044",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.97,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9522,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.9042,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_045",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.953,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9527,
+        "unaffected_pixel_correlation_avg": 0.9847,
+        "unaffected_pixel_correlation_min": 0.9279,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_046",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9457,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.9415,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_047",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9437,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.9345,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_048",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9594,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9145,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_049",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.959,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9408,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.909,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_050",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.956,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9498,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.9154,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_051",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.98,
+        "aligned_ssim_with_golden": 0.9345,
+        "unaffected_pixel_correlation_avg": 0.9766,
+        "unaffected_pixel_correlation_min": 0.8932,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_052",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.95,
+        "aligned_ssim_with_golden": 0.953,
+        "unaffected_pixel_correlation_avg": 0.986,
+        "unaffected_pixel_correlation_min": 0.9665,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_053",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.96,
+        "aligned_ssim_with_golden": 0.9481,
+        "unaffected_pixel_correlation_avg": 0.9858,
+        "unaffected_pixel_correlation_min": 0.9686,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_054",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9519,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.9616,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_055",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.952,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9527,
+        "unaffected_pixel_correlation_avg": 0.984,
+        "unaffected_pixel_correlation_min": 0.9014,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_056",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9504,
+        "unaffected_pixel_correlation_avg": 0.9845,
+        "unaffected_pixel_correlation_min": 0.9005,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_057",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.955,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9468,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.9218,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_058",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9502,
+        "unaffected_pixel_correlation_avg": 0.9851,
+        "unaffected_pixel_correlation_min": 0.9127,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_059",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9437,
+        "unaffected_pixel_correlation_avg": 0.9848,
+        "unaffected_pixel_correlation_min": 0.9066,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_060",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9508,
+        "unaffected_pixel_correlation_avg": 0.9848,
+        "unaffected_pixel_correlation_min": 0.8998,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_061",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.941,
+        "unaffected_pixel_correlation_avg": 0.9861,
+        "unaffected_pixel_correlation_min": 0.9716,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_062",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9605,
+        "unaffected_pixel_correlation_avg": 0.9859,
+        "unaffected_pixel_correlation_min": 0.9174,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_063",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.97,
+        "aligned_ssim_with_golden": 0.9473,
+        "unaffected_pixel_correlation_avg": 0.9862,
+        "unaffected_pixel_correlation_min": 0.9596,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_064",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9545,
+        "unaffected_pixel_correlation_avg": 0.984,
+        "unaffected_pixel_correlation_min": 0.9206,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_065",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9475,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.9163,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_066",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9584,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.9042,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_067",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.966,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.947,
+        "unaffected_pixel_correlation_avg": 0.9849,
+        "unaffected_pixel_correlation_min": 0.9048,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_068",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9462,
+        "unaffected_pixel_correlation_avg": 0.9857,
+        "unaffected_pixel_correlation_min": 0.9186,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_069",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9499,
+        "unaffected_pixel_correlation_avg": 0.9838,
+        "unaffected_pixel_correlation_min": 0.9443,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_070",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.966,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9525,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9402,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_071",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9503,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.9382,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_072",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9518,
+        "unaffected_pixel_correlation_avg": 0.9863,
+        "unaffected_pixel_correlation_min": 0.9358,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_073",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9547,
+        "unaffected_pixel_correlation_avg": 0.986,
+        "unaffected_pixel_correlation_min": 0.9624,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_074",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9577,
+        "unaffected_pixel_correlation_avg": 0.9831,
+        "unaffected_pixel_correlation_min": 0.8907,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_075",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9544,
+        "unaffected_pixel_correlation_avg": 0.9834,
+        "unaffected_pixel_correlation_min": 0.9161,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_076",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9446,
+        "unaffected_pixel_correlation_avg": 0.9857,
+        "unaffected_pixel_correlation_min": 0.9364,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_077",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.974,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9524,
+        "unaffected_pixel_correlation_avg": 0.9874,
+        "unaffected_pixel_correlation_min": 0.9487,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_078",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9475,
+        "unaffected_pixel_correlation_avg": 0.9848,
+        "unaffected_pixel_correlation_min": 0.9322,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_079",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.969,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9495,
+        "unaffected_pixel_correlation_avg": 0.9852,
+        "unaffected_pixel_correlation_min": 0.9646,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_080",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9537,
+        "unaffected_pixel_correlation_avg": 0.9849,
+        "unaffected_pixel_correlation_min": 0.8972,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_081",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9499,
+        "unaffected_pixel_correlation_avg": 0.9858,
+        "unaffected_pixel_correlation_min": 0.9293,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_082",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.98,
+        "aligned_ssim_with_golden": 0.9405,
+        "unaffected_pixel_correlation_avg": 0.9771,
+        "unaffected_pixel_correlation_min": 0.8931,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_083",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9503,
+        "unaffected_pixel_correlation_avg": 0.9851,
+        "unaffected_pixel_correlation_min": 0.9128,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_084",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.953,
+        "unaffected_pixel_correlation_avg": 0.985,
+        "unaffected_pixel_correlation_min": 0.9311,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_085",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9578,
+        "unaffected_pixel_correlation_avg": 0.9883,
+        "unaffected_pixel_correlation_min": 0.9705,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_086",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.97,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9516,
+        "unaffected_pixel_correlation_avg": 0.9859,
+        "unaffected_pixel_correlation_min": 0.9679,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_087",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9431,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.9241,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_088",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.85,
+        "aligned_ssim_with_golden": 0.9554,
+        "unaffected_pixel_correlation_avg": 0.9843,
+        "unaffected_pixel_correlation_min": 0.9113,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_089",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.97,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9503,
+        "unaffected_pixel_correlation_avg": 0.9851,
+        "unaffected_pixel_correlation_min": 0.9348,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "good_090",
+        "category": "GOOD",
+        "affected_components": [],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9531,
+        "unaffected_pixel_correlation_avg": 0.9842,
+        "unaffected_pixel_correlation_min": 0.9011,
+        "affected_component_correlations": [],
+        "unaffected_components_preserved": 34,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_001",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U1"
+        ],
+        "missing_components": [
+          "U1"
+        ],
+        "inlier_ratio": 0.955,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9132,
+        "unaffected_pixel_correlation_avg": 0.9846,
+        "unaffected_pixel_correlation_min": 0.9148,
+        "affected_component_correlations": [
+          [
+            "U1",
+            0.079
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_002",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U2"
+        ],
+        "missing_components": [
+          "U2"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9558,
+        "unaffected_pixel_correlation_avg": 0.9843,
+        "unaffected_pixel_correlation_min": 0.9127,
+        "affected_component_correlations": [
+          [
+            "U2",
+            0.067
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_003",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U3"
+        ],
+        "missing_components": [
+          "U3"
+        ],
+        "inlier_ratio": 0.956,
+        "reg_reprojection_error_px": 1.0,
+        "aligned_ssim_with_golden": 0.9526,
+        "unaffected_pixel_correlation_avg": 0.985,
+        "unaffected_pixel_correlation_min": 0.9495,
+        "affected_component_correlations": [
+          [
+            "U3",
+            0.013
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_004",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U4"
+        ],
+        "missing_components": [
+          "U4"
+        ],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.83,
+        "aligned_ssim_with_golden": 0.9526,
+        "unaffected_pixel_correlation_avg": 0.987,
+        "unaffected_pixel_correlation_min": 0.9616,
+        "affected_component_correlations": [
+          [
+            "U4",
+            -0.044
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_005",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "Y1"
+        ],
+        "missing_components": [
+          "Y1"
+        ],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9396,
+        "unaffected_pixel_correlation_avg": 0.9851,
+        "unaffected_pixel_correlation_min": 0.9522,
+        "affected_component_correlations": [
+          [
+            "Y1",
+            0.054
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_006",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C1"
+        ],
+        "missing_components": [
+          "C1"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9375,
+        "unaffected_pixel_correlation_avg": 0.9837,
+        "unaffected_pixel_correlation_min": 0.9202,
+        "affected_component_correlations": [
+          [
+            "C1",
+            -0.105
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_007",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C2"
+        ],
+        "missing_components": [
+          "C2"
+        ],
+        "inlier_ratio": 0.969,
+        "reg_reprojection_error_px": 0.85,
+        "aligned_ssim_with_golden": 0.9511,
+        "unaffected_pixel_correlation_avg": 0.986,
+        "unaffected_pixel_correlation_min": 0.9225,
+        "affected_component_correlations": [
+          [
+            "C2",
+            -0.093
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_008",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "SW1"
+        ],
+        "missing_components": [
+          "SW1"
+        ],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9458,
+        "unaffected_pixel_correlation_avg": 0.985,
+        "unaffected_pixel_correlation_min": 0.9626,
+        "affected_component_correlations": [
+          [
+            "SW1",
+            0.23
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_009",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "D1"
+        ],
+        "missing_components": [
+          "D1"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9457,
+        "unaffected_pixel_correlation_avg": 0.9848,
+        "unaffected_pixel_correlation_min": 0.9191,
+        "affected_component_correlations": [
+          [
+            "D1",
+            0.044
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_010",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "F1"
+        ],
+        "missing_components": [
+          "F1"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9477,
+        "unaffected_pixel_correlation_avg": 0.9851,
+        "unaffected_pixel_correlation_min": 0.9229,
+        "affected_component_correlations": [
+          [
+            "F1",
+            -0.088
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_011",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "LED_ON"
+        ],
+        "missing_components": [
+          "LED_ON"
+        ],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9425,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.9137,
+        "affected_component_correlations": [
+          [
+            "LED_ON",
+            0.186
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_012",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "LED_L"
+        ],
+        "missing_components": [
+          "LED_L"
+        ],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.947,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9229,
+        "affected_component_correlations": [
+          [
+            "LED_L",
+            0.006
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_013",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "LED_TX"
+        ],
+        "missing_components": [
+          "LED_TX"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.95,
+        "aligned_ssim_with_golden": 0.9549,
+        "unaffected_pixel_correlation_avg": 0.9858,
+        "unaffected_pixel_correlation_min": 0.9507,
+        "affected_component_correlations": [
+          [
+            "LED_TX",
+            -0.004
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_014",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "LED_RX"
+        ],
+        "missing_components": [
+          "LED_RX"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9583,
+        "unaffected_pixel_correlation_avg": 0.9875,
+        "unaffected_pixel_correlation_min": 0.9757,
+        "affected_component_correlations": [
+          [
+            "LED_RX",
+            0.076
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_015",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C3"
+        ],
+        "missing_components": [
+          "C3"
+        ],
+        "inlier_ratio": 0.969,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9473,
+        "unaffected_pixel_correlation_avg": 0.9827,
+        "unaffected_pixel_correlation_min": 0.9325,
+        "affected_component_correlations": [
+          [
+            "C3",
+            -0.032
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_016",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C4"
+        ],
+        "missing_components": [
+          "C4"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9538,
+        "unaffected_pixel_correlation_avg": 0.9836,
+        "unaffected_pixel_correlation_min": 0.9209,
+        "affected_component_correlations": [
+          [
+            "C4",
+            0.228
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_017",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C5"
+        ],
+        "missing_components": [
+          "C5"
+        ],
+        "inlier_ratio": 0.955,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9366,
+        "unaffected_pixel_correlation_avg": 0.9829,
+        "unaffected_pixel_correlation_min": 0.9088,
+        "affected_component_correlations": [
+          [
+            "C5",
+            -0.037
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_018",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C6"
+        ],
+        "missing_components": [
+          "C6"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9399,
+        "unaffected_pixel_correlation_avg": 0.9804,
+        "unaffected_pixel_correlation_min": 0.8463,
+        "affected_component_correlations": [
+          [
+            "C6",
+            -0.008
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_019",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C7"
+        ],
+        "missing_components": [
+          "C7"
+        ],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9468,
+        "unaffected_pixel_correlation_avg": 0.9871,
+        "unaffected_pixel_correlation_min": 0.9713,
+        "affected_component_correlations": [
+          [
+            "C7",
+            0.015
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_020",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "RN1"
+        ],
+        "missing_components": [
+          "RN1"
+        ],
+        "inlier_ratio": 0.973,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9381,
+        "unaffected_pixel_correlation_avg": 0.9792,
+        "unaffected_pixel_correlation_min": 0.839,
+        "affected_component_correlations": [
+          [
+            "RN1",
+            0.268
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_021",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "RN2"
+        ],
+        "missing_components": [
+          "RN2"
+        ],
+        "inlier_ratio": 0.966,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9496,
+        "unaffected_pixel_correlation_avg": 0.9831,
+        "unaffected_pixel_correlation_min": 0.8616,
+        "affected_component_correlations": [
+          [
+            "RN2",
+            0.274
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_022",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "R1"
+        ],
+        "missing_components": [
+          "R1"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9494,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.8995,
+        "affected_component_correlations": [
+          [
+            "R1",
+            0.208
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_023",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U1"
+        ],
+        "missing_components": [
+          "U1"
+        ],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9094,
+        "unaffected_pixel_correlation_avg": 0.9864,
+        "unaffected_pixel_correlation_min": 0.9359,
+        "affected_component_correlations": [
+          [
+            "U1",
+            0.078
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_024",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U2"
+        ],
+        "missing_components": [
+          "U2"
+        ],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9475,
+        "unaffected_pixel_correlation_avg": 0.985,
+        "unaffected_pixel_correlation_min": 0.9177,
+        "affected_component_correlations": [
+          [
+            "U2",
+            0.073
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_025",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U3"
+        ],
+        "missing_components": [
+          "U3"
+        ],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9464,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.9024,
+        "affected_component_correlations": [
+          [
+            "U3",
+            0.012
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_026",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "U4"
+        ],
+        "missing_components": [
+          "U4"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9483,
+        "unaffected_pixel_correlation_avg": 0.9842,
+        "unaffected_pixel_correlation_min": 0.8856,
+        "affected_component_correlations": [
+          [
+            "U4",
+            -0.051
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_027",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "Y1"
+        ],
+        "missing_components": [
+          "Y1"
+        ],
+        "inlier_ratio": 0.966,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9521,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.8995,
+        "affected_component_correlations": [
+          [
+            "Y1",
+            0.059
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_028",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C1"
+        ],
+        "missing_components": [
+          "C1"
+        ],
+        "inlier_ratio": 0.959,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9488,
+        "unaffected_pixel_correlation_avg": 0.9867,
+        "unaffected_pixel_correlation_min": 0.9547,
+        "affected_component_correlations": [
+          [
+            "C1",
+            -0.102
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_029",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "C2"
+        ],
+        "missing_components": [
+          "C2"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9392,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.9536,
+        "affected_component_correlations": [
+          [
+            "C2",
+            -0.093
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_030",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "SW1"
+        ],
+        "missing_components": [
+          "SW1"
+        ],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9433,
+        "unaffected_pixel_correlation_avg": 0.9856,
+        "unaffected_pixel_correlation_min": 0.9476,
+        "affected_component_correlations": [
+          [
+            "SW1",
+            0.239
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_031",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "D1"
+        ],
+        "missing_components": [
+          "D1"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9525,
+        "unaffected_pixel_correlation_avg": 0.9845,
+        "unaffected_pixel_correlation_min": 0.9107,
+        "affected_component_correlations": [
+          [
+            "D1",
+            0.045
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_032",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "F1"
+        ],
+        "missing_components": [
+          "F1"
+        ],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9493,
+        "unaffected_pixel_correlation_avg": 0.9846,
+        "unaffected_pixel_correlation_min": 0.9142,
+        "affected_component_correlations": [
+          [
+            "F1",
+            -0.096
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_033",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "LED_ON"
+        ],
+        "missing_components": [
+          "LED_ON"
+        ],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9525,
+        "unaffected_pixel_correlation_avg": 0.9868,
+        "unaffected_pixel_correlation_min": 0.9692,
+        "affected_component_correlations": [
+          [
+            "LED_ON",
+            0.18
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_034",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "LED_L"
+        ],
+        "missing_components": [
+          "LED_L"
+        ],
+        "inlier_ratio": 0.956,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9419,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.8986,
+        "affected_component_correlations": [
+          [
+            "LED_L",
+            0.007
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "missing_035",
+        "category": "MISSING_COMPONENT",
+        "affected_components": [
+          "LED_TX"
+        ],
+        "missing_components": [
+          "LED_TX"
+        ],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9543,
+        "unaffected_pixel_correlation_avg": 0.9856,
+        "unaffected_pixel_correlation_min": 0.9558,
+        "affected_component_correlations": [
+          [
+            "LED_TX",
+            -0.004
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_001",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.916,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9061,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.9422,
+        "affected_component_correlations": [
+          [
+            "U1",
+            -0.002
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_002",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U2"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9443,
+        "unaffected_pixel_correlation_avg": 0.9856,
+        "unaffected_pixel_correlation_min": 0.9528,
+        "affected_component_correlations": [
+          [
+            "U2",
+            -0.016
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_003",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U3"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.946,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9543,
+        "unaffected_pixel_correlation_avg": 0.9872,
+        "unaffected_pixel_correlation_min": 0.9551,
+        "affected_component_correlations": [
+          [
+            "U3",
+            0.031
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_004",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U4"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9488,
+        "unaffected_pixel_correlation_avg": 0.983,
+        "unaffected_pixel_correlation_min": 0.89,
+        "affected_component_correlations": [
+          [
+            "U4",
+            0.169
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_005",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "Y1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9398,
+        "unaffected_pixel_correlation_avg": 0.9818,
+        "unaffected_pixel_correlation_min": 0.8578,
+        "affected_component_correlations": [
+          [
+            "Y1",
+            0.391
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_006",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9493,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9483,
+        "affected_component_correlations": [
+          [
+            "C1",
+            0.28
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_007",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C2"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9456,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.9298,
+        "affected_component_correlations": [
+          [
+            "C2",
+            0.337
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_008",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "SW1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9417,
+        "unaffected_pixel_correlation_avg": 0.9858,
+        "unaffected_pixel_correlation_min": 0.9178,
+        "affected_component_correlations": [
+          [
+            "SW1",
+            0.137
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_009",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "D1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9533,
+        "unaffected_pixel_correlation_avg": 0.9851,
+        "unaffected_pixel_correlation_min": 0.9202,
+        "affected_component_correlations": [
+          [
+            "D1",
+            0.355
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_010",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "F1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.957,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9472,
+        "unaffected_pixel_correlation_avg": 0.9865,
+        "unaffected_pixel_correlation_min": 0.9591,
+        "affected_component_correlations": [
+          [
+            "F1",
+            0.2
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_011",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "LED_ON"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9509,
+        "unaffected_pixel_correlation_avg": 0.9836,
+        "unaffected_pixel_correlation_min": 0.9305,
+        "affected_component_correlations": [
+          [
+            "LED_ON",
+            0.194
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_012",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "LED_L"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.85,
+        "aligned_ssim_with_golden": 0.9491,
+        "unaffected_pixel_correlation_avg": 0.9838,
+        "unaffected_pixel_correlation_min": 0.9042,
+        "affected_component_correlations": [
+          [
+            "LED_L",
+            -0.125
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_013",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "LED_TX"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.95,
+        "aligned_ssim_with_golden": 0.9507,
+        "unaffected_pixel_correlation_avg": 0.9832,
+        "unaffected_pixel_correlation_min": 0.8999,
+        "affected_component_correlations": [
+          [
+            "LED_TX",
+            0.148
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_014",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "LED_RX"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.953,
+        "reg_reprojection_error_px": 0.95,
+        "aligned_ssim_with_golden": 0.958,
+        "unaffected_pixel_correlation_avg": 0.9839,
+        "unaffected_pixel_correlation_min": 0.9049,
+        "affected_component_correlations": [
+          [
+            "LED_RX",
+            0.106
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_015",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C3"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9407,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.9269,
+        "affected_component_correlations": [
+          [
+            "C3",
+            0.142
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_016",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C4"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9432,
+        "unaffected_pixel_correlation_avg": 0.9786,
+        "unaffected_pixel_correlation_min": 0.8942,
+        "affected_component_correlations": [
+          [
+            "C4",
+            0.392
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_017",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C5"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9453,
+        "unaffected_pixel_correlation_avg": 0.9834,
+        "unaffected_pixel_correlation_min": 0.9189,
+        "affected_component_correlations": [
+          [
+            "C5",
+            -0.06
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_018",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C6"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9517,
+        "unaffected_pixel_correlation_avg": 0.9832,
+        "unaffected_pixel_correlation_min": 0.861,
+        "affected_component_correlations": [
+          [
+            "C6",
+            0.152
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_019",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C7"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.967,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9529,
+        "unaffected_pixel_correlation_avg": 0.9874,
+        "unaffected_pixel_correlation_min": 0.9712,
+        "affected_component_correlations": [
+          [
+            "C7",
+            -0.045
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_020",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "RN1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9446,
+        "unaffected_pixel_correlation_avg": 0.9794,
+        "unaffected_pixel_correlation_min": 0.8373,
+        "affected_component_correlations": [
+          [
+            "RN1",
+            0.309
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_021",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "RN2"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9507,
+        "unaffected_pixel_correlation_avg": 0.981,
+        "unaffected_pixel_correlation_min": 0.8508,
+        "affected_component_correlations": [
+          [
+            "RN2",
+            0.293
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_022",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "R1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9505,
+        "unaffected_pixel_correlation_avg": 0.9853,
+        "unaffected_pixel_correlation_min": 0.947,
+        "affected_component_correlations": [
+          [
+            "R1",
+            0.255
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_023",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.926,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9112,
+        "unaffected_pixel_correlation_avg": 0.9813,
+        "unaffected_pixel_correlation_min": 0.839,
+        "affected_component_correlations": [
+          [
+            "U1",
+            0.126
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_024",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U2"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.959,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9425,
+        "unaffected_pixel_correlation_avg": 0.9835,
+        "unaffected_pixel_correlation_min": 0.9189,
+        "affected_component_correlations": [
+          [
+            "U2",
+            0.085
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_025",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U3"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9446,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.9361,
+        "affected_component_correlations": [
+          [
+            "U3",
+            0.084
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_026",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "U4"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.96,
+        "aligned_ssim_with_golden": 0.9506,
+        "unaffected_pixel_correlation_avg": 0.9859,
+        "unaffected_pixel_correlation_min": 0.8991,
+        "affected_component_correlations": [
+          [
+            "U4",
+            -0.078
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_027",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "Y1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9517,
+        "unaffected_pixel_correlation_avg": 0.9852,
+        "unaffected_pixel_correlation_min": 0.9179,
+        "affected_component_correlations": [
+          [
+            "Y1",
+            0.392
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_028",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.955,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9444,
+        "unaffected_pixel_correlation_avg": 0.9825,
+        "unaffected_pixel_correlation_min": 0.9165,
+        "affected_component_correlations": [
+          [
+            "C1",
+            0.33
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_029",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "C2"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.957,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9478,
+        "unaffected_pixel_correlation_avg": 0.9825,
+        "unaffected_pixel_correlation_min": 0.8967,
+        "affected_component_correlations": [
+          [
+            "C2",
+            0.377
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_030",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "SW1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.952,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9428,
+        "unaffected_pixel_correlation_avg": 0.9858,
+        "unaffected_pixel_correlation_min": 0.9465,
+        "affected_component_correlations": [
+          [
+            "SW1",
+            0.177
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_031",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "D1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9506,
+        "unaffected_pixel_correlation_avg": 0.9835,
+        "unaffected_pixel_correlation_min": 0.8958,
+        "affected_component_correlations": [
+          [
+            "D1",
+            0.387
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_032",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "F1"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.958,
+        "reg_reprojection_error_px": 0.95,
+        "aligned_ssim_with_golden": 0.9349,
+        "unaffected_pixel_correlation_avg": 0.985,
+        "unaffected_pixel_correlation_min": 0.9412,
+        "affected_component_correlations": [
+          [
+            "F1",
+            0.316
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_033",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "LED_ON"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.89,
+        "aligned_ssim_with_golden": 0.9537,
+        "unaffected_pixel_correlation_avg": 0.9831,
+        "unaffected_pixel_correlation_min": 0.8959,
+        "affected_component_correlations": [
+          [
+            "LED_ON",
+            0.186
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_034",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "LED_L"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.99,
+        "aligned_ssim_with_golden": 0.9508,
+        "unaffected_pixel_correlation_avg": 0.9859,
+        "unaffected_pixel_correlation_min": 0.9543,
+        "affected_component_correlations": [
+          [
+            "LED_L",
+            -0.113
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "misaligned_035",
+        "category": "MISALIGNED_COMPONENT",
+        "affected_components": [
+          "LED_TX"
+        ],
+        "missing_components": [],
+        "inlier_ratio": 0.961,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9394,
+        "unaffected_pixel_correlation_avg": 0.9832,
+        "unaffected_pixel_correlation_min": 0.9235,
+        "affected_component_correlations": [
+          [
+            "LED_TX",
+            0.088
+          ]
+        ],
+        "unaffected_components_preserved": 33,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_001",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "U4",
+          "C1"
+        ],
+        "missing_components": [
+          "U4"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9353,
+        "unaffected_pixel_correlation_avg": 0.9827,
+        "unaffected_pixel_correlation_min": 0.9011,
+        "affected_component_correlations": [
+          [
+            "U4",
+            -0.051
+          ],
+          [
+            "C1",
+            0.27
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_002",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "C2",
+          "D1"
+        ],
+        "missing_components": [
+          "C2"
+        ],
+        "inlier_ratio": 0.957,
+        "reg_reprojection_error_px": 0.92,
+        "aligned_ssim_with_golden": 0.9417,
+        "unaffected_pixel_correlation_avg": 0.9864,
+        "unaffected_pixel_correlation_min": 0.9659,
+        "affected_component_correlations": [
+          [
+            "C2",
+            -0.098
+          ],
+          [
+            "D1",
+            0.261
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_003",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "F1",
+          "LED_L"
+        ],
+        "missing_components": [
+          "F1"
+        ],
+        "inlier_ratio": 0.959,
+        "reg_reprojection_error_px": 0.85,
+        "aligned_ssim_with_golden": 0.9425,
+        "unaffected_pixel_correlation_avg": 0.9856,
+        "unaffected_pixel_correlation_min": 0.9403,
+        "affected_component_correlations": [
+          [
+            "F1",
+            -0.089
+          ],
+          [
+            "LED_L",
+            -0.116
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_004",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "LED_TX",
+          "C3"
+        ],
+        "missing_components": [
+          "LED_TX"
+        ],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.933,
+        "unaffected_pixel_correlation_avg": 0.9833,
+        "unaffected_pixel_correlation_min": 0.9221,
+        "affected_component_correlations": [
+          [
+            "LED_TX",
+            0.007
+          ],
+          [
+            "C3",
+            0.047
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_005",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "C4",
+          "C6"
+        ],
+        "missing_components": [
+          "C4"
+        ],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.9358,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.9425,
+        "affected_component_correlations": [
+          [
+            "C4",
+            0.05
+          ],
+          [
+            "C6",
+            0.316
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_006",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "C7",
+          "RN2"
+        ],
+        "missing_components": [
+          "C7"
+        ],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9504,
+        "unaffected_pixel_correlation_avg": 0.9832,
+        "unaffected_pixel_correlation_min": 0.8602,
+        "affected_component_correlations": [
+          [
+            "C7",
+            0.013
+          ],
+          [
+            "RN2",
+            0.313
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_007",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "R1",
+          "U2"
+        ],
+        "missing_components": [
+          "R1"
+        ],
+        "inlier_ratio": 0.965,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9505,
+        "unaffected_pixel_correlation_avg": 0.9856,
+        "unaffected_pixel_correlation_min": 0.9474,
+        "affected_component_correlations": [
+          [
+            "U2",
+            0.17
+          ],
+          [
+            "R1",
+            0.226
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_008",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "U3",
+          "Y1"
+        ],
+        "missing_components": [
+          "U3"
+        ],
+        "inlier_ratio": 0.968,
+        "reg_reprojection_error_px": 0.87,
+        "aligned_ssim_with_golden": 0.9395,
+        "unaffected_pixel_correlation_avg": 0.9809,
+        "unaffected_pixel_correlation_min": 0.8467,
+        "affected_component_correlations": [
+          [
+            "U3",
+            0.016
+          ],
+          [
+            "Y1",
+            0.416
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_009",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "C1",
+          "SW1"
+        ],
+        "missing_components": [
+          "C1"
+        ],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9415,
+        "unaffected_pixel_correlation_avg": 0.9848,
+        "unaffected_pixel_correlation_min": 0.9181,
+        "affected_component_correlations": [
+          [
+            "C1",
+            -0.093
+          ],
+          [
+            "SW1",
+            0.173
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_010",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "D1",
+          "LED_ON"
+        ],
+        "missing_components": [
+          "D1"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9494,
+        "unaffected_pixel_correlation_avg": 0.9854,
+        "unaffected_pixel_correlation_min": 0.95,
+        "affected_component_correlations": [
+          [
+            "D1",
+            0.046
+          ],
+          [
+            "LED_ON",
+            0.218
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_011",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "LED_L",
+          "LED_RX"
+        ],
+        "missing_components": [
+          "LED_L"
+        ],
+        "inlier_ratio": 0.964,
+        "reg_reprojection_error_px": 0.86,
+        "aligned_ssim_with_golden": 0.9484,
+        "unaffected_pixel_correlation_avg": 0.9862,
+        "unaffected_pixel_correlation_min": 0.9556,
+        "affected_component_correlations": [
+          [
+            "LED_L",
+            0.018
+          ],
+          [
+            "LED_RX",
+            0.207
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_012",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "C3",
+          "C5"
+        ],
+        "missing_components": [
+          "C3"
+        ],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9561,
+        "unaffected_pixel_correlation_avg": 0.9848,
+        "unaffected_pixel_correlation_min": 0.9023,
+        "affected_component_correlations": [
+          [
+            "C3",
+            -0.067
+          ],
+          [
+            "C5",
+            0.116
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_013",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "C6",
+          "RN1"
+        ],
+        "missing_components": [
+          "C6"
+        ],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9485,
+        "unaffected_pixel_correlation_avg": 0.9734,
+        "unaffected_pixel_correlation_min": 0.8421,
+        "affected_component_correlations": [
+          [
+            "C6",
+            -0.024
+          ],
+          [
+            "RN1",
+            0.267
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_014",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "RN2",
+          "U1"
+        ],
+        "missing_components": [
+          "RN2"
+        ],
+        "inlier_ratio": 0.913,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.914,
+        "unaffected_pixel_correlation_avg": 0.9829,
+        "unaffected_pixel_correlation_min": 0.8529,
+        "affected_component_correlations": [
+          [
+            "U1",
+            0.065
+          ],
+          [
+            "RN2",
+            0.266
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_015",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "U2",
+          "U4"
+        ],
+        "missing_components": [
+          "U2"
+        ],
+        "inlier_ratio": 0.962,
+        "reg_reprojection_error_px": 0.88,
+        "aligned_ssim_with_golden": 0.9426,
+        "unaffected_pixel_correlation_avg": 0.9852,
+        "unaffected_pixel_correlation_min": 0.9312,
+        "affected_component_correlations": [
+          [
+            "U2",
+            0.073
+          ],
+          [
+            "U4",
+            -0.072
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_016",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "Y1",
+          "C2"
+        ],
+        "missing_components": [
+          "Y1"
+        ],
+        "inlier_ratio": 0.963,
+        "reg_reprojection_error_px": 0.9,
+        "aligned_ssim_with_golden": 0.9391,
+        "unaffected_pixel_correlation_avg": 0.9844,
+        "unaffected_pixel_correlation_min": 0.9432,
+        "affected_component_correlations": [
+          [
+            "Y1",
+            0.054
+          ],
+          [
+            "C2",
+            0.383
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_017",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "SW1",
+          "F1"
+        ],
+        "missing_components": [
+          "SW1"
+        ],
+        "inlier_ratio": 0.96,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9463,
+        "unaffected_pixel_correlation_avg": 0.9855,
+        "unaffected_pixel_correlation_min": 0.9208,
+        "affected_component_correlations": [
+          [
+            "SW1",
+            0.222
+          ],
+          [
+            "F1",
+            0.095
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_018",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "LED_ON",
+          "LED_TX"
+        ],
+        "missing_components": [
+          "LED_ON"
+        ],
+        "inlier_ratio": 0.969,
+        "reg_reprojection_error_px": 0.93,
+        "aligned_ssim_with_golden": 0.954,
+        "unaffected_pixel_correlation_avg": 0.9796,
+        "unaffected_pixel_correlation_min": 0.8024,
+        "affected_component_correlations": [
+          [
+            "LED_ON",
+            0.158
+          ],
+          [
+            "LED_TX",
+            0.13
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_019",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "LED_RX",
+          "C4"
+        ],
+        "missing_components": [
+          "LED_RX"
+        ],
+        "inlier_ratio": 0.955,
+        "reg_reprojection_error_px": 0.91,
+        "aligned_ssim_with_golden": 0.9528,
+        "unaffected_pixel_correlation_avg": 0.9835,
+        "unaffected_pixel_correlation_min": 0.9189,
+        "affected_component_correlations": [
+          [
+            "LED_RX",
+            0.08
+          ],
+          [
+            "C4",
+            0.185
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      },
+      {
+        "image_id": "multiple_defects_020",
+        "category": "MULTIPLE_DEFECTS",
+        "affected_components": [
+          "C5",
+          "C7"
+        ],
+        "missing_components": [
+          "C5"
+        ],
+        "inlier_ratio": 0.954,
+        "reg_reprojection_error_px": 0.94,
+        "aligned_ssim_with_golden": 0.9579,
+        "unaffected_pixel_correlation_avg": 0.9868,
+        "unaffected_pixel_correlation_min": 0.9253,
+        "affected_component_correlations": [
+          [
+            "C5",
+            -0.04
+          ],
+          [
+            "C7",
+            0.014
+          ]
+        ],
+        "unaffected_components_preserved": 32,
+        "status": "PASS"
+      }
+    ]
+  }
+}

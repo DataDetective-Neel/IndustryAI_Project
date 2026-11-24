@@ -1,0 +1,10 @@
+{
+  "split": "eval",
+  "image_ids": [
+    "good_003",
+    "good_004",
+    "missing_003",
+    "misaligned_003"
+  ],
+  "count": 4
+}
